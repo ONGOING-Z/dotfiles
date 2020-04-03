@@ -76,8 +76,10 @@ Plug 'xolox/vim-misc'          " 安装vim-note必须安装misc
 Plug 'itchyny/calendar.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'Yggdroot/LeaderF'        "20.3.14
+                               " Attention this exten needs python envir.
 Plug 'RRethy/vim-illuminate'   "20.3.16  高亮鼠标所在相同单词
 Plug 'tpope/vim-fugitive'      "20.3.20 Git
+Plug 'preservim/nerdtree'      " 20.4.3
 Plug 'preservim/nerdcommenter' "20.3.20 Comment
 Plug 'godlygeek/tabular'       "20.3.24 markdown
 Plug 'plasticboy/vim-markdown' "20.3.24 markdown
