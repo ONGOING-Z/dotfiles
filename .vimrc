@@ -1,0 +1,235 @@
+" =============================================================================
+"                                      vimrc
+" =============================================================================
+" 1. 单行注释写在配置右侧
+" 2. 逐渐将注释变为全英
+set number
+set showmatch                                   " 显示匹配的括号
+set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding 
+set hlsearch                                    " Highlight search results
+
+" Ignoring uppercase and lowercase when searching
+set ignorecase
+set smartcase
+
+" Highlight syntax
+syntax enable
+syntax on
+
+set list listchars=tab:»·,trail:· " Display extra whitespace
+
+" 将下列命令取消的原因:
+" 由于一些txt文件的每行都很长，将每行的长度限制了反而不容易查看
+set textwidth=80
+set colorcolumn=1
+
+" Highlight current line
+au WinLeave * set nocursorline nocursorcolumn
+au WinEnter * set cursorline cursorcolumn
+set cursorline
+
+" Softtabs, 4 spaces
+set tabstop=4
+set shiftwidth=4
+set shiftround
+set expandtab
+
+" NERDTree 
+let NERDChristmasTree=0
+let NERDTreeWinSize=35
+let NERDTreeChDirMode=2
+let NERDTreeIgnore=['\~$', '\.pyc$', '\.swp$']
+let NERDTreeWinPos="left"
+map <F3> :NERDTreeMirror<CR>
+map <F3> :NERDTreeToggle<CR>
+
+" Encoding open and close
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+
+" Vim-Plug
+call plug#begin()
+Plug 'morhetz/gruvbox'
+" Statusline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-syntastic/syntastic' " Syntax checking
+Plug 'dense-analysis/ale'       " Another syntax checking 20.3.24
+Plug 'majutsushi/tagbar'        " Display variables and functions in code
+                                " Prepare:安装此插件同时需要安装ctags
+                                " sudo apt-get install ctags
+                                " ctags -R --c++-kinds=+p --fields=+iaS
+                                " --extra=+q 
+
+" 由于此插件太多庞大，一次安装并没有成功，未安装成功每次开启vim都会提示，
+" 就将之卸载。
+"Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+
+" Surroundings
+Plug 'tpope/vim-surround'
+
+" Debug
+"Plug 'puremourning/vimspector'  " 20.3.8
+Plug 'Yggdroot/indentLine'     " 20.3.8 对齐线
+Plug 'jiangmiao/auto-pairs'    " 20.3.9
+Plug 'xolox/vim-notes'
+Plug 'xolox/vim-misc'          " 安装vim-note必须安装misc
+Plug 'itchyny/calendar.vim'
+Plug 'vimwiki/vimwiki'
+Plug 'Yggdroot/LeaderF'        "20.3.14
+Plug 'RRethy/vim-illuminate'   "20.3.16  高亮鼠标所在相同单词
+Plug 'tpope/vim-fugitive'      "20.3.20 Git
+Plug 'preservim/nerdcommenter' "20.3.20 Comment
+Plug 'godlygeek/tabular'       "20.3.24 markdown
+Plug 'plasticboy/vim-markdown' "20.3.24 markdown
+call plug#end()
+
+" Statusline
+let g:syntastic_check_on_open = 1
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_wq = 0
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+" Tagbar
+nmap <F8> : TagbarToggle<CR>
+
+colorscheme gruvbox " Theme
+set background=dark " set dark scheme
+
+let g:indentLine_color_term = 239
+set cc=80 " 在80个字符处显示竖线"
+" Leaderf
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+
+" F7键编译cpp文件 20.3.16
+map <F7> :call CompileGcc()<CR>
+func! CompileGcc()
+    if &filetype == 'cpp'
+        exec "!time g++ -Wall % -o %<"
+    endif
+    if &filetype == 'c'
+        exec "!time gcc -Wall % -o %<"
+    endif
+endfunc
+" F9运行已经编译好的文件 20.3.16
+map <F9> :call RunGcc()<CR>
+func! RunGcc()
+    if &filetype == 'cpp'
+        exec "!time ./%<"
+    endif
+    if &filetype == 'c'
+        exec "!time ./%<"
+    endif
+endfunc
+
+" 虚拟行与屏幕行
+" 当在vim中显示的一行很长的时候，在屏幕上显示了几行，使用
+" 下面设置可以和正常jk移动相同，在行内上下移动。20.3.16
+noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+
+set title    " Display file name on tag page.
+set showcmd
+set autoread " 当文件在外部被改变时，Vim自动更新载入
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" 根据基本语法进行代码折叠
+" za进行折叠和代开
+set foldmethod=syntax
+" 启动vim时关闭折叠代码
+set nofoldenable
+
+" Markdown disable conceal
+let g:vim_markdown_conceal = 0
+" Disable conceiling code fences 
+" 禁止隐藏代码围栏的标志
+let g:vim_markdown_conceal_code_blocks = 0
+" Ale config
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '⚠ '
+" The format for echo messages 
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" Use <space> + number to jump between windows.
+set statusline=%{winnr()}
+for key in range(0, 9)
+	execute 'nnoremap <Space>'.key key.'<C-w>w'
+endfor
+
+" =============================================================================
+"                                暂时注释不用
+" =============================================================================
+" 
+" 显示空格并以红色高亮（暂时不用)
+"highlight WhitespaceEOL ctermbg=red guibg=red 
+"match WhitespaceEOL /\s\+$/
+
+" 在旁边高亮未修改部分
+"let g:gitgutter_override_sign_column_highlight = 0
+"highlight SignColumn ctermbg=green
+
+" GitGutter Signs' colors and symbols
+"highlight GitGutterAdd    guifg=#009900 guibg=#073642 ctermfg=2 ctermbg=0
+"highlight GitGutterChange guifg=#bbbb00 guibg=#073642 ctermfg=3 ctermbg=0
+"highlight GitGutterDelete guifg=#FF0000 guibg=#073642 ctermfg=1 ctermbg=0
+
+"let g:gitgutter_sign_added = '++'
+"let g:gitgutter_sign_modified = '+'
+"let g:gitgutter_sign_removed = '--'
+"let g:gitgutter_sign_removed_first_line = 'r'
+"let g:gitgutter_sign_modified_removed = 'w'
+" 禁止光标闪烁
+"set gcr=a:block-blinkon0 这种方式没有用，我所使用的平台为ubuntu，需要到
+"系统设置 - 键盘下勾选掉，即可。
+
+"-------------
+" iab用于编辑模式，实现替换功能
+"-------------
+" insert into now time
+"iab xtime <c-r>=strftime("%Y-%m-%d %H:%M:%S")<cr>
+"iab xdate <c-r>=strftime("%Y-%m-%d %a %Y年%j天")<cr>
+
+"-------------
+" Hitting space make j and k move faster
+"-------------
+"nmap <Space>j 10j<Space>
+"nmap <Space>k 10k<Space>
+"nmap <Space><Space> <Nop> " Hit space again to exits the mode
+
+"-------------
+" syntastic
+"-------------
+" error/warning的图标 
+"let g:syntastic_enable_signs = 1 
+"let g:syntastic_error_symbol='✗' 
+"let g:syntastic_warning_symbol='►'
+"let g:syntastic_warning_symbol='⚠ '
+" 总是打开Location List（相当于QuickFix）窗口，如果你发现syntastic因为与其他
+" 插件冲突而经常崩溃，将下面选项置0
+"let g:syntastic_always_populate_loc_list = 1
+" 自动打开Locaton List，默认值为2，表示发现错误时不自动打开，当修正以后没有再
+" 发现错误时自动关闭，置1表示自动打开自动关闭，0表示关闭自动打开和自动关闭，
+" 3表示自动打开，但不自动关闭 
+"let g:syntastic_auto_loc_list = 1 
+" 修改Locaton List窗口高度
+" let g:syntastic_loc_list_height = 5
+" 打开文件时自动进行检查 
+"let g:syntastic_check_on_open = 1 
+" 自动跳转到发现的第一个错误或警告处[not ok, 自动跳转很不好]
+" let g:syntastic_auto_jump = 1
+" 进行实时检查，如果觉得卡顿，将下面的选项置为1 
+"let g:syntastic_check_on_wq = 0 
+" 高亮错误
+"let g:syntastic_enable_highlighting=1
+
+" Git 并不怎么会看git信息
+"Plug 'gregsexton/gitv', {'on': ['Gitv']}
+"Plug 'airblade/vim-gitgutter'
