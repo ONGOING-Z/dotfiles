@@ -1,3 +1,4 @@
+
 " =============================================================================
 "                                      vimrc
 " =============================================================================
@@ -83,6 +84,7 @@ Plug 'preservim/nerdtree'      " 20.4.3
 Plug 'preservim/nerdcommenter' "20.3.20 Comment
 Plug 'godlygeek/tabular'       "20.3.24 markdown
 Plug 'plasticboy/vim-markdown' "20.3.24 markdown
+Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
 call plug#end()
 
 " Statusline
@@ -235,3 +237,4 @@ endfor
 " Git 并不怎么会看git信息
 "Plug 'gregsexton/gitv', {'on': ['Gitv']}
 "Plug 'airblade/vim-gitgutter'
+"
