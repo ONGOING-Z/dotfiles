@@ -1,3 +1,4 @@
+
 " =============================================================================
 "                                      vimrc
 " =============================================================================
@@ -8,6 +9,9 @@ set showmatch                                   " 显示匹配的括号
 set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding 
 set hlsearch                                    " Highlight search results
 
+" Gives vim access to a broader range of colors
+set termguicolors
+
 " Ignoring uppercase and lowercase when searching
 set ignorecase
 set smartcase
@@ -17,6 +21,20 @@ syntax enable
 syntax on
 
 set list listchars=tab:»·,trail:· " Display extra whitespace
+
+" ---- From https://secluded.site/vim-as-a-markdown-editor/ ----
+" Treat all .md files as markdown
+autocmd BufNewFile,BufRead *.md set filetype=markdown
+" Hightlight the line the cursor is on
+autocmd FileType markdown set cursorline
+" Hide and format markdown element like **bold**
+autocmd FileType markdown set conceallevel=2
+
+" Set spell check to British English
+autocmd FileType markdown setlocal spell spelllang=en_gb
+" Open Goyo for all markdown files
+autocmd FileType markdown Goyo
+" ---------
 
 " 将下列命令取消的原因:
 " 由于一些txt文件的每行都很长，将每行的长度限制了反而不容易查看
@@ -33,6 +51,9 @@ set tabstop=4
 set shiftwidth=4
 set shiftround
 set expandtab
+
+" Disable mouse support 
+set mouse=
 
 " NERDTree 
 let NERDChristmasTree=0
@@ -83,10 +104,25 @@ Plug 'preservim/nerdtree'      " 20.4.3
 "Plug 'preservim/nerdcommenter' "20.3.20 Comment
 Plug 'godlygeek/tabular'       "20.3.24 markdown
 Plug 'plasticboy/vim-markdown' "20.3.24 markdown
-"Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
+Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'        "20.5.4
 call plug#end()
+
+" --------------------------------------------------------Plugin Configuration 
+" Configuration for vim-markdown
+" Markdown disable conceal
+" let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal = 2
+" 禁止隐藏代码围栏的标志
+let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_math = 1
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_autowrite = 1
+let g:vim_markdown_edit_url_in = 'tab'
+let g:vim_markdown_follow_anchor = 1
 
 " Statusline
 let g:syntastic_check_on_open = 1
@@ -97,20 +133,41 @@ set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-" Tagbar
-nmap <F8> : TagbarToggle<CR>
+" Leaderf
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
 
+" Ale config
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '⚠ '
+" The format for echo messages 
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" ---------------------------------------------------------Basic Configuration 
 colorscheme gruvbox " Theme
 set background=dark " set dark scheme
 
 let g:indentLine_color_term = 239
 set cc=80 " 在80个字符处显示竖线"
-" Leaderf
-let g:Lf_WindowPosition = 'popup'
-let g:Lf_PreviewInPopup = 1
 
-" F7键编译cpp文件 20.3.16
-map <F7> :call CompileGcc()<CR>
+set title    " Display file name on tag page.
+set showcmd
+set autoread " 当文件在外部被改变时，Vim自动更新载入
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" 根据基本语法进行代码折叠
+" za进行折叠和代开
+set foldmethod=syntax
+" 启动vim时关闭折叠代码
+set nofoldenable
+
+" ------------------------------------------------------------------- Function 
+" CompileGcc()
 func! CompileGcc()
     if &filetype == 'cpp'
         exec "!time g++ -Wall % -o %<"
@@ -130,38 +187,18 @@ func! RunGcc()
     endif
 endfunc
 
+" ------------------------------------------------------------------- Mapping 
+nnoremap <C-g> :Goyo<CR>
+" Tagbar
+nmap <F8> : TagbarToggle<CR>
+" F7键编译cpp文件 20.3.16
+map <F7> :call CompileGcc()<CR>
+
 " 虚拟行与屏幕行
 " 当在vim中显示的一行很长的时候，在屏幕上显示了几行，使用
 " 下面设置可以和正常jk移动相同，在行内上下移动。20.3.16
 noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
 noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
-
-set title    " Display file name on tag page.
-set showcmd
-set autoread " 当文件在外部被改变时，Vim自动更新载入
-
-" Enable filetype plugins
-filetype plugin on
-filetype indent on
-
-" 根据基本语法进行代码折叠
-" za进行折叠和代开
-set foldmethod=syntax
-" 启动vim时关闭折叠代码
-set nofoldenable
-
-" Markdown disable conceal
-let g:vim_markdown_conceal = 0
-" Disable conceiling code fences 
-" 禁止隐藏代码围栏的标志
-let g:vim_markdown_conceal_code_blocks = 0
-" Ale config
-let g:ale_sign_error = '>>'
-let g:ale_sign_warning = '⚠ '
-" The format for echo messages 
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 " Use <space> + number to jump between windows.
 set statusline=%{winnr()}
