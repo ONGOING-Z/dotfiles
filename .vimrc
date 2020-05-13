@@ -1,9 +1,27 @@
-
 " =============================================================================
 "                                      vimrc
 " =============================================================================
 " 1. 单行注释写在配置右侧
 " 2. 逐渐将注释变为全英
+
+" ---------------------------------------------------------Basic Configuration 
+set background=dark " set dark scheme
+
+let g:indentLine_color_term = 239
+set cc=80          " 在80个字符处显示竖线"
+
+set title          " Display file name on tag page.
+set showcmd
+set autoread       " 当文件在外部被改变时，Vim自动更新载入
+
+filetype plugin on " Enable filetype plugins
+filetype indent on
+
+" 根据基本语法进行代码折叠
+" za进行折叠和代开
+set foldmethod=syntax
+set nofoldenable                                " 启动vim时关闭折叠代码
+
 set number
 set showmatch                                   " 显示匹配的括号
 set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding 
@@ -36,8 +54,7 @@ autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType markdown Goyo
 " ---------
 
-" 将下列命令取消的原因:
-" 由于一些txt文件的每行都很长，将每行的长度限制了反而不容易查看
+" Limit line length
 set textwidth=80
 set colorcolumn=1
 
@@ -55,19 +72,10 @@ set expandtab
 " Disable mouse support 
 set mouse=
 
-" NERDTree 
-let NERDChristmasTree=0
-let NERDTreeWinSize=35
-let NERDTreeChDirMode=2
-let NERDTreeIgnore=['\~$', '\.pyc$', '\.swp$']
-let NERDTreeWinPos="left"
-map <F3> :NERDTreeMirror<CR>
-map <F3> :NERDTreeToggle<CR>
-
 " Encoding open and close
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 
-" Vim-Plug
+"---------------------------------------------------------------------Vim-Plug
 call plug#begin()
 Plug 'morhetz/gruvbox'
 " Statusline
@@ -145,26 +153,12 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-" ---------------------------------------------------------Basic Configuration 
-colorscheme gruvbox " Theme
-set background=dark " set dark scheme
-
-let g:indentLine_color_term = 239
-set cc=80 " 在80个字符处显示竖线"
-
-set title    " Display file name on tag page.
-set showcmd
-set autoread " 当文件在外部被改变时，Vim自动更新载入
-
-" Enable filetype plugins
-filetype plugin on
-filetype indent on
-
-" 根据基本语法进行代码折叠
-" za进行折叠和代开
-set foldmethod=syntax
-" 启动vim时关闭折叠代码
-set nofoldenable
+" NERDTree config
+let NERDChristmasTree=0
+let NERDTreeWinSize=35
+let NERDTreeChDirMode=2
+let NERDTreeIgnore=['\~$', '\.pyc$', '\.swp$']
+let NERDTreeWinPos="left"
 
 " ------------------------------------------------------------------- Function 
 " CompileGcc()
@@ -205,6 +199,10 @@ set statusline=%{winnr()}
 for key in range(0, 9)
 	execute 'nnoremap <Space>'.key key.'<C-w>w'
 endfor
+
+" NerdTree Mapping
+map <F3> :NERDTreeMirror<CR>
+map <F3> :NERDTreeToggle<CR>
 
 " =============================================================================
 "                                暂时注释不用
@@ -275,4 +273,5 @@ endfor
 " Git 并不怎么会看git信息
 "Plug 'gregsexton/gitv', {'on': ['Gitv']}
 "Plug 'airblade/vim-gitgutter'
-"
+
+colorscheme gruvbox " Theme
