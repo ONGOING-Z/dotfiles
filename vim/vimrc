@@ -40,6 +40,12 @@ syntax on
 
 set list listchars=tab:»·,trail:· " Display extra whitespace
 
+" Save file when it loses focus.
+set autowrite
+
+" Disable swap files.
+set noswapfile
+
 " ---- From https://secluded.site/vim-as-a-markdown-editor/ ----
 " Treat all .md files as markdown
 autocmd BufNewFile,BufRead *.md set filetype=markdown
@@ -120,9 +126,9 @@ call plug#end()
 " --------------------------------------------------------Plugin Configuration 
 " Configuration for vim-markdown
 " Markdown disable conceal
-" let g:vim_markdown_conceal = 0
-let g:vim_markdown_conceal = 2
 " 禁止隐藏代码围栏的标志
+let g:vim_markdown_conceal = 0
+"let g:vim_markdown_conceal = 2
 let g:vim_markdown_conceal_code_blocks = 0
 let g:vim_markdown_math = 1
 let g:vim_markdown_toml_frontmatter = 1
@@ -273,5 +279,5 @@ map <F3> :NERDTreeToggle<CR>
 " Git 并不怎么会看git信息
 "Plug 'gregsexton/gitv', {'on': ['Gitv']}
 "Plug 'airblade/vim-gitgutter'
-
+"
 colorscheme gruvbox " Theme
