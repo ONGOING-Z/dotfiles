@@ -321,4 +321,4 @@ map <F3> :NERDTreeToggle<CR>
 "Plug 'airblade/vim-gitgutter'
 "
 colorscheme gruvbox " Theme
-let g:gruvbox_contrast_dark='hard'
+"let g:gruvbox_contrast_dark='hard'
