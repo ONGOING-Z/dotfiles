@@ -7,6 +7,7 @@
 " ---------------------------------------------------------Basic Configuration 
 set background=dark " set dark scheme
 
+let $LANG='en'
 let g:indentLine_color_term = 239
 set cc=80          " 在80个字符处显示竖线"
 
@@ -28,7 +29,16 @@ set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding
 set hlsearch                                    " Highlight search results
 
 " Gives vim access to a broader range of colors
-set termguicolors
+"set termguicolors
+
+if has("termguicolors")
+    " fix bug for vim
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+    " enable true color
+    set termguicolors
+endif
 
 " Ignoring uppercase and lowercase when searching
 set ignorecase
@@ -121,6 +131,9 @@ Plug 'plasticboy/vim-markdown' "20.3.24 markdown
 Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'        "20.5.4
+Plug 'wincent/command-t'       " 20.6.14
+Plug 'luochen1990/rainbow'      " 20.6.15
+Plug 'mileszs/ack.vim'          " 20.6.15
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -166,6 +179,33 @@ let NERDTreeChDirMode=2
 let NERDTreeIgnore=['\~$', '\.pyc$', '\.swp$']
 let NERDTreeWinPos="left"
 
+" rainbow
+let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
+let g:rainbow_conf = {
+\	'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+\	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+\	'operators': '_,_',
+\	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+\	'separately': {
+\		'*': {},
+\		'tex': {
+\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+\		},
+\		'lisp': {
+\			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+\		},
+\		'vim': {
+\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+\		},
+\		'html': {
+\			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+\		},
+\		'css': 0,
+\	}
+\}
+
+" ack.vim
+let g:ackprg = 'ag --nogroup --nocolor --column'
 " ------------------------------------------------------------------- Function 
 " CompileGcc()
 func! CompileGcc()
@@ -201,10 +241,10 @@ noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
 noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 
 " Use <space> + number to jump between windows.
-set statusline=%{winnr()}
-for key in range(0, 9)
-	execute 'nnoremap <Space>'.key key.'<C-w>w'
-endfor
+"set statusline=%{winnr()}
+"for key in range(0, 9)
+"	execute 'nnoremap <Space>'.key key.'<C-w>w'
+"endfor
 
 " NerdTree Mapping
 map <F3> :NERDTreeMirror<CR>
@@ -281,3 +321,4 @@ map <F3> :NERDTreeToggle<CR>
 "Plug 'airblade/vim-gitgutter'
 "
 colorscheme gruvbox " Theme
+let g:gruvbox_contrast_dark='hard'
