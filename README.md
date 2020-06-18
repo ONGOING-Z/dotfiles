@@ -35,3 +35,4 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
 
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
+2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
