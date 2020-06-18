@@ -101,8 +101,8 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias goo='cd /media/third/System_remaining/0000_mine/GOO/Bridges'
-alias univer='cd /media/third/System_remaining/0000_mine/UNIVERSITY/Github'
+
+source ~/.bash_profile # 继承本机.bash_profile
 
 alias vim='gvim -v'
 
