@@ -70,7 +70,7 @@ autocmd FileType markdown set cursorline
 autocmd FileType markdown set conceallevel=2
 
 " Set spell check to British English
-autocmd FileType markdown setlocal spell spelllang=en_gb
+"autocmd FileType markdown setlocal spell spelllang=en_gb
 " Open Goyo for all markdown files
 autocmd FileType markdown Goyo
 " ---------
@@ -129,7 +129,7 @@ Plug 'jiangmiao/auto-pairs'    " 20.3.9
 "Plug 'xolox/vim-misc'          " 安装vim-note必须安装misc
 Plug 'itchyny/calendar.vim'
 "Plug 'vimwiki/vimwiki'
-Plug 'Yggdroot/LeaderF'        "20.3.14
+"Plug 'Yggdroot/LeaderF'        "20.3.14
                                " Attention this exten needs python envir.
 Plug 'RRethy/vim-illuminate'   "20.3.16  高亮鼠标所在相同单词
 Plug 'tpope/vim-fugitive'      "20.3.20 Git
@@ -144,7 +144,7 @@ Plug 'wincent/command-t'       " 20.6.14
 Plug 'luochen1990/rainbow'      " 20.6.15
 Plug 'mileszs/ack.vim'          " 20.6.15
 Plug 'mhinz/vim-startify'       " 20.6.28
-Plug 'danilamihailov/beacon.nvim' " 20.6.28 This enable the cursor more realizable when jump more distance
+"Plug 'danilamihailov/beacon.nvim' " 20.6.28 This enable the cursor more realizable when jump more distance 没啥用。浪费资源。
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -172,8 +172,8 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 " Leaderf
-let g:Lf_WindowPosition = 'popup'
-let g:Lf_PreviewInPopup = 1
+"let g:Lf_WindowPosition = 'popup'
+"let g:Lf_PreviewInPopup = 1
 
 " Ale config
 let g:ale_sign_error = '>>'
