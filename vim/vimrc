@@ -145,6 +145,8 @@ Plug 'luochen1990/rainbow'      " 20.6.15
 Plug 'mileszs/ack.vim'          " 20.6.15
 Plug 'mhinz/vim-startify'       " 20.6.28
 "Plug 'danilamihailov/beacon.nvim' " 20.6.28 This enable the cursor more realizable when jump more distance 没啥用。浪费资源。
+Plug 'SirVer/ultisnips'         " 20.7.4
+Plug 'honza/vim-snippets'       " 20.7.4
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -217,6 +219,17 @@ let g:rainbow_conf = {
 
 " ack.vim
 let g:ackprg = 'ag --nogroup --nocolor --column'
+
+
+" snippets
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
 " ------------------------------------------------------------------- Function 
 " CompileGcc()
 func! CompileGcc()
