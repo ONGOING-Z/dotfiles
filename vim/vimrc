@@ -9,28 +9,28 @@ set background=dark " set dark scheme
 
 let $LANG='en'
 let g:indentLine_color_term = 239
-set cc=80          " 在80个字符处显示竖线"
+set cc=80          " Display a vertical bar in 80 characters
 
-set title          " Display file name on tag page.
+set title          " Display filename on tag page.
 set showcmd
-set autoread       " 当文件在外部被改变时，Vim自动更新载入
+set autoread       " Auto load when external files have been changed
 
 filetype plugin on " Enable filetype plugins
 filetype indent on
 
-" 根据基本语法进行代码折叠
-" za进行折叠和代开
+" Coding folding depending on the syntax
+" Press <za> to fold and unfold
 set foldmethod=syntax
-set nofoldenable                                " 启动vim时关闭折叠代码
+set nofoldenable                                " Disable code folding when launching vim
 
 set number
-set showmatch                                   " 显示匹配的括号
-set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding 
+set showmatch                                   " Display matching parentheses
+set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding configuration
 set hlsearch                                    " Highlight search results
 
 
 " Gives vim access to a broader range of colors
-"set termguicolors
+" Set termguicolors
 
 if has("termguicolors")
     " fix bug for vim
