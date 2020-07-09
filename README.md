@@ -29,6 +29,35 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
   2. 链接到自己的dotfiles
 
 
+## zsh 
+
+### 1. 安装
+
+```bash
+$ sudo apt-get install zsh  # ubuntu installation
+```
+之后使用`chsh -s /bin/zsh`将默认的shell改为zsh
+
+### 2. 安装oh-my-zsh
+
+第一种方法: 通过`curl`
+```bash
+$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+第二种方法: 通过`wget`
+```bash
+$ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+## tmux
+
+### 1. 安装
+```bash
+$ sudo apt install tmux
+```
+
+
+
+
 [1]: http://www.zsh.org/
 [2]: http://www.vim.org/
 [3]: https://github.com/tmux/tmux
