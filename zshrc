@@ -79,7 +79,8 @@ source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
@@ -117,7 +118,8 @@ alias gp="git push origin master"
 alias gcm="git commit -m "
 alias goshell="cd /home/third/Desktop/shells_learn"
 alias dt="cd ~/Desktop"
-
+alias idea="bash /media/third/New_Disk/idea-IC-201.7846.76/bin/idea.sh"
+alias leetcode="cd /media/third/System_remaining/0000_mine/UNIVERSITY/Github/DataStructure/OJ/LeetCode"
 
 
 # Install plugins if there are plugins that have not been installed
