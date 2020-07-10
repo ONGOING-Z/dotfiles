@@ -11,6 +11,9 @@ let $LANG='en'
 let g:indentLine_color_term = 239
 set cc=80          " Display a vertical bar in 80 characters
 
+" String to put at the start of lines that have been wrapped "
+let &showbreak='↪ '
+
 set title          " Display filename on tag page.
 set showcmd
 set autoread       " Auto load when external files have been changed
@@ -151,6 +154,7 @@ Plug 'honza/vim-snippets'       " 20.7.4
 Plug 'dhruvasagar/vim-table-mode' " 20.7.5
 Plug 'haya14busa/incsearch.vim'   " 20.7.7
 Plug 'junegunn/vim-easy-align'    " 20.7.10
+Plug 'easymotion/vim-easymotion'  " 20.7.10
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -291,11 +295,23 @@ map <F3> :NERDTreeMirror<CR>
 map <F3> :NERDTreeToggle<CR>
 
 " vim-easy-align
-" Start interactive EasyAlign in visual mode (e.g. vipga)
+" 1. Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+" 2. Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+" easymotion
+" 1. <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+" 2. s{char}{char} to move to {char}{char}
+"nmap s <Plug>(easymotion-overwin-f2)
+" 3. Move to line
+"map <Leader>L <Plug>(easymotion-bd-jk)
+"nmap <Leader>L <Plug>(easymotion-overwin-line)
+" 4. Move to word
+"map  <Leader>w <Plug>(easymotion-bd-w)
+"nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 " =============================================================================
 "                                暂时注释不用
