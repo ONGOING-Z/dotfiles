@@ -104,8 +104,11 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 "let &t_ZR = "\e23m"
 "highlight Comment cterm=italic gui=italic
 
-inoremap jk <esc>
-inoremap <esc> <nop>
+"inoremap jk <esc>
+"jinoremap <esc> <nop>
+"
+" template
+autocmd BufNewFile *.cpp 0r ~/.vim/template/cppconfig.cpp
 "---------------------------------------------------------------------Vim-Plug
 call plug#begin()
 Plug 'morhetz/gruvbox'
