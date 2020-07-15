@@ -496,18 +496,6 @@ nmap <Leader>f <Plug>(easymotion-overwin-f)
 "map  <Leader>w <Plug>(easymotion-bd-w)
 "nmap <Leader>w <Plug>(easymotion-overwin-w)
 
-" remove the arrow key in vim's insert mode
-inoremap <Down> <Nop>
-inoremap <Left> <Nop>
-inoremap <Right> <Nop>
-inoremap <Up> <Nop>
-
-" remove the arrow key in vim's visual mode
-vnoremap <Down> <Nop>
-vnoremap <Left> <Nop>
-vnoremap <Right> <Nop>
-vnoremap <Up> <Nop>
-
 " =============================================================================
 "                                暂时注释不用
 " =============================================================================
