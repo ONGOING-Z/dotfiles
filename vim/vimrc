@@ -82,7 +82,7 @@ autocmd FileType markdown set conceallevel=2
 " Set spell check to British English
 "autocmd FileType markdown setlocal spell spelllang=en_gb
 " Open Goyo for all markdown files
-autocmd FileType markdown Goyo
+"autocmd FileType markdown Goyo
 " ---------
 
 " Limit line length
@@ -299,7 +299,7 @@ Plug 'plasticboy/vim-markdown' "20.3.24 markdown
 "Plug 'iamcco/markdown-preview.vim'  " 20.7.13 markdown preview,
 "下边这个star比较多
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'} " 20.7.13
-Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
+"Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
 "Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 "Plug 'junegunn/fzf.vim'        "20.5.4
 Plug 'wincent/command-t'       " 20.6.14
@@ -315,7 +315,8 @@ Plug 'haya14busa/incsearch.vim'   " 20.7.7
 Plug 'junegunn/vim-easy-align'    " 20.7.10
 Plug 'easymotion/vim-easymotion'  " 20.7.10
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " 20.7.13
-Plug 'wakatime/vim-wakatime'      " 20.7.15 wakatime tracking
+"Plug 'wakatime/vim-wakatime'      " 20.7.15 wakatime tracking
+Plug 'ferrine/md-img-paste.vim'    " 20.7.16
 
 call plug#end()
 
@@ -450,7 +451,7 @@ endfunc
 autocmd BufRead *.md set filetype=markdown
 
 " ------------------------------------------------------------------- Mapping 
-nnoremap <C-g> :Goyo<CR>
+"nnoremap <C-g> :Goyo<CR>
 " Tagbar
 nmap <F8> : TagbarToggle<CR>
 " F7键编译cpp文件 20.3.16
@@ -476,7 +477,6 @@ map <F3> :NERDTreeToggle<CR>
 map <leader>p :InstantMarkdownPreview<CR>
 map <leader>p :InstantMarkdownStop<CR>
 
-
 " vim-easy-align
 " 1. Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -496,6 +496,9 @@ nmap <Leader>f <Plug>(easymotion-overwin-f)
 "map  <Leader>w <Plug>(easymotion-bd-w)
 "nmap <Leader>w <Plug>(easymotion-overwin-w)
 
+" md-img-paste.vim
+let g:mdip_imgdir='img'
+autocmd FileType markdown nmap <buffer><silent> <leader>i :call mdip#MarkdownClipboardImage()<CR>
 " =============================================================================
 "                                暂时注释不用
 " =============================================================================
