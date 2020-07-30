@@ -3,7 +3,7 @@ source ~/.zplug/init.zsh
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/third/.oh-my-zsh"
+export ZSH="/home/fifth/.oh-my-zsh"
 export TERM="xterm-256color"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -104,9 +104,9 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source ~/.bash_profile # 继承本机.bash_profile
+#source ~/.bash_profile # 继承本机.bash_profile
 
-alias vim='gvim -v'
+#alias vim='gvim -v'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
