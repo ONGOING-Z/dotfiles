@@ -4,6 +4,8 @@
 
 Save my development environment.
 
+[Shell生产力环境恢复][4]
+
 ## 管理dotfiles
 
 1. 新建一个`dotfiles/`文件夹
@@ -61,6 +63,7 @@ $ sudo apt install tmux
 [1]: http://www.zsh.org/
 [2]: http://www.vim.org/
 [3]: https://github.com/tmux/tmux
+[4]: https://www.ongoing.ink/blog/posts/2020/07/recover-the-shell-production-environment.html
 
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
