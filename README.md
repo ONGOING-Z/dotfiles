@@ -2,8 +2,6 @@
 
 存放文本三巨头[zsh][1]、[vim][2]、[tmux][3]的设置文件.
 
-Save my development environment.
-
 [Shell生产力环境恢复][4]
 
 ## 管理dotfiles
