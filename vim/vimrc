@@ -33,7 +33,7 @@ set nofoldenable                                " Disable code folding when laun
 " ---- Searching
 set showmatch                                   " Display matching parentheses
 set fencs=utf-8,GB18030,ucs-bom,default,latin1  " Encoding configuration
-set incsearch                                   " 即时显示匹配结果
+set incsearch                                   " Display the matched results instantly
 set hlsearch                                    " Highlight search results
 
 " Gives vim access to a broader range of colors
