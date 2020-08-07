@@ -322,6 +322,8 @@ else
   Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
 endif
 
+Plug 'codota/tabnine-vim'  " 20.8.7
+
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -505,6 +507,10 @@ nmap <Leader>f <Plug>(easymotion-overwin-f)
 " md-img-paste.vim
 let g:mdip_imgdir='img'
 autocmd FileType markdown nmap <buffer><silent> <leader>i :call mdip#MarkdownClipboardImage()<CR>
+
+" tabedit
+map <C-t> :tabedit ./
+
 " =============================================================================
 "                                暂时注释不用
 " =============================================================================
