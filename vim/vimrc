@@ -6,7 +6,7 @@
 
 " ---------------------------------------------------------Basic Configuration 
 " ---- baisc ui config
-set shortmess+=I     " disable startup message
+set shortmess+=atI     " disable startup message
 set noshowmode       " hide mode ??
 set shell=bash\ -i
 set background=dark " set dark scheme
@@ -61,6 +61,7 @@ syntax enable
 syntax on
 
 set list listchars=tab:»·,trail:· " Display extra whitespace
+set lcs=eol:¬,nbsp:_
 
 " Save file when it loses focus.
 set autowrite
