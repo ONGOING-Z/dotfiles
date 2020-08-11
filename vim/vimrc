@@ -325,6 +325,8 @@ endif
 
 Plug 'codota/tabnine-vim'  " 20.8.7
 
+Plug 'tpope/vim-eunuch'
+Plug 'sheerun/vim-polyglot'
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -509,8 +511,14 @@ nmap <Leader>f <Plug>(easymotion-overwin-f)
 let g:mdip_imgdir='img'
 autocmd FileType markdown nmap <buffer><silent> <leader>i :call mdip#MarkdownClipboardImage()<CR>
 
-" tabedit
+" tabedit to open a new file in new tab
 map <C-t> :tabedit ./
+
+" <Leader> is \ by default.
+" Make it to easy to update/reload vimrc
+nmap <Leader>s :source $MYVIMRC
+" Open $MYVIMRC for editing in a new tab
+nmap <Leader>v :tabedit $MYVIMRC
 
 " =============================================================================
 "                                暂时注释不用
