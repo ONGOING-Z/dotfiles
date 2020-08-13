@@ -7,7 +7,7 @@
 " ---------------------------------------------------------Basic Configuration 
 " ---- baisc ui config
 "
-source ./.vim/plugins.vim
+source ~/.vim/plugins.vim
 
 set shortmess+=atI     " disable startup message
 set noshowmode       " hide mode ??
