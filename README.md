@@ -29,6 +29,25 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
   2. 链接到自己的dotfiles
 
 
+## Vim
+
+```text
+vim
+├── .vim
+│   ├── autoload
+│   │   └── plug.vim
+│   ├── basic.vim
+│   ├── commented_configuration.vim
+│   ├── functions.vim
+│   ├── mapping.vim
+│   ├── plugins_configuration.vim
+│   ├── plugins.vim
+│   └── template
+│       └── cppconfig.cpp
+├── vimrc
+└── vimrc_whole.backup
+```
+
 ## zsh 
 
 ### 1. 安装
