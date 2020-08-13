@@ -48,7 +48,7 @@ vim
 └── vimrc_whole.backup
 ```
 
-## zsh 
+## Zsh 
 
 ### 1. 安装
 
@@ -67,7 +67,7 @@ $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/t
 ```bash
 $ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
-## tmux
+## Tmux
 
 ### 1. 安装
 ```bash
