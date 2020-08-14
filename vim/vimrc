@@ -4,11 +4,11 @@
 " 1. 单行注释写在配置右侧
 " 2. 逐渐将注释变为全英
 
-source ~/.vim/plugins.vim
-source ~/.vim/plugins_configuration.vim
-source ~/.vim/mapping.vim
-source ~/.vim/functions.vim
-source ~/.vim/basic.vim
+source ~/dotfiles/vim/.vim/plugins.vim
+source ~/dotfiles/vim/.vim/plugins_configuration.vim
+source ~/dotfiles/vim/.vim/mapping.vim
+source ~/dotfiles/vim/.vim/functions.vim
+source ~/dotfiles/vim/.vim/basic.vim
 
 " -------------------------------------------------------- filetype detection 
 autocmd BufRead *.md set filetype=markdown
