@@ -112,15 +112,23 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# Git
+alias gc="git clone"
+alias gmv="git mv"
 alias gs="git status"
 alias ga="git add "
+alias gl="git log"
 alias gp="git push origin master"
 alias gcm="git commit -m "
-alias goshell="cd /home/third/Desktop/shells_learn"
+
+# Path
+alias goo="cd /media/fifth/New_Disk/mine/Bridges/"
 alias dt="cd ~/Desktop"
 alias idea="bash /media/third/New_Disk/idea-IC-201.7846.76/bin/idea.sh"
-alias leetcode="cd /media/third/System_remaining/0000_mine/UNIVERSITY/Github/DataStructure/OJ/LeetCode"
+alias leetcode="cd /media/fifth/New_Disk/mine/Github/DataStructure/OJ/LeetCode"
 
+# Application
+alias screenkey="./home/fifth/Documents/screenkey/screenkey.sh"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
