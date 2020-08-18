@@ -52,10 +52,17 @@ vim
 
 ### 1. 安装
 
+- 查看shell列表
+    ```bash
+    cat /etc/shells
+    ```
+
 ```bash
 $ sudo apt-get install zsh  # ubuntu installation
 ```
 之后使用`chsh -s /bin/zsh`将默认的shell改为zsh
+
+- 查看当前shell: `echo $SHELL`
 
 ### 2. 安装oh-my-zsh
 
