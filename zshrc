@@ -3,7 +3,7 @@ source ~/.zplug/init.zsh
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/fifth/.oh-my-zsh"
+export ZSH="/home/${USER}/.oh-my-zsh"
 export TERM="xterm-256color"
 
 # Set name of the theme to load --- if set to "random", it will
