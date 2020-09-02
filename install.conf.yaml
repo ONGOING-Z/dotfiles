@@ -6,7 +6,6 @@
 
 - link:
     ~/.tmux.conf: tmux/tmux.conf
-    ~/.vim: vim/vim
     ~/.vimrc: vim/vimrc_whole.backup
     ~/.zshrc: zshrc
     ~/.gitconfig: git/gitconfig
