@@ -8,6 +8,7 @@
     ~/.tmux.conf: tmux/tmux.conf
     ~/.vimrc: vim/vimrc_whole.backup
     ~/.zshrc: zshrc
+    ~/.bash_aliases: bash_aliases
     ~/.gitconfig: git/gitconfig
 
 - create:
