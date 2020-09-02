@@ -94,6 +94,10 @@ export LC_ALL=en_US.UTF-8
 
 # zplug
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
+#  a zsh plugin to make listing directory more readable
+zplug "supercrabtree/k"
+# enhaced cd 
+zplug "b4b4r07/enhancd", use:init.sh
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -140,3 +144,5 @@ fi
 
 # Then, source plugins and add commands to $PATH
 zplug load
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
