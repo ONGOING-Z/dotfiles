@@ -7,23 +7,24 @@
 " ---------------------------------------------------------Basic Configuration 
 " ---- baisc ui config
 "
+set shell=/bin/zsh\ -l " Vim 执行命令报错 suspended (tty output)
 set shortmess+=atI     " disable startup message
-set noshowmode       " hide mode ??
+set noshowmode         " hide mode ??
 set shell=bash\ -i
-set background=dark " set dark scheme
+set background=dark    " set dark scheme
 set number
-set cc=80          " Display a vertical bar in 80 characters
+set cc=80              " Display a vertical bar in 80 characters
 " String to put at the start of lines that have been wrapped "
 let &showbreak='↪ '
 
 let $LANG='en'
 let g:indentLine_color_term = 239
 
-set title          " Display filename on tag page.
+set title              " Display filename on tag page.
 set showcmd
-set autoread       " Auto load when external files have been changed
+set autoread           " Auto load when external files have been changed
 
-filetype plugin on " Enable filetype plugins
+filetype plugin on     " Enable filetype plugins
 filetype indent on
 
 " Coding folding depending on the syntax
@@ -62,13 +63,10 @@ syntax enable
 syntax on
 
 set list listchars=tab:»·,trail:· " Display extra whitespace
-set lcs=eol:¬,nbsp:_
+set lcs=eol:¬,nbsp:_              " Display the end of line mark"
 
-" Save file when it loses focus.
-set autowrite
-
-" Disable swap files.
-set noswapfile
+set autowrite " Save file when it loses focus.
+set noswapfile " Disable swap files.
 
 " ---- From https://secluded.site/vim-as-a-markdown-editor/ ----
 " Treat all .md files as markdown
@@ -109,9 +107,6 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 "let &t_ZR = "\e23m"
 "highlight Comment cterm=italic gui=italic
 
-"inoremap jk <esc>
-"jinoremap <esc> <nop>
-"
 " template
 autocmd BufNewFile *.cpp 0r ~/.vim/template/cppconfig.cpp
 
@@ -329,6 +324,7 @@ endif
 Plug 'tpope/vim-eunuch'
 Plug 'sheerun/vim-polyglot'
 "Plug 'wsdjeg/FlyGrep.vim'  " search vim need 8.0+
+Plug 'lervag/vimtex'  " latex
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -441,6 +437,11 @@ map g# <Plug>(incsearch-nohl-g#)
 "let g:instant_markdown_port = 8888
 "let g:instant_markdown_python = 1
 "let g:instant_markdown_browser = "chrome --new-window"
+
+" snippets
+let g:UltiSnipsExpandTrigger = '<tab>' " tab 展开代码
+let g:UltiSnipsJumpForwardTrigger = '<tab>' " tab跳到下一个位置
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>' " shift tab跳到上一个位置
 
 " ------------------------------------------------------------------- Function 
 " CompileGcc()
