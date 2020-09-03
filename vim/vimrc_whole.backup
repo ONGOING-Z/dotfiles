@@ -438,6 +438,13 @@ map g# <Plug>(incsearch-nohl-g#)
 "let g:instant_markdown_python = 1
 "let g:instant_markdown_browser = "chrome --new-window"
 
+" vimtex
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=0
+let g:tex_conceal='abdmg'
+
 " snippets
 let g:UltiSnipsExpandTrigger = '<tab>' " tab 展开代码
 let g:UltiSnipsJumpForwardTrigger = '<tab>' " tab跳到下一个位置
