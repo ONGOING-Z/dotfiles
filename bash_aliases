@@ -15,3 +15,4 @@ alias leetcode="cd /media/fifth/New_Disk/mine/Github/DataStructure/OJ/LeetCode"
 
 # Application
 alias screenkey="./home/fifth/Documents/screenkey/screenkey.sh"
+alias vim='gvim -v'
