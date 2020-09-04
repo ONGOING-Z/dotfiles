@@ -302,7 +302,10 @@ Plug 'wincent/command-t'       " 20.6.14
 Plug 'mileszs/ack.vim'             " 20.6.15
 Plug 'mhinz/vim-startify'          " 20.6.28
 "Plug 'danilamihailov/beacon.nvim' " 20.6.28 This enable the cursor more realizable when jump more distance 没啥用。浪费资源。
-Plug 'SirVer/ultisnips'           " 20.7.4
+"Plug 'SirVer/ultisnips'           " 20.7.4
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'         " 20.7.4
 Plug 'dhruvasagar/vim-table-mode' " 20.7.5
 Plug 'haya14busa/incsearch.vim'   " 20.7.7
@@ -442,7 +445,7 @@ map g# <Plug>(incsearch-nohl-g#)
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
-set conceallevel=0
+set conceallevel=1
 let g:tex_conceal='abdmg'
 
 " snippets
