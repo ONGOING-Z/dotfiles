@@ -3,8 +3,8 @@ source ~/.zplug/init.zsh
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # bash aliases
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+if [ -f "$HOME/.bash_aliases" ]; then
+    . "$HOME/.bash_aliases"
 fi
 
 # Path to your oh-my-zsh installation.
@@ -76,6 +76,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(zsh-autosuggestions extract z)
+# use x to unpack the package
 
 source $ZSH/oh-my-zsh.sh
 
