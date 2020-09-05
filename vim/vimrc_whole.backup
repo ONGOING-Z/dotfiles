@@ -334,6 +334,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'sheerun/vim-polyglot'
 "Plug 'wsdjeg/FlyGrep.vim'  " search vim need 8.0+
 Plug 'lervag/vimtex'  " latex
+"Plug 'tomasr/molokai'
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -615,6 +616,12 @@ nmap <Leader>v :tabedit $MYVIMRC
 "Plug 'airblade/vim-gitgutter'
 "
 colorscheme gruvbox " Theme
+
+" if you want to use the scheme molokai, uncomment below three lines
+"colorscheme molokai
+"let g:molokai_original = 1
+"let g:rehash256 = 1
+
 "let g:gruvbox_contrast_dark='hard'
 "
 " Enable comment italics
