@@ -65,9 +65,6 @@ syntax on
 set list listchars=tab:»·,trail:· " Display extra whitespace
 set lcs=eol:¬,nbsp:_              " Display the end of line mark"
 
-set autowrite " Save file when it loses focus.
-set noswapfile " Disable swap files.
-
 " ---- From https://secluded.site/vim-as-a-markdown-editor/ ----
 " Treat all .md files as markdown
 autocmd BufNewFile,BufRead *.md set filetype=markdown
@@ -109,6 +106,15 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 
 " template
 autocmd BufNewFile *.cpp 0r ~/.vim/template/cppconfig.cpp
+
+"--------------------------------------------------------------
+" => Files, backups and undo
+"--------------------------------------------------------------
+" Turn backup off, since most stuff is in git et.c 
+set autowrite " Save file when it loses focus.
+set nobackup
+set nowb
+set noswapfile
 
 " ---- Coc Start----
 "set hidden
