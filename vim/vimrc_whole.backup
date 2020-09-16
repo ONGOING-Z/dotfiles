@@ -7,7 +7,8 @@
 " ---------------------------------------------------------Basic Configuration 
 " ---- baisc ui config
 "
-set shell=/bin/zsh\ -l " Vim 执行命令报错 suspended (tty output)
+"使用which zsh得到的反馈写入下边set shell=xxx, xxx即前一个命令得到的结果
+set shell=/usr/bin/zsh\ -l " Vim 执行命令报错 suspended (tty output)
 set shortmess+=atI     " disable startup message
 set noshowmode         " hide mode ??
 set shell=bash\ -i
@@ -471,7 +472,8 @@ func! CompileGcc()
     endif
 endfunc
 " F9运行已经编译好的文件 20.3.16
-map <F9> :call RunGcc()<CR>
+" modify → F12 20.9.12
+map <F12> :call RunGcc()<CR>
 func! RunGcc()
     if &filetype == 'cpp'
         exec "!time ./%<"
