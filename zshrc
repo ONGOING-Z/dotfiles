@@ -98,12 +98,14 @@ export LC_ALL=en_US.UTF-8
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# zplug
+######## Plugin ###### by zplug
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 #  a zsh plugin to make listing directory more readable
 zplug "supercrabtree/k"
 # enhaced cd 
 zplug "b4b4r07/enhancd", use:init.sh
+
+######## Plugin ######
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
