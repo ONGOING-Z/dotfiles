@@ -336,6 +336,7 @@ Plug 'sheerun/vim-polyglot'
 "Plug 'wsdjeg/FlyGrep.vim'  " search vim need 8.0+
 Plug 'lervag/vimtex'  " latex
 "Plug 'tomasr/molokai'
+Plug 'godlygeek/tabular'
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -461,14 +462,20 @@ let g:UltiSnipsExpandTrigger = '<tab>' " tab 展开代码
 let g:UltiSnipsJumpForwardTrigger = '<tab>' " tab跳到下一个位置
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>' " shift tab跳到上一个位置
 
+" godlygeek/tabular
+let g:table_mode_corner = '|'
+let g:table_mode_border=0
+let g:table_mode_fillchar=' '
+let g:table_mode_delimiter=' '
+
 " ------------------------------------------------------------------- Function 
 " CompileGcc()
 func! CompileGcc()
     if &filetype == 'cpp'
-        exec "!time g++ -std=c++11 -Wall % -o %<"
+        exec "!time g++ -g -std=c++11 -Wall % -o %<"
     endif
     if &filetype == 'c'
-        exec "!time gcc -Wall % -o %<"
+        exec "!time gcc -g -Wall % -o %<"
     endif
 endfunc
 " F9运行已经编译好的文件 20.3.16
@@ -483,13 +490,26 @@ func! RunGcc()
     endif
 endfunc
 
+" gdb
+"map <F8>:call Rungdb()<CR>
+"func! Rungdb()
+"    exec "w"
+"    exec "!g++ % -g -o %<"
+"    exec "!gdb ./%<"
+"endfunc
+map <F8> :call Rungdb()<CR>
+func! Rungdb()
+		exec "w"
+		exec "!g++ % -g -o %<"
+		exec "!gdb ./%<"
+endfunc
 " -------------------------------------------------------- filetype detection 
 autocmd BufRead *.md set filetype=markdown
 
 " ------------------------------------------------------------------- Mapping 
 "nnoremap <C-g> :Goyo<CR>
 " Tagbar
-nmap <F8> : TagbarToggle<CR>
+"nmap <F8> : TagbarToggle<CR>
 " F7键编译cpp文件 20.3.16
 map <F7> :call CompileGcc()<CR>
 
@@ -546,6 +566,8 @@ map <C-t> :tabedit ./
 nmap <Leader>s :source $MYVIMRC
 " Open $MYVIMRC for editing in a new tab
 nmap <Leader>v :tabedit $MYVIMRC
+
+nnoremap <Leader>d :packadd termdebug<CR><ESC>:Termdebug<CR><ESC><c-w>w<c-w>w<c-w>H
 
 " =============================================================================
 "                                暂时注释不用
