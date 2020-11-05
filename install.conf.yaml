@@ -9,6 +9,7 @@
     ~/.vimrc: vim/vimrc_whole.backup
     ~/.zshrc: zshrc
     ~/.bash_aliases: bash_aliases
+    ~/.gdbinit: gdbinit
     ~/.gitconfig: git/gitconfig
 
 - create:
