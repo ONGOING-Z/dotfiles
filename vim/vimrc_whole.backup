@@ -624,13 +624,6 @@ nnoremap <Leader>d :packadd termdebug<CR><ESC>:Termdebug<CR><ESC><c-w>w<c-w>w<c-
 "iab xdate <c-r>=strftime("%Y-%m-%d %a %Y年%j天")<cr>
 
 "-------------
-" Hitting space make j and k move faster
-"-------------
-"nmap <Space>j 10j<Space>
-"nmap <Space>k 10k<Space>
-"nmap <Space><Space> <Nop> " Hit space again to exits the mode
-
-"-------------
 " syntastic
 "-------------
 " error/warning的图标 
