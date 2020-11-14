@@ -511,6 +511,19 @@ func! Rungdb()
 		exec "!g++ % -g -o %<"
 		exec "!gdb -q ./%<"
 endfunc
+
+" place a markdown extension footnote[^foo]
+" type Footnote foo
+function! s:MdFootnote(note)
+  let s:footnote = "[^".a:note."]"
+  let @m = s:footnote
+  norm "mpmm
+  $put = s:footnote.':'
+  norm `m
+endfunction
+
+command! -nargs=1 Footnote call s:MdFootnote("<args>")
+
 " -------------------------------------------------------- filetype detection 
 autocmd BufRead *.md set filetype=markdown
 
@@ -647,8 +660,8 @@ nnoremap <Leader>d :packadd termdebug<CR><ESC>:Termdebug<CR><ESC><c-w>w<c-w>w<c-
 "Plug 'gregsexton/gitv', {'on': ['Gitv']}
 "Plug 'airblade/vim-gitgutter'
 "
-"colorscheme gruvbox " Theme
-colorscheme oceanicnext
+colorscheme gruvbox " Theme
+"colorscheme oceanicnext
 
 " if you want to use the scheme molokai, uncomment below three lines
 "colorscheme molokai
@@ -663,3 +676,4 @@ colorscheme oceanicnext
 " doesn't override it. 
 "    -- https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
 highlight Comment cterm=italic gui=italic
+
