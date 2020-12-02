@@ -1,5 +1,8 @@
 [alias]
     l = log
+	d = difftool
+[diff]
+	tool = vimdiff # 使用vimdiff比较文件差异
 
 ##############################################################################
 # from https://github.com/mathiasbynens/dotfiles/blob/master/.gitconfig
