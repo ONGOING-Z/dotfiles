@@ -28,6 +28,8 @@ set autoread           " Auto load when external files have been changed
 filetype plugin on     " Enable filetype plugins
 filetype indent on
 
+set cindent
+
 " Coding folding depending on the syntax
 " Press <za> to fold and unfold
 set foldmethod=syntax
@@ -63,6 +65,7 @@ set smartcase
 syntax enable
 syntax on
 
+set nolist
 set list listchars=tab:»·,trail:· " Display extra whitespace
 set lcs=eol:¬,nbsp:_              " Display the end of line mark"
 
@@ -93,7 +96,7 @@ set cursorline
 set tabstop=4
 set shiftwidth=4
 set shiftround
-set expandtab
+set noexpandtab " 不把tab键用空格代替
 
 " Disable mouse support 
 set mouse=
@@ -107,6 +110,7 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 
 " template
 autocmd BufNewFile *.cpp 0r ~/.vim/template/cppconfig.cpp
+autocmd BufNewFile *.sql 0r ~/.vim/template/config.sql
 
 set nocompatible
 
@@ -132,13 +136,13 @@ set updatetime=300
 set shortmess+=c
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
-
+"if has("patch-8.1.1564")
+"  " Recently vim can merge signcolumn and number column into one
+"  set signcolumn=number
+"else
+"  set signcolumn=yes
+"endif
+"
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -260,7 +264,7 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+"nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " ---- Coc end----
 "---------------------------------------------------------------------Vim-Plug
 call plug#begin('~/.vim/plugged')
@@ -505,7 +509,7 @@ endfunc
 "    exec "!g++ % -g -o %<"
 "    exec "!gdb ./%<"
 "endfunc
-map <F8> :call Rungdb()<CR>
+"map <F8> :call Rungdb()<CR>
 func! Rungdb()
 		exec "w"
 		exec "!g++ % -g -o %<"
@@ -530,7 +534,7 @@ autocmd BufRead *.md set filetype=markdown
 " ------------------------------------------------------------------- Mapping 
 "nnoremap <C-g> :Goyo<CR>
 " Tagbar
-"nmap <F8> : TagbarToggle<CR>
+nmap <F8> : TagbarToggle<CR>
 " F7键编译cpp文件 20.3.16
 map <F7> :call CompileGcc()<CR>
 
@@ -590,79 +594,14 @@ nmap <Leader>v :tabedit $MYVIMRC
 
 nnoremap <Leader>d :packadd termdebug<CR><ESC>:Termdebug<CR><ESC><c-w>w<c-w>w<c-w>H
 
-" =============================================================================
-"                                暂时注释不用
-" =============================================================================
-" 
-" 显示空格并以红色高亮（暂时不用)
-"highlight WhitespaceEOL ctermbg=red guibg=red 
-"match WhitespaceEOL /\s\+$/
+noremap <Leader>y "*y
+noremap <Leader>p "*p
 
-" 在旁边高亮未修改部分
-"let g:gitgutter_override_sign_column_highlight = 0
-"highlight SignColumn ctermbg=green
-
-" GitGutter Signs' colors and symbols
-"highlight GitGutterAdd    guifg=#009900 guibg=#073642 ctermfg=2 ctermbg=0
-"highlight GitGutterChange guifg=#bbbb00 guibg=#073642 ctermfg=3 ctermbg=0
-"highlight GitGutterDelete guifg=#FF0000 guibg=#073642 ctermfg=1 ctermbg=0
-
-"let g:gitgutter_sign_added = '++'
-"let g:gitgutter_sign_modified = '+'
-"let g:gitgutter_sign_removed = '--'
-"let g:gitgutter_sign_removed_first_line = 'r'
-"let g:gitgutter_sign_modified_removed = 'w'
-" 禁止光标闪烁
-"set gcr=a:block-blinkon0 这种方式没有用，我所使用的平台为ubuntu，需要到
-"系统设置 - 键盘下勾选掉，即可。
-
-"-------------
-" iab用于编辑模式，实现替换功能
-"-------------
-" insert into now time
-"iab xtime <c-r>=strftime("%Y-%m-%d %H:%M:%S")<cr>
-"iab xdate <c-r>=strftime("%Y-%m-%d %a %Y年%j天")<cr>
-
-"-------------
-" syntastic
-"-------------
-" error/warning的图标 
-"let g:syntastic_enable_signs = 1 
-"let g:syntastic_error_symbol='✗' 
-"let g:syntastic_warning_symbol='►'
-"let g:syntastic_warning_symbol='⚠ '
-" 总是打开Location List（相当于QuickFix）窗口，如果你发现syntastic因为与其他
-" 插件冲突而经常崩溃，将下面选项置0
-"let g:syntastic_always_populate_loc_list = 1
-" 自动打开Locaton List，默认值为2，表示发现错误时不自动打开，当修正以后没有再
-" 发现错误时自动关闭，置1表示自动打开自动关闭，0表示关闭自动打开和自动关闭，
-" 3表示自动打开，但不自动关闭 
-"let g:syntastic_auto_loc_list = 1 
-" 修改Locaton List窗口高度
-" let g:syntastic_loc_list_height = 5
-" 打开文件时自动进行检查 
-"let g:syntastic_check_on_open = 1 
-" 自动跳转到发现的第一个错误或警告处[not ok, 自动跳转很不好]
-" let g:syntastic_auto_jump = 1
-" 进行实时检查，如果觉得卡顿，将下面的选项置为1 
-"let g:syntastic_check_on_wq = 0 
-" 高亮错误
-"let g:syntastic_enable_highlighting=1
-
-" Git 并不怎么会看git信息
-"Plug 'gregsexton/gitv', {'on': ['Gitv']}
-"Plug 'airblade/vim-gitgutter'
+"=================================================================================
 "
 colorscheme gruvbox " Theme
 "colorscheme oceanicnext
 
-" if you want to use the scheme molokai, uncomment below three lines
-"colorscheme molokai
-"let g:molokai_original = 1
-"let g:rehash256 = 1
-
-"let g:gruvbox_contrast_dark='hard'
-"
 " Enable comment italics
 " If you're using a color scheme other than the default, the below line should
 " come after the color scheme is loaded in my .vimrc, so that the color scheme
