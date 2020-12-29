@@ -1,5 +1,6 @@
 [alias]
-    l = log
+	l = log
+	logo = log --oneline
 	d = difftool
 [diff]
 	tool = vimdiff # 使用vimdiff比较文件差异
@@ -11,6 +12,9 @@
 	# Use colors in Git commands that are capable of colored output when
 	# outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
 	ui = auto
+	interactire = true
+	branch = true
+	status = true
 
 [color "branch"]
 
@@ -33,8 +37,10 @@
 ##############################################################################
 [core]
 	quotepath = false
+	editor = vim
 [user]
 	email = 1413677817@qq.com
 	name = ongoing-z
+	mail = 1413677817@qq.com
 [credential]
 	helper = store
