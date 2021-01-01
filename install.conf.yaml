@@ -11,10 +11,12 @@
     ~/.bash_aliases: bash_aliases
     ~/.gdbinit: gdbinit
     ~/.gitconfig: git/gitconfig
+    ~/.pip/pip.conf: .pip/pip.conf
 
 - create:
     - ~/downloads
     - ~/.vim/undo-history
+    - ~/.pip
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
