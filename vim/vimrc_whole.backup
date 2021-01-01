@@ -348,7 +348,8 @@ Plug 'godlygeek/tabular'
 " 20.11.8 find a pretty colorscheme
 Plug 'adrian5/oceanic-next-vim' 
 
- 
+"Plug 'davidhalter/jedi-vim' "直接在vim-plug中安装不知道怎么回事出了问题
+                             "ubunu16.04 使用apt install jedi-vim可以
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -488,6 +489,9 @@ func! CompileGcc()
     endif
     if &filetype == 'c'
         exec "!time gcc -g -Wall % -o %<"
+    endif
+    if &filetype == 'python'
+        exec "!time python %"
     endif
 endfunc
 " F9运行已经编译好的文件 20.3.16
