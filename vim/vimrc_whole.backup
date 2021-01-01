@@ -349,7 +349,7 @@ Plug 'godlygeek/tabular'
 Plug 'adrian5/oceanic-next-vim' 
 
 "Plug 'davidhalter/jedi-vim' "直接在vim-plug中安装不知道怎么回事出了问题
-                             "ubunu16.04 使用apt install jedi-vim可以
+                             "ubunu16.04 使用apt install vim-python-jedi可以
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
