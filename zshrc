@@ -75,7 +75,12 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(zsh-autosuggestions extract z)
+plugins=(
+    zsh-autosuggestions
+    extract
+    z
+    colored-man-pages # 彩版man page
+)
 # use x to unpack the package
 
 source $ZSH/oh-my-zsh.sh
@@ -132,7 +137,34 @@ if ! zplug check --verbose; then
     fi
 fi
 
+# 有道词典cli查询
+# pre condition: sudo apt install w3m
+youdao() {
+if [ -z "$1" ]
+then
+echo 'Usage youdao <word>'
+else
+    w3m -dump "http://dict.youdao.com/search?q=$1"
+fi
+}
+
 # Then, source plugins and add commands to $PATH
 zplug load
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/media/fifth/New_Disk/anaconda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/media/fifth/New_Disk/anaconda/etc/profile.d/conda.sh" ]; then
+        . "/media/fifth/New_Disk/anaconda/etc/profile.d/conda.sh"
+    else
+        export PATH="/media/fifth/New_Disk/anaconda/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
