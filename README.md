@@ -80,18 +80,33 @@ $ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 ```
 ## Tmux
 
-### 1. 安装
+### 1. 在ubuntu下的安装
 ```bash
 $ sudo apt install tmux
 ```
 
+#### 1. tmux的升级
 
+当前以`tmux 3.1c`版本为例
+
+1. 首先到[tmux release页面][5]下载自己的版本,这里下载的是[tmux 3.1c][6]
+2. 解压这个`.tar.gz`包
+3. `cd tmux-3.1c`
+4. 运行`./configure`
+5. 这时可能会出现`error: libevent not found`的错误,因为这个没有安装
+  解决: `sudo apt-get install libevent-dev`
+  安装完成后重新执行`./configure`
+6. 运行`make`
+7. `sudo make install`
+8. 重启终端后输入`tmux -V`检查版本是否正确.
 
 
 [1]: http://www.zsh.org/
 [2]: http://www.vim.org/
 [3]: https://github.com/tmux/tmux
 [4]: https://www.ongoing.ink/blog/posts/2020/07/recover-the-shell-production-environment.html
+[5]: https://github.com/tmux/tmux/releases/
+[6]: https://github.com/tmux/tmux/releases/tag/3.1c
 
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
