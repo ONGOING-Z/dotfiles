@@ -65,8 +65,8 @@ set smartcase
 syntax enable
 syntax on
 
-set nolist
-set list listchars=tab:»·,trail:· " Display extra whitespace
+set nolist " 关闭显示不可见字符
+set listchars=tab:»·,trail:· " Display extra whitespace
 set lcs=eol:¬,nbsp:_              " Display the end of line mark"
 
 " ---- From https://secluded.site/vim-as-a-markdown-editor/ ----
@@ -491,7 +491,7 @@ func! CompileGcc()
         exec "!time gcc -g -Wall % -o %<"
     endif
     if &filetype == 'python'
-        exec "!time python %"
+        exec "!clear;time python3 %"
     endif
 endfunc
 " F9运行已经编译好的文件 20.3.16
@@ -598,7 +598,9 @@ nmap <Leader>v :tabedit $MYVIMRC
 
 nnoremap <Leader>d :packadd termdebug<CR><ESC>:Termdebug<CR><ESC><c-w>w<c-w>w<c-w>H
 
+" Copy to clipboard
 noremap <Leader>y "*y
+" Paste from clipboard
 noremap <Leader>p "*p
 
 "=================================================================================
@@ -613,3 +615,5 @@ colorscheme gruvbox " Theme
 "    -- https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
 highlight Comment cterm=italic gui=italic
 
+" 一些缩写命令
+iab xtime <c-r>=strftime("%Y-%m-%d")<cr>
