@@ -151,6 +151,7 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
+# fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # >>> conda initialize >>>
@@ -168,3 +169,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+uptime
