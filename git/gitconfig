@@ -34,6 +34,15 @@
 	added = yellow
 	changed = green
 	untracked = cyan
+[pager]
+    diff = diff-so-fancy | less --tabs=1,5 -RFX
+    show = diff-so-fancy | less --tabs=1,5 -RFX
+    log = diff-so-fancy | less --tabs=1,5 -RFX
+
+[diff-so-fancy]
+    markEmptyLines = false
+    changeHunkIndicators = false
+
 ##############################################################################
 [core]
 	quotepath = false

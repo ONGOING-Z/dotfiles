@@ -87,6 +87,14 @@ $ sudo apt install tmux
 
 更新tmux.conf: `tmux source ~/.tmux.conf`
 
+## Git
+
+#### git diff美化工具[diff-so-fancy][8]
+
+在命令行中对于用户更加友好.
+
+安装: `npm install -g diff-so-fancy`
+
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
 2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
@@ -98,3 +106,4 @@ $ sudo apt install tmux
 [5]: https://github.com/tmux/tmux/releases/
 [6]: https://github.com/tmux/tmux/releases/tag/3.1c
 [7]: https://github.com/anishathalye/dotbot/
+[8]: https://github.com/so-fancy/diff-so-fancy
