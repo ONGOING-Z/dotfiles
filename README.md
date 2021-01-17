@@ -6,7 +6,7 @@
 
 [Shell生产力环境恢复][4]
 
-## 管理dotfiles
+## dotfiles管理方法1
 
 1. 新建一个`dotfiles/`文件夹
 ```bash
@@ -30,25 +30,9 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
   1. 首先删除原机上的.vimrc/.zshrc...
   2. 链接到自己的dotfiles
 
+## dotfiles管理方法2(*推荐*)
 
-## Vim
-
-```text
-vim
-├── .vim
-│   ├── autoload
-│   │   └── plug.vim
-│   ├── basic.vim
-│   ├── commented_configuration.vim
-│   ├── functions.vim
-│   ├── mapping.vim
-│   ├── plugins_configuration.vim
-│   ├── plugins.vim
-│   └── template
-│       └── cppconfig.cpp
-├── vimrc
-└── vimrc_whole.backup
-```
+使用[dotbot][7]
 
 ## Zsh 
 
@@ -80,12 +64,13 @@ $ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 ```
 ## Tmux
 
-### 1. 在ubuntu下的安装
+#### 在ubuntu下的安装
+
 ```bash
 $ sudo apt install tmux
 ```
 
-#### 1. tmux的升级
+#### tmux的升级
 
 当前以`tmux 3.1c`版本为例
 
@@ -100,6 +85,11 @@ $ sudo apt install tmux
 7. `sudo make install`
 8. 重启终端后输入`tmux -V`检查版本是否正确.
 
+更新tmux.conf: `tmux source ~/.tmux.conf`
+
+## 参考
+1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
+2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
 
 [1]: http://www.zsh.org/
 [2]: http://www.vim.org/
@@ -107,7 +97,4 @@ $ sudo apt install tmux
 [4]: https://www.ongoing.ink/blog/posts/2020/07/recover-the-shell-production-environment.html
 [5]: https://github.com/tmux/tmux/releases/
 [6]: https://github.com/tmux/tmux/releases/tag/3.1c
-
-## 参考
-1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
-2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
+[7]: https://github.com/anishathalye/dotbot/
