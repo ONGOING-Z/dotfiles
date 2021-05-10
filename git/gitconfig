@@ -2,6 +2,7 @@
 	l = log
 	logo = log --oneline
 	d = difftool
+	b = branch
 [diff]
 	tool = vimdiff # 使用vimdiff比较文件差异
 
@@ -12,7 +13,7 @@
 	# Use colors in Git commands that are capable of colored output when
 	# outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
 	ui = auto
-	interactire = true
+	interactive = true
 	branch = true
 	status = true
 
