@@ -169,3 +169,19 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+# Set java environment
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+PATH=$JAVA_HOME/bin:$PATH
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:/home/fifth/Desktop/jdbc/mysql-connector-java_8.0.22-1ubuntu16.04_all/usr/share/java/mysql-connector-java-8.0.22.jar
+export JAVA_HOME PATH CLASSPATH
+
+# Set maven environment
+# M2_HOME指向Maven的安装目录
+export M2_HOME=/usr/local/apache-maven-3.3.9
+
+export PATH=$PATH:/usr/local/git/bin:${M2_HOME}/bin
+
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/fifth/.sdkman"
+[[ -s "/home/fifth/.sdkman/bin/sdkman-init.sh" ]] && source "/home/fifth/.sdkman/bin/sdkman-init.sh"

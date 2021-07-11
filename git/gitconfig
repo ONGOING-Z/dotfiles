@@ -54,3 +54,6 @@
 	mail = 1413677817@qq.com
 [credential]
 	helper = store
+
+[merge]
+	tool = vimdiff
