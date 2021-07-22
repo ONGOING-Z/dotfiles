@@ -11,6 +11,11 @@ fi
 export ZSH="/home/${USER}/.oh-my-zsh"
 export TERM="xterm-256color"
 
+# Options
+setopt correct                                                  # Auto correct mistakes
+setopt appendhistory                                            # Immediately append history instead of overwriting
+setopt histignorealldups                                        # If a new command is a duplicate, remove the older one
+setopt autocd                                                   # if only directory path is entered, cd there.
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -109,6 +114,8 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "supercrabtree/k"
 # enhaced cd 
 zplug "b4b4r07/enhancd", use:init.sh
+
+zplug "zsh-users/zsh-history-substring-search"
 
 ######## Plugin ######
 
