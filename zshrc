@@ -161,25 +161,16 @@ zplug load
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/media/fifth/New_Disk/anaconda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/media/fifth/New_Disk/anaconda/etc/profile.d/conda.sh" ]; then
-        . "/media/fifth/New_Disk/anaconda/etc/profile.d/conda.sh"
-    else
-        export PATH="/media/fifth/New_Disk/anaconda/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+# tail log
+alias tail="_tail_log"
+_tail_log() {
+  "tail" $@ | perl -pe 's/(INFO)/\e[0;32m$1\e[0m/g,s/(WARN)/\e[0;33m$1\e[0m/g,s/(ERROR)/\e[1;31m$1\e[0m/g'
+}
 
 # Set java environment
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 PATH=$JAVA_HOME/bin:$PATH
-CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:/home/fifth/Desktop/jdbc/mysql-connector-java_8.0.22-1ubuntu16.04_all/usr/share/java/mysql-connector-java-8.0.22.jar
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:/home/${USER}/Desktop/jdbc/mysql-connector-java_8.0.22-1ubuntu16.04_all/usr/share/java/mysql-connector-java-8.0.22.jar
 export JAVA_HOME PATH CLASSPATH
 
 # Set maven environment
@@ -188,7 +179,15 @@ export M2_HOME=/usr/local/apache-maven-3.3.9
 
 export PATH=$PATH:/usr/local/git/bin:${M2_HOME}/bin
 
+# This prevents duplicates of PATH variables.
+typeset -U PATH
+
+# Q: How to share PATHs in .zshrc, .bashrc, .bash_profile?
+# A: One way is to source the ~/.bashrc in your ~/.zshrc file.
+# 下面这句加进去之后新起一个终端会出问题！！！
+#. ~/.bashrc
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/fifth/.sdkman"
-[[ -s "/home/fifth/.sdkman/bin/sdkman-init.sh" ]] && source "/home/fifth/.sdkman/bin/sdkman-init.sh"
+# 21-9-5 Sun the sdkman is a tool that install softwares like apache tomcat.
+export SDKMAN_DIR="/home/${USER}/.sdkman"
+[[ -s "/home/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/home/${USER}/.sdkman/bin/sdkman-init.sh"
