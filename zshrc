@@ -168,6 +168,11 @@ _tail_log() {
   "tail" $@ | perl -pe 's/(INFO)/\e[0;32m$1\e[0m/g,s/(WARN)/\e[0;33m$1\e[0m/g,s/(ERROR)/\e[1;31m$1\e[0m/g'
 }
 
+# tool - mat: it can check harmful info of pictures
+# -c: check
+# -d: display
+alias clean_pic="mat"
+
 # Set java environment
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 PATH=$JAVA_HOME/bin:$PATH
