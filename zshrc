@@ -86,6 +86,8 @@ plugins=(
     extract
     z
     colored-man-pages # 彩版man page
+    web-search # open search engine in cli by key words
+    git-open # open remote repo address
 )
 # use x to unpack the package
 
@@ -117,6 +119,7 @@ zplug "supercrabtree/k"
 zplug "b4b4r07/enhancd", use:init.sh
 
 zplug "zsh-users/zsh-history-substring-search"
+#zplug "paulirish/git-open", as:plugin
 
 ######## Plugin ######
 
@@ -137,14 +140,28 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
-fi
 
+
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+################ Aliases ###################
+# tail log
+alias tail="_tail_log"
+_tail_log() {
+  "tail" $@ | perl -pe 's/(INFO)/\e[0;32m$1\e[0m/g,s/(WARN)/\e[0;33m$1\e[0m/g,s/(ERROR)/\e[1;31m$1\e[0m/g'
+}
+
+# tool - mat: it can check harmful info of pictures
+# -c: check
+# -d: display
+alias clean_pic="mat"
+
+############################################
+
+################ self defined functions ###################
+#
 # 有道词典cli查询
 # pre condition: sudo apt install w3m
 youdao() {
@@ -156,22 +173,7 @@ else
 fi
 }
 
-# Then, source plugins and add commands to $PATH
-zplug load
-
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# tail log
-alias tail="_tail_log"
-_tail_log() {
-  "tail" $@ | perl -pe 's/(INFO)/\e[0;32m$1\e[0m/g,s/(WARN)/\e[0;33m$1\e[0m/g,s/(ERROR)/\e[1;31m$1\e[0m/g'
-}
-
-# tool - mat: it can check harmful info of pictures
-# -c: check
-# -d: display
-alias clean_pic="mat"
+###########################################################
 
 # Set java environment
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -197,3 +199,16 @@ typeset -U PATH
 # 21-9-5 Sun the sdkman is a tool that install softwares like apache tomcat.
 export SDKMAN_DIR="/home/${USER}/.sdkman"
 [[ -s "/home/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/home/${USER}/.sdkman/bin/sdkman-init.sh"
+
+###################################################################################################
+# place this the end of file. !!!
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+# Then, source plugins and add commands to $PATH
+zplug load
