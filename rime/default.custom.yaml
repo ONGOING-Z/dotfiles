@@ -1,0 +1,8 @@
+# default.custom.yaml
+# user's config
+patch:  
+  # 输入方案列表
+  schema_list:  
+    - schema: luna_pinyin
+  menu:
+    page_size: 5

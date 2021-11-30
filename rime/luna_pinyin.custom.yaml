@@ -1,0 +1,18 @@
+# luna_pinyin.custom.yaml
+# 明月输入方案配置
+ 
+patch:
+  translator/dictionary: luna_pinyin.extended
+  switches:
+  - name: ascii_mode  
+    reset: 0 # 设置编码
+    states: ["中文", "西文"]
+  - name: full_shape
+    reset: 0 # 设置半角
+    states: ["半角", "全角"]
+  - name: simplification
+    reset: 1 # 设置简体
+    states: ["漢字", "汉字"]
+  - name: ascii_punct
+    reset: 1 # 设置标点
+    states: ["。，", "．，"]
