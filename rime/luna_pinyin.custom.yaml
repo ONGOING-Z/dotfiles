@@ -1,8 +1,8 @@
 # luna_pinyin.custom.yaml
-# 明月输入方案配置
+# 明月输入方案 配置  五笔方案 其它拼音方案 格式与该格式类似
  
 patch:
-  translator/dictionary: luna_pinyin.extended
+  translator/dictionary: luna_pinyin.extended # 选择词库: WordAll.extended  该命名方式随意,与词库文件头名称需一致.
   switches:
   - name: ascii_mode  
     reset: 0 # 设置编码
