@@ -1,8 +1,7 @@
 # default.custom.yaml
-# user's config
+# 用户  输入法配置
 patch:  
-  # 输入方案列表
-  schema_list:  
-    - schema: luna_pinyin
+  schema_list:  # 输入方案列表
+    - schema: luna_pinyin  # 移除其它输入方案, 只保留拼音输入方案
   menu:
-    page_size: 5
+    page_size: 5  # 候选词为5个
