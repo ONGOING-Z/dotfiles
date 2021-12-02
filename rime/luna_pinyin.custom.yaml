@@ -1,8 +1,7 @@
 # luna_pinyin.custom.yaml
-# 明月输入方案 配置  五笔方案 其它拼音方案 格式与该格式类似
- 
+# patch 定义了一组补丁
 patch:
-  translator/dictionary: luna_pinyin.extended # 选择词库: WordAll.extended  该命名方式随意,与词库文件头名称需一致.
+  translator/dictionary: luna_pinyin.extended 
   switches:
   - name: ascii_mode  
     reset: 0 # 设置编码
@@ -16,3 +15,13 @@ patch:
   - name: ascii_punct
     reset: 1 # 设置标点
     states: ["。，", "．，"]
+
+  # Rime 中负责转换标点符号的组件
+  punctuator:
+    import_preset: default
+    half_shape:
+      "/t": ["✓", "✔", "√", "☑"]      
+      "/x": ["✕", "✖", "✗", "☒"]
+      "/c": ["○", "●", "◯"]
+      "/l": ["『", "【", "〖", "〔", "﹁", "﹃", "〈"]
+      "/r": ["』", "】", "〗", "〕", "﹂", "﹄", "〉"]
