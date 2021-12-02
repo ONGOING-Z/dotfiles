@@ -12,6 +12,9 @@
     ~/.gdbinit: gdbinit
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
+    ~/.config/nvim/init.vim: nvim/init.vim
+    ~/.config/fcitx/rime/default.custom.yaml: rime/default.custom.yaml
+    ~/.config/fcitx/rime/luna_pinyin.custom.yaml: rime/luna_pinyin.custom.yaml
 
 - create:
     - ~/downloads
