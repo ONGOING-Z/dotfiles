@@ -1,3 +1,6 @@
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "rime-config"]
+	path = rime-config
+	url = git@github.com:ONGOING-Z/rime-config.git
