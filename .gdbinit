@@ -1,7 +1,7 @@
 # STL printer
 python
 import sys
-sys.path.insert(0, '/home/fifth/.gdb/stl_pretty_printer/python')
+sys.path.insert(0, '/home/$USER/.gdb/stl_pretty_printer/python')
 from libstdcxx.v6.printers import register_libstdcxx_printers
 register_libstdcxx_printers (None)
 end

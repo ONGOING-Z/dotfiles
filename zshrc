@@ -158,6 +158,12 @@ _tail_log() {
 # -d: display
 alias clean_pic="mat"
 
+alias bfg="java -jar /media/$USER/New_Disk/test6/bfg-1.14.0.jar"
+alias gbook="gitbook"
+alias mj="makejava"
+alias vim="~/nvim.appimage"
+
+
 ############################################
 
 ################ self defined functions ###################
