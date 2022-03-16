@@ -13,7 +13,7 @@ set shortmess+=atI     " disable startup message
 set noshowmode         " hide mode ??
 set shell=bash\ -i
 set background=dark    " set dark scheme
-set number
+set number relativenumber " hyper relativenumber
 set cc=80              " Display a vertical bar in 80 characters
 " String to put at the start of lines that have been wrapped "
 let &showbreak='↪ '
@@ -480,6 +480,11 @@ let g:table_mode_corner = '|'
 let g:table_mode_border=0
 let g:table_mode_fillchar=' '
 let g:table_mode_delimiter=' '
+
+" snipmate
+" disable warning from snipMate when opening a file, the default was deprecated,
+" @see :h Snipmate-deprecate
+let g:snipMate = { 'snippet_version' : 1 } 
 
 " ------------------------------------------------------------------- Function 
 " CompileGcc()
