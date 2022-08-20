@@ -50,7 +50,7 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
     $ sudo apt-get install zsh  # ubuntu installation
     ```
 
-之后使用`chsh -s /bin/zsh`将默认的shell改为zsh
+之后使用`chsh -s /bin/zsh`将默认的shell改为zsh. 这之后需要logout一下，不然即使重开一个terminal也没有生效。
 
 ### 2. 安装oh-my-zsh
 
