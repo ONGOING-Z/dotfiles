@@ -88,6 +88,7 @@ plugins=(
     colored-man-pages # 彩版man page
     web-search # open search engine in cli by key words
     git-open # open remote repo address
+    fzf
 )
 # use x to unpack the package
 
