@@ -85,10 +85,11 @@ plugins=(
     zsh-autosuggestions
     extract
     z
-    colored-man-pages # 彩版man page
+    colored-man-pages # colored man page
     web-search # open search engine in cli by key words
     git-open # open remote repo address
     fzf
+    safe-paste
 )
 # use x to unpack the package
 
