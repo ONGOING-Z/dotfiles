@@ -102,7 +102,7 @@ $ sudo apt install tmux
 [1]: http://www.zsh.org/
 [2]: http://www.vim.org/
 [3]: https://github.com/tmux/tmux
-[4]: https://www.ongoing.ink/blog/posts/2020/07/recover-the-shell-production-environment.html
+[4]: https://ongoing-z.github.io//blog/posts/2020/07/recover-the-shell-production-environment.html
 [5]: https://github.com/tmux/tmux/releases/
 [6]: https://github.com/tmux/tmux/releases/tag/3.1c
 [7]: https://github.com/anishathalye/dotbot/
