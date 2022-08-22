@@ -4,3 +4,6 @@
 [submodule "rime-config"]
 	path = rime-config
 	url = git@github.com:ONGOING-Z/rime-config.git
+[submodule "Common-Services"]
+	path = Common-Services
+	url = git@github.com:ONGOING-Z/Common-Services.git
