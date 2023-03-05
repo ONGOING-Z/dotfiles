@@ -622,3 +622,7 @@ highlight Comment cterm=italic gui=italic
 
 " 一些缩写命令
 iab xtime <c-r>=strftime("%Y-%m-%d")<cr>
+
+# 连接vim和系统剪切板
+set clipboard+=unnamedplus
+
