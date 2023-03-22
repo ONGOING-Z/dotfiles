@@ -13,6 +13,7 @@ set shortmess+=atI     " disable startup message
 set noshowmode         " hide mode ??
 set shell=bash\ -i
 set background=dark    " set dark scheme
+" Typing 5j will move the cursor five lines down
 set number relativenumber " hyper relativenumber
 set cc=80              " Display a vertical bar in 80 characters
 " String to put at the start of lines that have been wrapped "
