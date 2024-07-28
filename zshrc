@@ -8,7 +8,7 @@ if [ -f "$HOME/.bash_aliases" ]; then
 fi
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/${USER}/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 export TERM="xterm-256color"
 
 # Options
@@ -87,7 +87,8 @@ plugins=(
     z
     colored-man-pages # 彩版man page
     web-search # open search engine in cli by key words
-    git-open # open remote repo address
+    #git-open # open remote repo address
+    fzf
 )
 # use x to unpack the package
 
@@ -114,8 +115,8 @@ export LC_ALL=en_US.UTF-8
 ######## Plugin ###### by zplug
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 #  a zsh plugin to make listing directory more readable
-zplug "supercrabtree/k"
-# enhaced cd 
+#zplug "supercrabtree/k"
+# enhaced cd
 zplug "b4b4r07/enhancd", use:init.sh
 
 zplug "zsh-users/zsh-history-substring-search"
@@ -161,7 +162,6 @@ alias clean_pic="mat"
 alias bfg="java -jar /media/$USER/New_Disk/test6/bfg-1.14.0.jar"
 alias gbook="gitbook"
 alias mj="makejava"
-alias vim="~/nvim.appimage"
 
 
 ############################################
@@ -182,19 +182,22 @@ fi
 ###########################################################
 
 # Set java environment
-JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-PATH=$JAVA_HOME/bin:$PATH
+JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
+#PATH=$JAVA_HOME/bin:$PATH
 CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:/home/${USER}/Desktop/jdbc/mysql-connector-java_8.0.22-1ubuntu16.04_all/usr/share/java/mysql-connector-java-8.0.22.jar
 export JAVA_HOME PATH CLASSPATH
 
 # Set maven environment
 # M2_HOME指向Maven的安装目录
-export M2_HOME=/usr/local/apache-maven-3.3.9
+export M2_HOME=/usr/local/apache-maven-3.8.4
 
 export PATH=$PATH:/usr/local/git/bin:${M2_HOME}/bin
 
 # This prevents duplicates of PATH variables.
 typeset -U PATH
+
+# ban auto correct
+unsetopt correct_all
 
 # Q: How to share PATHs in .zshrc, .bashrc, .bash_profile?
 # A: One way is to source the ~/.bashrc in your ~/.zshrc file.
@@ -218,3 +221,18 @@ fi
 
 # Then, source plugins and add commands to $PATH
 zplug load
+
+export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles
+
+export GOPATH=$HOME/Documents/github/go
+
+
+export TOMCAT_PATH=/usr/local/apache-tomcat-10.1.18/bin
+export PATH=$PATH:$TOMCAT_PATH/bin
+
+alias cat="bat"
+
+#docker
+alias dms="docker images"
+alias dm="docker image"
+alias dcl="docker container ls -a"
