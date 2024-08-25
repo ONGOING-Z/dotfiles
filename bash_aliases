@@ -1,13 +1,9 @@
 # Git
-alias gc="git clone"
-alias gmv="git mv"
 alias gs="git status"
-alias ga="git add "
-alias gb="git branch "
+alias ga="git add"
+alias gb="git branch"
 alias gl="git log"
-alias gp="git push origin master"
 alias gcm="git commit -m "
-alias gcam="git commit -a -m " # 省去 git add 步骤
 
 # Application
 alias gdb='gdb -q'
