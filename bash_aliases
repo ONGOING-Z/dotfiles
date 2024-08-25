@@ -18,6 +18,7 @@ alias dr='docker'
 alias dri='docker images'
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
+alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
 # tar
 alias untar='tar -zxvf'
