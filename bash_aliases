@@ -11,8 +11,9 @@ alias gcam="git commit -a -m " # 省去 git add 步骤
 
 # Application
 alias gdb='gdb -q'
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
+# at macos system, pbcopy/pbpaste are builtin tools.
+#alias pbcopy='xclip -selection clipboard'
+#alias pbpaste='xclip -selection clipboard -o'
 alias dr='docker'
 alias dri='docker images'
 alias pmanim='python3 -m manim'
