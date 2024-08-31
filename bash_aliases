@@ -4,6 +4,7 @@ alias ga="git add"
 alias gb="git branch"
 alias gl="git log"
 alias gcm="git commit -m "
+alias undo="git reset --soft head^" # 让头指针指向上次的提交，并且不改变暂存区和工作区。
 
 # Application
 alias gdb='gdb -q'
