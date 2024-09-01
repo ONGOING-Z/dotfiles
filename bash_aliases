@@ -17,6 +17,10 @@ alias pmanim='python3 -m manim'
 alias pc='proxychains'
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
+# brew install m-cli
+alias wof="m wifi off"
+alias won="m wifi on"
+
 # tar
 alias untar='tar -zxvf'
 
