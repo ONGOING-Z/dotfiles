@@ -13,15 +13,12 @@
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
     ~/.config/nvim/init.vim: nvim/init.vim
-    ~/.config/fcitx/rime/default.custom.yaml: rime-config/rime/default.custom.yaml
-    ~/.config/fcitx/rime/luna_pinyin.custom.yaml: rime-config/rime/luna_pinyin.custom.yaml
-    ~/.config/fcitx/rime/luna_pinyin.cn_en.dict.yaml: rime-config/rime/luna_pinyin.cn_en.dict.yaml
-    ~/.config/fcitx/rime/luna_pinyin.extended.dict.yaml: rime-config/rime/luna_pinyin.extended.dict.yaml
 
 - create:
     - ~/downloads
     - ~/.vim/undo-history
     - ~/.pip
+    - ~/.config/nvim
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
