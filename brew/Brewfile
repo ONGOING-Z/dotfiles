@@ -1,0 +1,95 @@
+tap "homebrew/bundle"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@1.1"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.10"
+# Shell extension to jump to frequently used directories
+brew "autojump"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Vector graphics library with cross-device output support
+brew "cairo"
+# Asynchronous event library
+brew "libevent"
+# Container runtimes on MacOS (and Linux) with minimal setup
+brew "colima"
+# Pack, ship and run any application as a lightweight container
+brew "docker"
+# Perl lib for reading and writing EXIF metadata
+brew "exiftool"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# Interpreter for PostScript and PDF
+brew "ghostscript"
+# Distributed revision control system
+brew "git"
+# Syntax-highlighting pager for git and diff output
+brew "git-delta"
+# User-friendly cURL replacement (command-line HTTP client)
+brew "httpie"
+# Configurable static site generator
+brew "hugo"
+# Interactive computing in Python
+brew "ipython"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Curses-based tool for viewing and analyzing log files
+brew "lnav"
+# Swiss Army Knife for macOS
+brew "m-cli"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Port scanning utility for large networks
+brew "nmap"
+# Platform built on V8 to build network applications
+brew "node"
+# Development kit for the Java programming language
+brew "openjdk"
+# Passphrase entry dialog utilizing the Assuan protocol
+brew "pinentry"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
+# Locking and sync for Pip requirements files
+brew "pip-tools"
+# Manage compile and link flags for libraries
+brew "pkg-config"
+# Python 3 bindings for the Cairo graphics library
+brew "py3cairo"
+# SOcket CAT: netcat on steroids
+brew "socat"
+# Change macOS audio source from the command-line
+brew "switchaudio-osx"
+# User interface to the TELNET protocol
+brew "telnet"
+# Code-search similar to ack
+brew "the_silver_searcher"
+# Terminal multiplexer
+brew "tmux"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Internet file retriever
+brew "wget"
+# Linter for YAML files
+brew "yamllint"
+# Dumb downloader that scrapes the web
+brew "you-get"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# Desktop automation application
+cask "hammerspoon"
+# Alternative input source switcher
+cask "kawa"
+# Full TeX Live distribution with GUI applications
+cask "mactex"
+# Collaboration platform for API development
+cask "postman"
+# Rime input method engine
+cask "squirrel"
+# Open-source version of the X.Org X Window System
+cask "xquartz"
