@@ -85,9 +85,11 @@ plugins=(
     zsh-autosuggestions
     extract
     z
-    colored-man-pages # 彩版man page
+    colored-man-pages # colored man page
     web-search # open search engine in cli by key words
     git-open # open remote repo address
+    fzf
+    safe-paste
 )
 # use x to unpack the package
 
@@ -180,6 +182,10 @@ fi
 }
 
 ###########################################################
+#
+# node path
+export NODE_HOME=$HOME/my-libs/node-v10.23.0-linux-x64
+export NODE_PATH=$NODE_HOME/lib/node_modules
 
 # Set java environment
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -191,7 +197,7 @@ export JAVA_HOME PATH CLASSPATH
 # M2_HOME指向Maven的安装目录
 export M2_HOME=/usr/local/apache-maven-3.3.9
 
-export PATH=$PATH:/usr/local/git/bin:${M2_HOME}/bin
+export PATH=$PATH:/usr/local/git/bin:${M2_HOME}/bin:$NODE_HOME/bin
 
 # This prevents duplicates of PATH variables.
 typeset -U PATH
