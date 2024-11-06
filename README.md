@@ -1,5 +1,3 @@
-![dotfiles](./img/MyDotfiles.png)
-
 # dotfiles
 
 存放文本三巨头[zsh][1]、[vim][2]、[tmux][3]的设置文件.
