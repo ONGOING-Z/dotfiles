@@ -148,10 +148,10 @@ set shortmess+=c
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
+      \ coc#pum#visible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr><S-TAB> coc#pum#visible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -166,7 +166,7 @@ inoremap <silent><expr> <c-space> coc#refresh()
 if exists('*complete_info')
   inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  inoremap <expr> <cr> coc#pum#visible() ? "\<C-y>" : "\<C-g>u\<CR>"
 endif
 
 " Use `[g` and `]g` to navigate diagnostics
@@ -306,7 +306,7 @@ Plug 'godlygeek/tabular'       " 20.3.24 markdown
 Plug 'plasticboy/vim-markdown' " 20.3.24 markdown
 "Plug 'iamcco/markdown-preview.vim'  " 20.7.13 markdown preview,
 "下边这个star比较多
-Plug 'suan/vim-instant-markdown', {'for': 'markdown'} " 20.7.13
+"Plug 'suan/vim-instant-markdown', {'for': 'markdown'} " 20.7.13
 "Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
 "Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 "Plug 'junegunn/fzf.vim'       " 20.5.4
@@ -351,6 +351,17 @@ Plug 'adrian5/oceanic-next-vim'
 
 "Plug 'davidhalter/jedi-vim' "直接在vim-plug中安装不知道怎么回事出了问题
                              "ubunu16.04 使用apt install vim-python-jedi可以
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" For vsnip users.
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'                             "
+Plug 'nathangrigg/vim-beancount'
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -624,6 +635,6 @@ highlight Comment cterm=italic gui=italic
 " 一些缩写命令
 iab xtime <c-r>=strftime("%Y-%m-%d")<cr>
 
-# 连接vim和系统剪切板
-set clipboard+=unnamedplus
+set rtp+=/opt/homebrew/opt/fzf
 
+" source $VIMRUNTIME/mswin.vim "可以使用ctrl-c, ctrl-v快捷键
