@@ -32,3 +32,5 @@ alias cds='du -hs .' # cds: current directory size
 alias localdate='date +%Y-%m-%d'
 # localtime, 12:50
 alias localtime='date +%H:%M'
+
+alias tree='tree -aC' # a: all files, C: color
