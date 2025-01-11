@@ -309,7 +309,7 @@ Plug 'plasticboy/vim-markdown' " 20.3.24 markdown
 "Plug 'suan/vim-instant-markdown', {'for': 'markdown'} " 20.7.13
 "Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
 "Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-"Plug 'junegunn/fzf.vim'       " 20.5.4
+Plug 'junegunn/fzf.vim'       " 20.5.4
 Plug 'wincent/command-t'       " 20.6.14
 "Plug 'luochen1990/rainbow'    " 20.6.15
 " 20.7.13 注释掉此插件，觉得这个颜色对我干扰较大。
@@ -616,9 +616,9 @@ nmap <Leader>v :tabedit $MYVIMRC
 nnoremap <Leader>d :packadd termdebug<CR><ESC>:Termdebug<CR><ESC><c-w>w<c-w>w<c-w>H
 
 " Copy to clipboard
-noremap <Leader>y "*y
+noremap <Leader>y "+y
 " Paste from clipboard
-noremap <Leader>p "*p
+noremap <Leader>p "+p
 
 "=================================================================================
 "
@@ -638,3 +638,12 @@ iab xtime <c-r>=strftime("%Y-%m-%d")<cr>
 set rtp+=/opt/homebrew/opt/fzf
 
 " source $VIMRUNTIME/mswin.vim "可以使用ctrl-c, ctrl-v快捷键
+"
+if executable('rg') 
+    set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+    set grepformat+=%f:%l:%c:%m
+endif
+
+
+" leader is '\'
+nnoremap <Leader>g :silent lgrep<Space>
