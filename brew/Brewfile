@@ -1,4 +1,6 @@
 tap "homebrew/bundle"
+# Record and share terminal sessions
+brew "asciinema"
 # Cryptography and SSL/TLS Toolkit
 brew "openssl@1.1"
 # Interpreted, interactive, object-oriented programming language
@@ -9,14 +11,14 @@ brew "autojump"
 brew "bat"
 # Vector graphics library with cross-device output support
 brew "cairo"
-# Asynchronous event library
-brew "libevent"
 # Container runtimes on MacOS (and Linux) with minimal setup
 brew "colima"
 # Pack, ship and run any application as a lightweight container
 brew "docker"
 # Perl lib for reading and writing EXIF metadata
 brew "exiftool"
+# Asynchronous event library
+brew "libevent"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
 # Command-line fuzzy finder written in Go
@@ -25,6 +27,8 @@ brew "fzf"
 brew "ghostscript"
 # Distributed revision control system
 brew "git"
+# Highly customizable changelog generator
+brew "git-cliff"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
 # User-friendly cURL replacement (command-line HTTP client)
@@ -49,16 +53,20 @@ brew "nmap"
 brew "node"
 # Development kit for the Java programming language
 brew "openjdk"
+# Interactive grep tool
+brew "percol"
 # Passphrase entry dialog utilizing the Assuan protocol
 brew "pinentry"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Locking and sync for Pip requirements files
 brew "pip-tools"
-# Manage compile and link flags for libraries
-brew "pkg-config"
+# Package compiler and linker metadata toolkit
+brew "pkgconf"
 # Python 3 bindings for the Cairo graphics library
 brew "py3cairo"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
 # SOcket CAT: netcat on steroids
 brew "socat"
 # Change macOS audio source from the command-line
@@ -93,3 +101,5 @@ cask "postman"
 cask "squirrel"
 # Open-source version of the X.Org X Window System
 cask "xquartz"
+# Multiplayer code editor
+cask "zed"
