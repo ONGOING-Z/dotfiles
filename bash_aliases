@@ -17,6 +17,7 @@ alias dri='docker images'
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+alias pycharm="/Applications/PyCharm\ CE.app/Contents/MacOS/pycharm"
 
 # brew install m-cli
 alias wof="m wifi off"
