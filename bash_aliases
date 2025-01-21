@@ -16,12 +16,22 @@ alias dr='docker'
 alias dri='docker images'
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
+
+
+# app
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 alias pycharm="/Applications/PyCharm\ CE.app/Contents/MacOS/pycharm"
+alias ideace="/Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea"
 
 # brew install m-cli
-alias wof="m wifi off"
-alias won="m wifi on"
+alias won="m wifi on; m bluetooth enable"
+alias wof="m wifi off; m bluetooth disable"
+
+alias won1="m wifi on"
+alias wof1="m wifi off"
+
+alias won2="m bluetooth enable"
+alias wof2="m bluetooth disable"
 
 # tar
 alias untar='tar -zxvf'
