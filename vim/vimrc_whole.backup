@@ -362,6 +362,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'                             "
 Plug 'nathangrigg/vim-beancount'
+Plug 'ahmedkhalf/project.nvim'
 call plug#end()
 
 " --------------------------------------------------------Plugin Configuration 
@@ -647,3 +648,6 @@ endif
 
 " leader is '\'
 nnoremap <Leader>g :silent lgrep<Space>
+
+command Todo Ack! 'TODO\|FIXME'
+set nrformats+=alpha
