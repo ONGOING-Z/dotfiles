@@ -651,3 +651,7 @@ nnoremap <Leader>g :silent lgrep<Space>
 
 command Todo Ack! 'TODO\|FIXME'
 set nrformats+=alpha
+
+" coc补全选项快捷键设置。<Tab> and <S-Tab> 
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
