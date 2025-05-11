@@ -1,13 +1,12 @@
 [user]
 	name = ongoing-z
-	email = 1413677817@qq.com
+	email = code@ongoingblog.org
 	signingkey = B8655142E5FD8FB4
 [core]
-	autocrlf = input
+	autocrlf = input # 仅在输入时转换换行符
+    pager = delta # 使用 delta 美化 diff
 [commit]
-	gpgsign = false
-[core]
-    pager = delta
+	gpgsign = true
 
 [interactive]
     diffFilter = delta --color-only --features=interactive
