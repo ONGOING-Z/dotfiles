@@ -1,5 +1,6 @@
 - defaults:
     link:
+      create: true
       relink: true
 
 - clean: ['~']
@@ -19,6 +20,7 @@
     - ~/.vim/undo-history
     - ~/.pip
     - ~/.config/nvim
+    - ~/.zshrc
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
