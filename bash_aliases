@@ -20,6 +20,7 @@ alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/co
 alias pycharm="/Applications/PyCharm\ CE.app/Contents/MacOS/pycharm"
 alias ideace="/Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea"
 alias typora="/Applications/Typora.app/Contents/MacOS/Typora"
+alias cursor="/Applications/Cursor.app/Contents/MacOS/Cursor"
 
 # brew install m-cli
 alias wof="m wifi off"
