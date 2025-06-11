@@ -1,12 +1,13 @@
 [user]
 	name = ongoing-z
 	email = code@ongoingblog.org
-	signingkey = B8655142E5FD8FB4
+	signingkey = 6701ED3756D9C096
 [core]
-	autocrlf = input # 仅在输入时转换换行符
-    pager = delta # 使用 delta 美化 diff
+	autocrlf = input
 [commit]
 	gpgsign = true
+[core]
+    pager = delta
 
 [interactive]
     diffFilter = delta --color-only --features=interactive
@@ -27,4 +28,9 @@
     hunk-header-file-style = red
     hunk-header-line-number-style = "#067a00"
     hunk-header-style = file line-number syntax
-
+[safe]
+	directory = $HOME/.oh-my-zsh
+[credential]
+	helper = store
+[init]
+	defaultBranch = dev
