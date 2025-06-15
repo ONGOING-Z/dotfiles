@@ -1,0 +1,40 @@
+# ===== 核心配置 =====
+# 自动附加到最新启动的Java进程
+auto.attach = true
+# 跳过版本检查
+skip.version.check = true
+
+# ===== 输出控制 =====
+# 启用JSON格式输出
+json.format = true
+# 输出深度限制
+print.parent.fields.level = 3
+# 禁用颜色输出
+disable.color = false
+
+# ===== 增强配置 =====
+# 允许增强系统类
+if ${java.version} >= "17" {
+    unsafe = true
+}
+# 类dump输出目录
+dump.path = ~/arthas_dumps/
+
+# ===== 别名配置 =====
+# 自定义命令别名
+alias.tc = trace * '{params, returnObj}' -n 5
+alias.wm = watch * * '{params, target, throwExp}' -x 3
+alias.sysprop = sysprop | grep -E
+
+# ===== 历史记录 =====
+# 命令历史保存路径
+history.file = ~/.arthas_history
+# 历史记录最大条数
+history.max.size = 5000
+
+# ===== 网络配置 =====
+# 默认Telnet端口
+telnet.port = 3658
+# 默认HTTP端口
+http.port = 8563
+

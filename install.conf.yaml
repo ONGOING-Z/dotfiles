@@ -14,6 +14,7 @@
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
     ~/.config/nvim/init.vim: nvim/init.vim
+    ~/.arthasrc: arthas/arthasrc
 
 - create:
     - ~/downloads
