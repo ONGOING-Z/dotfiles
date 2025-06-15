@@ -17,10 +17,11 @@ alias dri='docker images'
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
-alias pycharm="/Applications/PyCharm\ CE.app/Contents/MacOS/pycharm"
+alias pycharm="/Applications/PyCharm.app/Contents/MacOS/pycharm"
 alias ideace="/Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea"
 alias typora="/Applications/Typora.app/Contents/MacOS/Typora"
 alias cursor="/Applications/Cursor.app/Contents/MacOS/Cursor"
+alias arthas="/usr/local/arthas-packaging-4.0.5-bin/as.sh"
 
 # brew install m-cli
 alias wof="m wifi off"
