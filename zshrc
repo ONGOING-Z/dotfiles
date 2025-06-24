@@ -236,3 +236,6 @@ alias cat="bat"
 alias dms="docker images"
 alias dm="docker image"
 alias dcl="docker container ls -a"
+
+export GPG_TTY=$(tty)
+export PATH="/opt/homebrew/bin:$PATH"
