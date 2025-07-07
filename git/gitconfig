@@ -34,3 +34,7 @@
 	helper = store
 [init]
 	defaultBranch = dev
+[notes]
+	fetchRef = refs/notes/commits
+[remote "origin"]
+	fetch = +refs/notes/*:refs/notes/*
