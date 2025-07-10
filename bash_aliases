@@ -42,3 +42,5 @@ alias localtime='date +%H:%M'
 alias tree='tree -aC' # a: all files, C: color
 
 alias redis_start="docker exec -it my-redis redis-cli"
+
+alias weather='curl wttr.in'
