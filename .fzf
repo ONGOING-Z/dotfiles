@@ -1,6 +1,87 @@
-fzf-history-widget-accept() {
-  fzf-history-widget
-  zle accept-line
+# Use Ctrl+X Ctrl+R to search history with fzf and auto-accept the result
+if (( $+functions[fzf-history-widget] )); then
+  fzf-history-widget-accept() {
+    fzf-history-widget
+    zle accept-line
+  }
+  zle -N fzf-history-widget-accept
+  bindkey '^X^R' fzf-history-widget-accept
+fi
+
+fzf-cd-widget() {
+  local dir
+  dir=$(find . -type d 2>/dev/null | fzf +m) && cd "$dir"
 }
-zle -N fzf-history-widget-accept
-bindkey '^X^R' fzf-history-widget-accept
+zle -N fzf-cd-widget
+bindkey '^O' fzf-cd-widget  # Ctrl+O
+
+fzf-open-widget() {
+  local file
+  file=$(fzf --preview 'bat --style=numbers --color=always {} || cat {}' --preview-window=right:60%) && ${EDITOR:-vim} "$file"
+}
+zle -N fzf-open-widget
+bindkey '^P' fzf-open-widget  # Ctrl+P
+
+fzf-args-history-widget() {
+  BUFFER=$(history | awk '{$1=""; print substr($0,2)}' | grep -v '^ *$' | fzf)
+  CURSOR=$#BUFFER
+  zle reset-prompt
+}
+zle -N fzf-args-history-widget
+bindkey '^R' fzf-args-history-widget  # Ctrl+R
+
+fzf-git-log() {
+  git log --oneline --color=always | \
+    fzf --ansi --preview 'git show --color=always {1}' --preview-window=right:70%
+}
+alias glf='fzf-git-log'
+
+fzf-git-checkout() {
+  local branch
+  branch=$(git branch --all | grep -v HEAD | sed 's/.* //' | sort -u | fzf) && git checkout "$branch"
+}
+zle -N fzf-git-checkout
+bindkey '^G^B' fzf-git-checkout  # Ctrl+G Ctrl+B
+
+fzf-pbcopy-widget() {
+  print -z -- "$(pbpaste | fzf)"
+}
+zle -N fzf-pbcopy-widget
+bindkey '^Y' fzf-pbcopy-widget  # Ctrl+Y
+
+export FZF_DEFAULT_OPTS='
+  --height 40%
+  --layout=reverse
+  --border
+  --preview "bat --style=numbers --color=always {} || cat {}"
+  --preview-window=right:60%
+  --color=fg:#d0d0d0,bg:#1b1b1b,hl:#ffaf00
+  --color=fg+:#f0f0f0,bg+:#262626,hl+:#ffaf00
+  --color=info:#87afff,prompt:#af5fff,pointer:#ff5faf,marker:#ff5faf,spinner:#ffaf00
+'
+
+fzf-kill-widget() {
+  local pid
+  pid=$(ps -ef | sed 1d | fzf --header='Select process to kill' | awk '{print $2}')
+  if [[ -n "$pid" ]]; then
+    kill -9 "$pid"
+  fi
+}
+zle -N fzf-kill-widget
+bindkey '^K' fzf-kill-widget  # Ctrl+K
+
+alias zf='zoxide query -l | fzf | xargs -r cd'
+
+fzf-args-widget() {
+  LBUFFER="$LBUFFER$(fc -rl 1 | fzf --tac | awk '{$1=\"\"; print substr($0,2)}')"
+  zle reset-prompt
+}
+zle -N fzf-args-widget
+bindkey '^X^A' fzf-args-widget  # Ctrl+X Ctrl+A
+
+fzf-man-widget() {
+  local cmd
+  cmd=$(apropos . | fzf | awk '{print $1}') && man "$cmd"
+}
+zle -N fzf-man-widget
+bindkey '^X^M' fzf-man-widget  # Ctrl+X Ctrl+M
