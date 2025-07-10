@@ -14,7 +14,7 @@
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
     ~/.config/nvim/init.vim: nvim/init.vim
-    ~/.arthasrc: arthas/arthasrc
+    /usr/local/arthas-packaging-4.0.5-bin/arthas.properties: arthas/arthas.properties
 
 - create:
     - ~/downloads

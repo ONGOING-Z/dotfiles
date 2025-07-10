@@ -12,13 +12,14 @@ alias gdb='gdb -q'
 # at macos system, pbcopy/pbpaste are builtin tools.
 #alias pbcopy='xclip -selection clipboard'
 #alias pbpaste='xclip -selection clipboard -o'
-alias dr='docker'
-alias dri='docker images'
+# 进入容器（替代 docker exec -it xxx /bin/bash）
+
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 alias pycharm="/Applications/PyCharm.app/Contents/MacOS/pycharm"
 alias ideace="/Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea"
+alias idea="/Applications/IntelliJ\ IDEA.app/Contents/MacOS/idea"
 alias typora="/Applications/Typora.app/Contents/MacOS/Typora"
 alias cursor="/Applications/Cursor.app/Contents/MacOS/Cursor"
 alias arthas="/usr/local/arthas-packaging-4.0.5-bin/as.sh"
@@ -39,3 +40,5 @@ alias localdate='date +%Y-%m-%d'
 alias localtime='date +%H:%M'
 
 alias tree='tree -aC' # a: all files, C: color
+
+alias redis_start="docker exec -it my-redis redis-cli"

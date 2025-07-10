@@ -36,5 +36,6 @@
 	defaultBranch = dev
 [notes]
 	fetchRef = refs/notes/commits
+    display = true
 [remote "origin"]
 	fetch = +refs/notes/*:refs/notes/*
