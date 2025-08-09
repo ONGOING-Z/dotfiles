@@ -89,6 +89,7 @@ plugins=(
     web-search # open search engine in cli by key words
     #git-open # open remote repo address
     fzf
+    fzf-tab
 )
 # use x to unpack the package
 
@@ -239,3 +240,7 @@ alias dcl="docker container ls -a"
 
 export GPG_TTY=$(tty)
 export PATH="/opt/homebrew/bin:$PATH"
+
+# enable homebrew auto upgrade(each week)
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_AUTO_UPDATE_SECS=604800
