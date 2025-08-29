@@ -15,7 +15,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Create or Reuse Pull Request
+      - name: Create or Reuse Pull Request and Comment
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +28,16 @@ jobs:
             // check existing open PRs
             const { data: prs } = await github.rest.pulls.list({ owner, repo, state: 'open', head, base });
             if (prs.length > 0) {
-              core.info(`PR already exists: ${prs[0].html_url}`);
+              const pr = prs[0];
+              core.info(`PR already exists: ${pr.html_url}`);
+              // leave a comment to indicate push happened and checks will rerun
+              const comment = [
+                'New commits pushed to the source branch. CI will rerun automatically.',
+                '',
+                `- Branch: \`${context.ref.replace('refs/heads/','')}\``,
+                `- Commit: \`${context.sha}\``
+              ].join('\n');
+              await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: comment });
               return;
             }
 
