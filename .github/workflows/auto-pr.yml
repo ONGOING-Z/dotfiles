@@ -32,8 +32,16 @@ jobs:
               return;
             }
 
-            const title = `chore: auto PR - ${context.ref.replace('refs/heads/','')}`;
-            const body = `This pull request was automatically created by GitHub Actions.\n\n- Source branch: \`${context.ref.replace('refs/heads/','')}\`\n- Base: \`${base}\`\n- Pusher: \`${context.actor}\``;
+            const branchName = context.ref.replace('refs/heads/','');
+            const title = `chore: auto PR - ${branchName}`;
+            const bodyLines = [
+              'This pull request was automatically created by GitHub Actions.',
+              '',
+              `- Source branch: \`${branchName}\``,
+              `- Base: \`${base}\``,
+              `- Pusher: \`${context.actor}\``
+            ];
+            const body = bodyLines.join('\n');
 
             const { data: pr } = await github.rest.pulls.create({ owner, repo, head, base, title, body });
             core.info(`Created PR: ${pr.html_url}`);
