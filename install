@@ -71,7 +71,7 @@ if [ -n "$new_formula" ]; then
   printf "    - %s\n" $new_formula
 else
   echo "  Formulae: none"
-endif
+fi
 if [ -n "$new_cask" ]; then
   echo "  Casks:"
   printf "    - %s\n" $new_cask
