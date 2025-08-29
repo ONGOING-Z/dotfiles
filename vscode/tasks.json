@@ -4,10 +4,10 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "Compile",
             "type": "shell",
             "command": "g++",
-            "args": ["-g", "${file}", "-std=c++11", "-o", "${fileBasenameNoExtension}.out"]
+            "args": ["-g", "${file}", "-std=c++17", "-o", "${fileBasenameNoExtension}.out"]
         }
     ]
 }

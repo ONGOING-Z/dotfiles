@@ -10,7 +10,7 @@
     ~/.vimrc: vim/vimrc_whole.backup
     ~/.zshrc: zshrc
     ~/.bash_aliases: bash_aliases
-    ~/.gdbinit: gdbinit
+    ~/.gdbinit: .gdbinit
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
     ~/.config/nvim/init.vim: nvim/init.vim
@@ -21,7 +21,6 @@
     - ~/.vim/undo-history
     - ~/.pip
     - ~/.config/nvim
-    - ~/.zshrc
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
