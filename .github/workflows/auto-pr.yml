@@ -6,6 +6,7 @@ on:
     branches-ignore:
       - macos
       - linux
+      - 'auto-pr/**'
 
 jobs:
   open-pr:
