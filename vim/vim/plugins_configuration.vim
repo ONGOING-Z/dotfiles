@@ -1,4 +1,4 @@
-" --------------------------------------------------------Plugin Configuration 
+" --------------------------------------------------------Plugin Configuration
 " Configuration for vim-markdown
 " Markdown disable conceal
 " 禁止隐藏代码围栏的标志
@@ -29,7 +29,7 @@ set statusline+=%*
 " Ale config
 let g:ale_sign_error = '>>'
 let g:ale_sign_warning = '⚠ '
-" The format for echo messages 
+" The format for echo messages
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'

@@ -6,6 +6,23 @@
 
 [Shell生产力环境恢复][4]
 
+## 快速开始（推荐）
+
+```bash
+# 克隆
+git clone --recursive https://github.com/ONGOING-Z/dotfiles ~/dotfiles
+cd ~/dotfiles
+
+# 使用 dotbot 建立符号链接
+./install
+
+# 重新加载 tmux/zsh（可选）
+tmux source ~/.tmux.conf || true
+exec $SHELL -l
+```
+
+> 注意：`install.conf.yaml` 会在需要时自动创建目录并建立链接；macOS 与 Linux 均可使用。
+
 ## dotfiles管理方法1
 
 1. 新建一个`dotfiles/`文件夹
@@ -34,7 +51,16 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
 
 使用[dotbot][7]
 
-## Zsh 
+### 跨平台说明
+
+- tmux
+  - 统一启用 256 色与剪贴板支持；macOS 自动使用 `pbcopy`，Linux 优先使用 `xclip`，否则回退 `xsel`。
+  - 可以使用前缀 `C-a` + `I` 安装插件（tpm）。
+- zsh
+  - Homebrew/Java/Maven/Tomcat 路径按操作系统与存在性条件加载；可覆盖 `JAVA_HOME`、`M2_HOME`、`TOMCAT_PATH`。
+  - 同时存在 oh-my-zsh 与 zplug，若需提速可改用单一插件管理器。
+
+## Zsh
 
 ### 1. 安装
 
@@ -94,6 +120,35 @@ $ sudo apt install tmux
 在命令行中对于用户更加友好.
 
 安装: `npm install -g diff-so-fancy`
+
+## Homebrew（可选）
+
+根据平台选择对应的 Brewfile：
+
+```bash
+# 公共依赖
+brew bundle --file brew/Brewfile.common
+
+# macOS 特定依赖
+brew bundle --file brew/Brewfile.macos
+
+# Linux 特定依赖
+brew bundle --file brew/Brewfile.linux
+```
+
+## 开发与 CI
+
+- 预提交检查：
+
+```bash
+pip install pre-commit
+pre-commit install
+
+# 本地全量检查
+pre-commit run --all-files
+```
+
+- CI：push/PR 将自动运行 pre-commit；非默认分支 push 会自动创建 PR（见 `.github/workflows/`）。
 
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)

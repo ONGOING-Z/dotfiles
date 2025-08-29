@@ -12,4 +12,24 @@ cd "${BASEDIR}"
 git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive
 git submodule update --init --recursive "${DOTBOT_DIR}"
 
+# OS detection and helpful tips
+OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
+printf "[info] Detected OS: %s\n" "$OS_NAME"
+
+if command -v tmux >/dev/null 2>&1; then
+  :
+else
+  printf "[hint] tmux is not installed. You can install it via brew/apt.\n"
+fi
+
+if [ "$OS_NAME" = "darwin" ]; then
+  if ! command -v pbcopy >/dev/null 2>&1; then
+    printf "[hint] pbcopy not found. Clipboard integration in tmux may be limited.\n"
+  fi
+else
+  if ! command -v xclip >/dev/null 2>&1 && ! command -v xsel >/dev/null 2>&1; then
+    printf "[hint] Install xclip or xsel for tmux clipboard integration.\n"
+  fi
+fi
+
 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"

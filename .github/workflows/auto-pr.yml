@@ -1,0 +1,47 @@
+---
+name: Auto PR on Push
+
+on:
+  push:
+    branches-ignore:
+      - macos
+      - linux
+      - 'auto-pr/**'
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Create or Reuse Pull Request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const head = `${owner}:${context.ref.replace('refs/heads/','')}`;
+            const base = context.payload.repository.default_branch;
+
+            // check existing open PRs
+            const { data: prs } = await github.rest.pulls.list({ owner, repo, state: 'open', head, base });
+            if (prs.length > 0) {
+              core.info(`PR already exists: ${prs[0].html_url}`);
+              return;
+            }
+
+            const branchName = context.ref.replace('refs/heads/','');
+            const title = `chore: auto PR - ${branchName}`;
+            const bodyLines = [
+              'This pull request was automatically created by GitHub Actions.',
+              '',
+              `- Source branch: \`${branchName}\``,
+              `- Base: \`${base}\``,
+              `- Pusher: \`${context.actor}\``
+            ];
+            const body = bodyLines.join('\n');
+
+            const { data: pr } = await github.rest.pulls.create({ owner, repo, head, base, title, body });
+            core.info(`Created PR: ${pr.html_url}`);

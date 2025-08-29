@@ -10,7 +10,7 @@ source ~/dotfiles/vim/.vim/mapping.vim
 source ~/dotfiles/vim/.vim/functions.vim
 source ~/dotfiles/vim/.vim/basic.vim
 
-" -------------------------------------------------------- filetype detection 
+" -------------------------------------------------------- filetype detection
 autocmd BufRead *.md set filetype=markdown
 
 colorscheme gruvbox " Theme
@@ -19,6 +19,6 @@ colorscheme gruvbox " Theme
 " Enable comment italics
 " If you're using a color scheme other than the default, the below line should
 " come after the color scheme is loaded in my .vimrc, so that the color scheme
-" doesn't override it. 
+" doesn't override it.
 "    -- https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
 highlight Comment cterm=italic gui=italic
