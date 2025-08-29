@@ -68,13 +68,13 @@ new_cask=$(comm -13 <(printf "%s\n" "$before_cask") <(printf "%s\n" "$after_cask
 printf "[info] Newly installed via brew:\n"
 if [ -n "$new_formula" ]; then
   echo "  Formulae:"
-  printf "    - %s\n" $new_formula
+  printf '%s\n' "$new_formula" | sed 's/^/    - /'
 else
   echo "  Formulae: none"
 fi
 if [ -n "$new_cask" ]; then
   echo "  Casks:"
-  printf "    - %s\n" $new_cask
+  printf '%s\n' "$new_cask" | sed 's/^/    - /'
 else
   echo "  Casks: none"
 fi
