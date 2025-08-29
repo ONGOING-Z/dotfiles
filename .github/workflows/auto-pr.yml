@@ -1,0 +1,38 @@
+name: Auto PR on Push
+
+on:
+  push:
+    branches-ignore:
+      - macos
+      - linux
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create or Update Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(ci): auto PR from ${{ github.ref_name }}"
+          title: "chore: auto PR - ${{ github.ref_name }}"
+          body: |
+            This pull request was automatically created by GitHub Actions.
+
+            - Source branch: `${{ github.ref_name }}`
+            - Pusher: `${{ github.actor }}`
+          branch: "auto-pr/${{ github.ref_name }}"
+          base: ${{ github.event.repository.default_branch }}
+          labels: |
+            automated
+            ci
+          assignees: |
+            ${{ github.repository_owner }}
+          reviewers: |
+            ${{ github.repository_owner }}
