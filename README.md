@@ -136,6 +136,20 @@ brew bundle --file brew/Brewfile.macos
 brew bundle --file brew/Brewfile.linux
 ```
 
+## 开发与 CI
+
+- 预提交检查：
+
+```bash
+pip install pre-commit
+pre-commit install
+
+# 本地全量检查
+pre-commit run --all-files
+```
+
+- CI：push/PR 将自动运行 pre-commit；非默认分支 push 会自动创建 PR（见 `.github/workflows/`）。
+
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
 2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)

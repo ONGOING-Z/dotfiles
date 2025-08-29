@@ -7,10 +7,11 @@
 
 import os
 import sys
+import argparse
 from pathlib import Path
 
 
-def create_standard_directories(base_path="."):
+def create_standard_directories(base_path: str = ".", dry_run: bool = False):
     """
     创建标准化目录
     
@@ -47,10 +48,14 @@ def create_standard_directories(base_path="."):
                     print(f"✗ 错误: {dir_name} 已存在但不是目录")
                     results["errors"].append(f"{dir_name} 已存在但不是目录")
             else:
-                # 创建目录
-                dir_path.mkdir(parents=True, exist_ok=True)
-                print(f"✓ 创建目录: {dir_name}")
-                results["created"].append(str(dir_path))
+                # 创建目录或进行 dry-run
+                if dry_run:
+                    print(f"↷ 预创建: {dir_name}")
+                    results["created"].append(str(dir_path))
+                else:
+                    dir_path.mkdir(parents=True, exist_ok=True)
+                    print(f"✓ 创建目录: {dir_name}")
+                    results["created"].append(str(dir_path))
                 
         except PermissionError:
             error_msg = f"权限不足，无法创建目录 {dir_name}"
@@ -88,17 +93,21 @@ def print_summary(results):
             print(f"  - {error}")
 
 
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="创建标准化目录: project, archive, discard")
+    parser.add_argument("path", nargs="?", default=".", help="目标路径，默认当前目录")
+    parser.add_argument("--dry-run", action="store_true", help="仅打印将要创建的目录，不实际创建")
+    return parser.parse_args(argv)
+
+
 def main():
     """主函数"""
-    # 获取命令行参数
-    if len(sys.argv) > 1:
-        target_path = sys.argv[1]
-    else:
-        target_path = "."
+    args = parse_args(sys.argv[1:])
+    target_path = args.path
     
     try:
         # 创建标准化目录
-        results = create_standard_directories(target_path)
+        results = create_standard_directories(target_path, dry_run=args.dry_run)
         
         # 打印摘要
         print_summary(results)
@@ -108,7 +117,10 @@ def main():
             print(f"\n⚠️  有 {len(results['errors'])} 个错误，请检查上述信息")
             sys.exit(1)
         else:
-            print(f"\n✅ 目录标准化完成！")
+            if args.dry_run:
+                print(f"\n✅ 预检完成（未实际创建目录）！")
+            else:
+                print(f"\n✅ 目录标准化完成！")
             sys.exit(0)
             
     except KeyboardInterrupt:
