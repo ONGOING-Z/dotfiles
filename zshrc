@@ -11,6 +11,9 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 export TERM="xterm-256color"
 
+# Detect OS
+OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
+
 # Options
 setopt correct                                                  # Auto correct mistakes
 setopt appendhistory                                            # Immediately append history instead of overwriting
@@ -139,8 +142,8 @@ zplug "zsh-users/zsh-history-substring-search"
 #alias vim='gvim -v'
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 
 
@@ -182,17 +185,28 @@ fi
 
 ###########################################################
 
-# Set java environment
-JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
-#PATH=$JAVA_HOME/bin:$PATH
-CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:/home/${USER}/Desktop/jdbc/mysql-connector-java_8.0.22-1ubuntu16.04_all/usr/share/java/mysql-connector-java-8.0.22.jar
-export JAVA_HOME PATH CLASSPATH
+# Set java environment (guarded by existence)
+if [ -d "/Library/Java/JavaVirtualMachines" ]; then
+  JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home"}
+elif [ -d "/usr/lib/jvm" ]; then
+  JAVA_HOME=${JAVA_HOME:-"/usr/lib/jvm/default-java"}
+fi
+if [ -n "$JAVA_HOME" ] && [ -d "$JAVA_HOME" ]; then
+  CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+  export JAVA_HOME CLASSPATH
+fi
 
 # Set maven environment
 # M2_HOME指向Maven的安装目录
-export M2_HOME=/usr/local/apache-maven-3.8.4
-
-export PATH=$PATH:/usr/local/git/bin:${M2_HOME}/bin
+export M2_HOME=${M2_HOME:-/usr/local/apache-maven-3.8.4}
+if [ -d "$M2_HOME" ]; then
+  export PATH=$PATH:${M2_HOME}/bin
+fi
+if command -v git >/dev/null 2>&1; then
+  : # git already in PATH
+elif [ -d "/usr/local/git/bin" ]; then
+  export PATH=$PATH:/usr/local/git/bin
+fi
 
 # This prevents duplicates of PATH variables.
 typeset -U PATH
@@ -224,15 +238,19 @@ fi
 zplug load
 
 # 使用国内二进制包镜像
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.ustc.edu.cn/homebrew-core.git"
+if [ "$OS_NAME" = "darwin" ]; then
+  export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+  export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
+  export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.ustc.edu.cn/homebrew-core.git"
+fi
 
 export GOPATH=$HOME/Documents/github/go
 
 
-export TOMCAT_PATH=/usr/local/apache-tomcat-10.1.18/bin
-export PATH=$PATH:$TOMCAT_PATH/bin
+export TOMCAT_PATH=${TOMCAT_PATH:-/usr/local/apache-tomcat-10.1.18}
+if [ -d "$TOMCAT_PATH/bin" ]; then
+  export PATH=$PATH:$TOMCAT_PATH/bin
+fi
 
 alias cat="bat"
 
@@ -242,7 +260,9 @@ alias dm="docker image"
 alias dcl="docker container ls -a"
 
 export GPG_TTY=$(tty)
-export PATH="/opt/homebrew/bin:$PATH"
+if [ "$OS_NAME" = "darwin" ] && [ -d "/opt/homebrew/bin" ]; then
+  export PATH="/opt/homebrew/bin:$PATH"
+fi
 
 # enable homebrew auto upgrade(each week)
 export HOMEBREW_NO_AUTO_UPDATE=1
