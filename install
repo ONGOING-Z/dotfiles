@@ -33,3 +33,51 @@ else
 fi
 
 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
+
+# Brew update & bundle, and report newly installed items
+if command -v brew >/dev/null 2>&1; then
+printf "[info] Homebrew detected. Updating and bundling...\n"
+
+BREWFILES=("brew/Brewfile.common")
+if [ "$OS_NAME" = "darwin" ]; then
+  BREWFILES+=("brew/Brewfile.macos")
+else
+  BREWFILES+=("brew/Brewfile.linux")
+fi
+
+# Capture pre-state
+before_formula=$(brew list --formula 2>/dev/null | sort || true)
+before_cask=$(brew list --cask 2>/dev/null | sort || true)
+
+brew update || true
+for bf in "${BREWFILES[@]}"; do
+  if [ -f "$bf" ]; then
+    printf "[info] brew bundle --file %s\n" "$bf"
+    brew bundle --file "$bf" --no-lock || true
+  fi
+done
+
+# Capture post-state
+after_formula=$(brew list --formula 2>/dev/null | sort || true)
+after_cask=$(brew list --cask 2>/dev/null | sort || true)
+
+# Compute newly installed
+new_formula=$(comm -13 <(printf "%s\n" "$before_formula") <(printf "%s\n" "$after_formula") | sed '/^$/d')
+new_cask=$(comm -13 <(printf "%s\n" "$before_cask") <(printf "%s\n" "$after_cask") | sed '/^$/d')
+
+printf "[info] Newly installed via brew:\n"
+if [ -n "$new_formula" ]; then
+  echo "  Formulae:"
+  printf '%s\n' "$new_formula" | sed 's/^/    - /'
+else
+  echo "  Formulae: none"
+fi
+if [ -n "$new_cask" ]; then
+  echo "  Casks:"
+  printf '%s\n' "$new_cask" | sed 's/^/    - /'
+else
+  echo "  Casks: none"
+fi
+else
+printf "[hint] Homebrew not found. Skip brew bundle.\n"
+fi
