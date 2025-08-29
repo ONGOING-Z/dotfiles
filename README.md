@@ -6,6 +6,23 @@
 
 [Shell生产力环境恢复][4]
 
+## 快速开始（推荐）
+
+```bash
+# 克隆
+git clone --recursive https://github.com/ONGOING-Z/dotfiles ~/dotfiles
+cd ~/dotfiles
+
+# 使用 dotbot 建立符号链接
+./install
+
+# 重新加载 tmux/zsh（可选）
+tmux source ~/.tmux.conf || true
+exec $SHELL -l
+```
+
+> 注意：`install.conf.yaml` 会在需要时自动创建目录并建立链接；macOS 与 Linux 均可使用。
+
 ## dotfiles管理方法1
 
 1. 新建一个`dotfiles/`文件夹
@@ -33,6 +50,15 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
 ## dotfiles管理方法2(*推荐*)
 
 使用[dotbot][7]
+
+### 跨平台说明
+
+- tmux
+  - 统一启用 256 色与剪贴板支持；macOS 自动使用 `pbcopy`，Linux 优先使用 `xclip`，否则回退 `xsel`。
+  - 可以使用前缀 `C-a` + `I` 安装插件（tpm）。
+- zsh
+  - Homebrew/Java/Maven/Tomcat 路径按操作系统与存在性条件加载；可覆盖 `JAVA_HOME`、`M2_HOME`、`TOMCAT_PATH`。
+  - 同时存在 oh-my-zsh 与 zplug，若需提速可改用单一插件管理器。
 
 ## Zsh 
 
