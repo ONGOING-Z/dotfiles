@@ -1,10 +1,10 @@
 # 安全示例：不包含真实IP/域名
 Host github.com
   IdentityFile ~/.ssh/github_key
-  
+
 Host gitee.com
   IdentityFile ~/.ssh/gitee_key
-  
+
 # 通用配置示例
 Host *
   AddKeysToAgent yes

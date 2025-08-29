@@ -60,7 +60,7 @@ $ ln -s dotfiles/tmux.conf .tmux.conf
   - Homebrew/Java/Maven/Tomcat 路径按操作系统与存在性条件加载；可覆盖 `JAVA_HOME`、`M2_HOME`、`TOMCAT_PATH`。
   - 同时存在 oh-my-zsh 与 zplug，若需提速可改用单一插件管理器。
 
-## Zsh 
+## Zsh
 
 ### 1. 安装
 

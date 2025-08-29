@@ -37,4 +37,3 @@ history.max.size = 5000
 telnet.port = 3658
 # 默认HTTP端口
 http.port = 8563
-

@@ -4,7 +4,7 @@
 " 1. 单行注释写在配置右侧
 " 2. 逐渐将注释变为全英
 
-" ---------------------------------------------------------Basic Configuration 
+" ---------------------------------------------------------Basic Configuration
 " ---- baisc ui config
 "
 "使用which zsh得到的反馈写入下边set shell=xxx, xxx即前一个命令得到的结果
@@ -99,7 +99,7 @@ set shiftwidth=4
 set shiftround
 set noexpandtab " 不把tab键用空格代替
 
-" Disable mouse support 
+" Disable mouse support
 set mouse=
 
 " Encoding open and close
@@ -118,7 +118,7 @@ set nocompatible
 "--------------------------------------------------------------
 " => Files, backups and undo
 "--------------------------------------------------------------
-" Turn backup off, since most stuff is in git et.c 
+" Turn backup off, since most stuff is in git et.c
 set autowrite " Save file when it loses focus.
 set nobackup
 set nowb
@@ -279,7 +279,7 @@ Plug 'majutsushi/tagbar'        " Display variables and functions in code
                                 " Prepare:安装此插件同时需要安装ctags
                                 " sudo apt-get install ctags
                                 " ctags -R --c++-kinds=+p --fields=+iaS
-                                " --extra=+q 
+                                " --extra=+q
 
 " 由于此插件太多庞大，一次安装并没有成功，未安装成功每次开启vim都会提示，
 " 就将之卸载。
@@ -344,10 +344,10 @@ Plug 'lervag/vimtex'  " latex
 "Plug 'tomasr/molokai'
 Plug 'godlygeek/tabular'
 " 20.10.24
-"Plug 'vim-ctrlspace/vim-ctrlspace'   
+"Plug 'vim-ctrlspace/vim-ctrlspace'
 
 " 20.11.8 find a pretty colorscheme
-Plug 'adrian5/oceanic-next-vim' 
+Plug 'adrian5/oceanic-next-vim'
 
 "Plug 'davidhalter/jedi-vim' "直接在vim-plug中安装不知道怎么回事出了问题
                              "ubunu16.04 使用apt install vim-python-jedi可以
@@ -365,7 +365,7 @@ Plug 'nathangrigg/vim-beancount'
 Plug 'ahmedkhalf/project.nvim'
 call plug#end()
 
-" --------------------------------------------------------Plugin Configuration 
+" --------------------------------------------------------Plugin Configuration
 " Configuration for vim-markdown
 " Markdown disable conceal
 " 禁止隐藏代码围栏的标志
@@ -396,7 +396,7 @@ set statusline+=%*
 " Ale config
 let g:ale_sign_error = '>>'
 let g:ale_sign_warning = '⚠ '
-" The format for echo messages 
+" The format for echo messages
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -497,9 +497,9 @@ let g:table_mode_delimiter=' '
 " snipmate
 " disable warning from snipMate when opening a file, the default was deprecated,
 " @see :h Snipmate-deprecate
-let g:snipMate = { 'snippet_version' : 1 } 
+let g:snipMate = { 'snippet_version' : 1 }
 
-" ------------------------------------------------------------------- Function 
+" ------------------------------------------------------------------- Function
 " CompileGcc()
 func! CompileGcc()
     if &filetype == 'cpp'
@@ -550,10 +550,10 @@ endfunction
 
 command! -nargs=1 Footnote call s:MdFootnote("<args>")
 
-" -------------------------------------------------------- filetype detection 
+" -------------------------------------------------------- filetype detection
 autocmd BufRead *.md set filetype=markdown
 
-" ------------------------------------------------------------------- Mapping 
+" ------------------------------------------------------------------- Mapping
 "nnoremap <C-g> :Goyo<CR>
 " Tagbar
 nmap <F8> : TagbarToggle<CR>
@@ -629,7 +629,7 @@ colorscheme gruvbox " Theme
 " Enable comment italics
 " If you're using a color scheme other than the default, the below line should
 " come after the color scheme is loaded in my .vimrc, so that the color scheme
-" doesn't override it. 
+" doesn't override it.
 "    -- https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
 highlight Comment cterm=italic gui=italic
 
@@ -640,7 +640,7 @@ set rtp+=/opt/homebrew/opt/fzf
 
 " source $VIMRUNTIME/mswin.vim "可以使用ctrl-c, ctrl-v快捷键
 "
-if executable('rg') 
+if executable('rg')
     set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
     set grepformat+=%f:%l:%c:%m
 endif
@@ -652,6 +652,6 @@ nnoremap <Leader>g :silent lgrep<Space>
 command Todo Ack! 'TODO\|FIXME'
 set nrformats+=alpha
 
-" coc补全选项快捷键设置。<Tab> and <S-Tab> 
+" coc补全选项快捷键设置。<Tab> and <S-Tab>
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"

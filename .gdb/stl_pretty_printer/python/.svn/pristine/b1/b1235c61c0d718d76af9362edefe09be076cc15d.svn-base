@@ -126,11 +126,11 @@ am__v_P_1 = :
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 = 
+am__v_GEN_1 =
 AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
-am__v_at_1 = 
+am__v_at_1 =
 depcomp =
 am__depfiles_maybe =
 SOURCES =
@@ -379,9 +379,9 @@ PWD_COMMAND = $${PWDCMD-pwd}
 STAMP = echo timestamp >
 toolexecdir = $(glibcxx_toolexecdir)
 toolexeclibdir = $(glibcxx_toolexeclibdir)
-@ENABLE_WERROR_FALSE@WERROR_FLAG = 
+@ENABLE_WERROR_FALSE@WERROR_FLAG =
 @ENABLE_WERROR_TRUE@WERROR_FLAG = -Werror
-@ENABLE_EXTERN_TEMPLATE_FALSE@XTEMPLATE_FLAGS = 
+@ENABLE_EXTERN_TEMPLATE_FALSE@XTEMPLATE_FLAGS =
 @ENABLE_EXTERN_TEMPLATE_TRUE@XTEMPLATE_FLAGS = -fno-implicit-templates
 
 # These bits are all figured out from configure.  Look in acinclude.m4
@@ -390,7 +390,7 @@ CONFIG_CXXFLAGS = \
 	$(SECTION_FLAGS) $(HWCAP_CFLAGS) -frandom-seed=$@
 
 WARN_CXXFLAGS = \
-	$(WARN_FLAGS) $(WERROR_FLAG) -fdiagnostics-show-location=once 
+	$(WARN_FLAGS) $(WERROR_FLAG) -fdiagnostics-show-location=once
 
 
 # -I/-D flags to pass when compiling.

@@ -1,4 +1,4 @@
-" ---------------------------------------------------------Basic Configuration 
+" ---------------------------------------------------------Basic Configuration
 " ---- baisc ui config
 
 set shortmess+=atI     " disable startup message
@@ -93,7 +93,7 @@ set shiftwidth=4
 set shiftround
 set expandtab
 
-" Disable mouse support 
+" Disable mouse support
 set mouse=
 
 " Encoding open and close

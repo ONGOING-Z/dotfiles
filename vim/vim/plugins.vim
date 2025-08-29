@@ -10,7 +10,7 @@ Plug 'majutsushi/tagbar'        " Display variables and functions in code
                                 " Prepare:安装此插件同时需要安装ctags
                                 " sudo apt-get install ctags
                                 " ctags -R --c++-kinds=+p --fields=+iaS
-                                " --extra=+q 
+                                " --extra=+q
 
 " 由于此插件太多庞大，一次安装并没有成功，未安装成功每次开启vim都会提示，
 " 就将之卸载。
@@ -42,7 +42,7 @@ Plug 'suan/vim-instant-markdown', {'for': 'markdown'} " 20.7.13
 "Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 "Plug 'junegunn/fzf.vim'        "20.5.4
 Plug 'wincent/command-t'       " 20.6.14
-"Plug 'luochen1990/rainbow'      " 20.6.15 
+"Plug 'luochen1990/rainbow'      " 20.6.15
 " 20.7.13 注释掉此插件，觉得这个颜色对我干扰较大。
 Plug 'mileszs/ack.vim'          " 20.6.15
 Plug 'mhinz/vim-startify'       " 20.6.28
