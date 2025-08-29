@@ -1,0 +1,17 @@
+tap "homebrew/bundle"
+
+# macOS specific formulae
+brew "colima"
+brew "docker"
+brew "m-cli"
+brew "pinentry-mac"
+brew "switchaudio-osx"
+
+# macOS casks
+cask "hammerspoon"
+cask "kawa"
+cask "mactex"
+cask "postman"
+cask "squirrel"
+cask "xquartz"
+cask "zed"

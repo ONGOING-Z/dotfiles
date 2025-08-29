@@ -121,6 +121,21 @@ $ sudo apt install tmux
 
 安装: `npm install -g diff-so-fancy`
 
+## Homebrew（可选）
+
+根据平台选择对应的 Brewfile：
+
+```bash
+# 公共依赖
+brew bundle --file brew/Brewfile.common
+
+# macOS 特定依赖
+brew bundle --file brew/Brewfile.macos
+
+# Linux 特定依赖
+brew bundle --file brew/Brewfile.linux
+```
+
 ## 参考
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
 2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
