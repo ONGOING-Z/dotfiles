@@ -53,6 +53,15 @@ jobs:
                 `- Commit: \`${context.sha}\``
               ].join('\n');
               await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: comment });
+              // Append brief Chinese change summary to PR description
+              try {
+                const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
+                const last = commits.slice(-10);
+                const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
+                const cn = ['变更要点（自动生成）', '', ...bullets].join('\n');
+                const mergedBody = (pr.body ? pr.body + '\n\n' : '') + cn;
+                await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: mergedBody });
+              } catch (e) { core.warning(`Update PR body failed: ${e.message}`); }
               return;
             }
 
@@ -89,4 +98,12 @@ jobs:
                 break;
               }
             }
+            // Add brief Chinese change summary into PR body
+            try {
+              const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
+              const last = commits.slice(-10);
+              const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
+              const cn = ['变更要点（自动生成）', '', ...bullets].join('\n');
+              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: body + '\n\n' + cn });
+            } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
             core.info(`Created PR: ${pr.html_url}`);
