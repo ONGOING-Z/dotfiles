@@ -39,7 +39,24 @@ jobs:
               const pr = prs[0];
               core.info(`PR already exists: ${pr.html_url}`);
               // ensure title includes Shanghai date suffix
-              const desiredTitle = `chore: auto PR - ${branchName} - ${shDate}`;
+              const cnMap = [
+                { re: /^feat[\/-]/i, cn: '功能' },
+                { re: /^fix[\/-]/i, cn: '修复' },
+                { re: /^docs[\/-]/i, cn: '文档' },
+                { re: /^ci[\/-]/i, cn: 'CI' },
+                { re: /^chore[\/-]/i, cn: '杂务' },
+              ];
+              let kind = '更新';
+              let desc = branchName;
+              for (const it of cnMap) {
+                if (it.re.test(branchName)) {
+                  kind = it.cn;
+                  desc = branchName.replace(it.re, '');
+                  break;
+                }
+              }
+              desc = desc.replace(/(^-|^_|\/-)/, '').replace(/[-_]/g, ' ').replace(/\b\d{4}-\d{2}-\d{2}\b/g, '').trim() || '更新';
+              const desiredTitle = `${kind}: ${desc} - ${shDate}`;
               if (pr.title !== desiredTitle) {
                 await github.rest.pulls.update({
                   owner, repo, pull_number: pr.number, title: desiredTitle
@@ -65,7 +82,24 @@ jobs:
               return;
             }
 
-            const title = `chore: auto PR - ${branchName} - ${shDate}`;
+            const cnMap = [
+              { re: /^feat[\/-]/i, cn: '功能' },
+              { re: /^fix[\/-]/i, cn: '修复' },
+              { re: /^docs[\/-]/i, cn: '文档' },
+              { re: /^ci[\/-]/i, cn: 'CI' },
+              { re: /^chore[\/-]/i, cn: '杂务' },
+            ];
+            let kind = '更新';
+            let desc = branchName;
+            for (const it of cnMap) {
+              if (it.re.test(branchName)) {
+                kind = it.cn;
+                desc = branchName.replace(it.re, '');
+                break;
+              }
+            }
+            desc = desc.replace(/(^-|^_|\/-)/, '').replace(/[-_]/g, ' ').replace(/\b\d{4}-\d{2}-\d{2}\b/g, '').trim() || '更新';
+            const title = `${kind}: ${desc} - ${shDate}`;
             const bodyLines = [
               'This pull request was automatically created by GitHub Actions.',
               '',
