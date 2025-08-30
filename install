@@ -94,6 +94,15 @@ if [ -n "$BREW_MIRROR" ]; then
       printf "[warn] Unknown BREW_MIRROR=%s\n" "$BREW_MIRROR"
       ;;
   esac
+else
+  # Auto-detect: try to ping common mirrors quickly (best-effort)
+  if command -v curl >/dev/null 2>&1; then
+    if curl -s --max-time 2 https://mirrors.ustc.edu.cn >/dev/null; then
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+    elif curl -s --max-time 2 https://mirrors.tuna.tsinghua.edu.cn >/dev/null; then
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+    fi
+  fi
 fi
 if [ -n "$BREW_PROXY" ]; then
   export ALL_PROXY="$BREW_PROXY"

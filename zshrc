@@ -17,6 +17,22 @@ case $- in
   *) return ;; # non-interactive
 esac
 
+# Optional: quick profiling (enable with ZSH_PROFILE=1)
+if [ "${ZSH_PROFILE:-0}" = "1" ]; then
+  zmodload zsh/zprof 2>/dev/null || true
+fi
+
+# Light lazy-load example: defer loading k and git-open until used
+_lazy_source() {
+  emulate -L zsh
+  setopt extended_glob
+  local plugin="$1"
+  shift
+  for cmd in "$@"; do
+    eval "${cmd}() { unfunction $cmd; source $plugin; $cmd \"$@\" }"
+  done
+}
+
 # Detect OS
 OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
