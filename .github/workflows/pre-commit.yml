@@ -12,6 +12,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
@@ -20,14 +22,18 @@ jobs:
       - name: Detect changed files
         id: diff
         run: |
-          git fetch origin ${GITHUB_BASE_REF:-${{ github.ref_name }}} --depth=1 || true
-          base=${GITHUB_BASE_REF}
-          if [ -z "$base" ]; then base=$(git rev-parse HEAD~1 || echo HEAD); fi
-          echo "base=$base" >> $GITHUB_OUTPUT
+          if [ -n "$GITHUB_BASE_REF" ]; then
+            git fetch origin "$GITHUB_BASE_REF" --depth=1 || true
+            echo "from=origin/$GITHUB_BASE_REF" >> $GITHUB_OUTPUT
+          else
+            prev=$(git rev-parse HEAD^ || echo HEAD)
+            echo "from=$prev" >> $GITHUB_OUTPUT
+          fi
+          echo "to=HEAD" >> $GITHUB_OUTPUT
       - name: Run pre-commit (changed files)
         uses: pre-commit/action@v3.0.1
         with:
-          extra_args: --from-ref ${{ steps.diff.outputs.base }} --to-ref HEAD --show-diff-on-failure
+          extra_args: --from-ref ${{ steps.diff.outputs.from }} --to-ref ${{ steps.diff.outputs.to }} --show-diff-on-failure
       - name: Auto-commit pre-commit fixes (if any)
         if: ${{ always() }}
         run: |
