@@ -76,16 +76,13 @@ jobs:
                 const last = commits.slice(-10);
                 const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
                 const cn = ['<!-- auto-summary:start -->', '变更要点（自动生成）', '', ...bullets, '<!-- auto-summary:end -->'].join('\n');
-                const body = pr.body || '';
+                let body = pr.body || '';
                 const start = '<!-- auto-summary:start -->';
                 const end = '<!-- auto-summary:end -->';
-                let nextBody;
-                if (body.includes(start) && body.includes(end)) {
-                  const re = new RegExp(`${start}[\s\S]*?${end}`);
-                  nextBody = body.replace(re, cn);
-                } else {
-                  nextBody = (body ? body + '\n\n' : '') + cn;
-                }
+                // remove all existing auto-summary blocks to avoid duplicates
+                const reAll = new RegExp(`${start}[\s\S]*?${end}`, 'g');
+                body = body.replace(reAll, '').trim();
+                const nextBody = (body ? body + '\n\n' : '') + cn;
                 await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: nextBody });
               } catch (e) { core.warning(`Update PR body failed: ${e.message}`); }
               return;
@@ -147,6 +144,11 @@ jobs:
               const last = commits.slice(-10);
               const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
               const cn = ['<!-- auto-summary:start -->', '变更要点（自动生成）', '', ...bullets, '<!-- auto-summary:end -->'].join('\n');
-              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: body + '\n\n' + cn });
+              // ensure no duplicates on first write as well (defensive)
+              const start = '<!-- auto-summary:start -->';
+              const end = '<!-- auto-summary:end -->';
+              const reAll = new RegExp(`${start}[\s\S]*?${end}`, 'g');
+              const baseBody = (body || '').replace(reAll, '').trim();
+              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: (baseBody ? baseBody + '\n\n' : '') + cn });
             } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
             core.info(`Created PR: ${pr.html_url}`);
