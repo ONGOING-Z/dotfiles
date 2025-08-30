@@ -1,5 +1,16 @@
 # dotfiles
 
+> 规范速览（详细见 `.cursor/rules.md`）
+
+- 分支命名：`<类型>-<简述>-<YYYY-MM-DD>`（上海时区），如 `feat-brew-install-2025-08-30`
+- PR 标题：`<类型中文>: <简述> - <YYYY-MM-DD>`，自动生成并随推送更新
+- 提交规范：Conventional Commits（可中文），提交前跑 `pre-commit run --all-files`
+- 安装脚本：默认仅建链接；可用 `--brew/--brew-upgrade/--brew-cleanup` 与 `BREW_MIRROR/ BREW_PROXY`
+- Zsh：仅选一个管理器（oh-my-zsh 或 zplug），非交互 shell 跳过重型初始化
+- Tmux：`tmux-256color` + `RGB`，`default-command` 使用 `zsh -l`
+- Dotbot：特权路径链接有条件执行（如 `arthas.properties`）
+- CI/PR：自动 PR（中文标题+摘要）、pre-commit、pytest（`std_my_dir`）
+
 最好在家目录下建立的配置文件都是link类型的，放引用在家目录下，让引用指向你dotfiles文件夹下真正的配置文件。
 
 存放文本三巨头[zsh][1]、[vim][2]、[tmux][3]的设置文件.
