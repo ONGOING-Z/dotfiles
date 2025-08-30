@@ -79,6 +79,8 @@ DISABLE_MAGIC_FUNCTIONS=true
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
+ZSH_MANAGER=${ZSH_MANAGER:-auto} # auto|ohmyzsh|zplug
+
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
@@ -96,7 +98,9 @@ plugins=(
 )
 # use x to unpack the package
 
-source $ZSH/oh-my-zsh.sh
+if [ "$ZSH_MANAGER" = "ohmyzsh" ] || { [ "$ZSH_MANAGER" = "auto" ] && [ -d "$ZSH" ]; }; then
+  source $ZSH/oh-my-zsh.sh
+fi
 
 # User configuration
 
@@ -116,17 +120,12 @@ export LC_ALL=en_US.UTF-8
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-######## Plugin ###### by zplug
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-#  a zsh plugin to make listing directory more readable
-#zplug "supercrabtree/k"
-# enhaced cd
-zplug "b4b4r07/enhancd", use:init.sh
-
-zplug "zsh-users/zsh-history-substring-search"
-#zplug "paulirish/git-open", as:plugin
-
-######## Plugin ######
+######## Plugin ###### by zplug (enabled when manager=zplug or auto with zplug present)
+if [ "$ZSH_MANAGER" = "zplug" ] || { [ "$ZSH_MANAGER" = "auto" ] && [ -f "$HOME/.zplug/init.zsh" ]; }; then
+  zplug "zsh-users/zsh-syntax-highlighting", defer:2
+  zplug "b4b4r07/enhancd", use:init.sh
+  zplug "zsh-users/zsh-history-substring-search"
+fi
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -227,15 +226,15 @@ export SDKMAN_DIR="/home/${USER}/.sdkman"
 ###################################################################################################
 # place this the end of file. !!!
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
+if [ "$ZSH_MANAGER" = "zplug" ] || { [ "$ZSH_MANAGER" = "auto" ] && [ -f "$HOME/.zplug/init.zsh" ]; }; then
+  if ! zplug check --verbose; then
+      printf "Install? [y/N]: "
+      if read -q; then
+          echo; zplug install
+      fi
+  fi
+  zplug load
 fi
-
-# Then, source plugins and add commands to $PATH
-zplug load
 
 # 使用国内二进制包镜像
 if [ "$OS_NAME" = "darwin" ]; then

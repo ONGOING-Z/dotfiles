@@ -19,6 +19,18 @@ repos:
     hooks:
       - id: black
         language_version: python3
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.0
+    hooks:
+      - id: codespell
+        args: ["-L", "te,hist,ot,ser"]
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
