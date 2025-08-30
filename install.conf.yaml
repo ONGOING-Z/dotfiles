@@ -15,7 +15,8 @@
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
     ~/.config/nvim/init.vim: nvim/init.vim
-    /usr/local/arthas-packaging-4.0.5-bin/arthas.properties: arthas/arthas.properties
+    # arthas properties (link only when directory exists; see shell task below)
+    # /usr/local/arthas-packaging-4.0.5-bin/arthas.properties: arthas/arthas.properties
 
 - create:
     - ~/downloads
@@ -25,3 +26,4 @@
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
+    - [ 'test -d /usr/local/arthas-packaging-4.0.5-bin && ln -snf "${PWD}/arthas/arthas.properties" /usr/local/arthas-packaging-4.0.5-bin/arthas.properties || echo "[skip] arthas directory not found"', 'Link arthas properties if present' ]

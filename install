@@ -34,6 +34,10 @@ fi
 
 ## Parse options (ours) and forward rest to Dotbot
 DO_BREW=${INSTALL_WITH_BREW:-1}
+DO_BREW_UPGRADE=${INSTALL_BREW_UPGRADE:-0}
+DO_BREW_CLEANUP=${INSTALL_BREW_CLEANUP:-0}
+BREW_MIRROR=${BREW_MIRROR:-}
+BREW_PROXY=${BREW_PROXY:-}
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
@@ -43,6 +47,14 @@ while (( "$#" )); do
       DO_BREW=0; shift ;;
     --brew)
       DO_BREW=1; shift ;;
+    --brew-upgrade)
+      DO_BREW_UPGRADE=1; shift ;;
+    --brew-cleanup)
+      DO_BREW_CLEANUP=1; shift ;;
+    --brew-mirror=*)
+      BREW_MIRROR="${1#*=}"; shift ;;
+    --brew-proxy=*)
+      BREW_PROXY="${1#*=}"; shift ;;
     *)
       FORWARD_ARGS+=("$1"); shift ;;
   esac
@@ -66,11 +78,35 @@ else
   BREWFILES+=("brew/Brewfile.linux")
 fi
 
+# Optional mirrors/proxy
+if [ -n "$BREW_MIRROR" ]; then
+  case "$BREW_MIRROR" in
+    ustc)
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+      ;;
+    tsinghua)
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+      ;;
+    *)
+      printf "[warn] Unknown BREW_MIRROR=%s\n" "$BREW_MIRROR"
+      ;;
+  esac
+fi
+if [ -n "$BREW_PROXY" ]; then
+  export ALL_PROXY="$BREW_PROXY"
+  export HTTPS_PROXY="$BREW_PROXY"
+  export HTTP_PROXY="$BREW_PROXY"
+fi
+
 # Capture pre-state
 before_formula=$(brew list --formula 2>/dev/null | sort || true)
 before_cask=$(brew list --cask 2>/dev/null | sort || true)
 
 brew update || true
+if [ "$DO_BREW_UPGRADE" = "1" ]; then
+  printf "[info] brew upgrade\n"
+  brew upgrade || true
+fi
 for bf in "${BREWFILES[@]}"; do
   if [ -f "$bf" ]; then
     printf "[info] brew bundle --file %s\n" "$bf"
@@ -98,6 +134,12 @@ if [ -n "$new_cask" ]; then
   printf '%s\n' "$new_cask" | sed 's/^/    - /'
 else
   echo "  Casks: none"
+fi
+
+if [ "$DO_BREW_CLEANUP" = "1" ]; then
+  printf "[info] brew cleanup & autoremove\n"
+  brew cleanup -s || true
+  brew autoremove || true
 fi
 else
 printf "[hint] Skip brew bundle (Homebrew missing or disabled).\n"

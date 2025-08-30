@@ -39,7 +39,24 @@ jobs:
               const pr = prs[0];
               core.info(`PR already exists: ${pr.html_url}`);
               // ensure title includes Shanghai date suffix
-              const desiredTitle = `chore: auto PR - ${branchName} - ${shDate}`;
+              const cnMap = [
+                { re: /^feat[\/-]/i, cn: '功能' },
+                { re: /^fix[\/-]/i, cn: '修复' },
+                { re: /^docs[\/-]/i, cn: '文档' },
+                { re: /^ci[\/-]/i, cn: 'CI' },
+                { re: /^chore[\/-]/i, cn: '杂务' },
+              ];
+              let kind = '更新';
+              let desc = branchName;
+              for (const it of cnMap) {
+                if (it.re.test(branchName)) {
+                  kind = it.cn;
+                  desc = branchName.replace(it.re, '');
+                  break;
+                }
+              }
+              desc = desc.replace(/(^-|^_|\/-)/, '').replace(/[-_]/g, ' ').replace(/\b\d{4}-\d{2}-\d{2}\b/g, '').trim() || '更新';
+              const desiredTitle = `${kind}: ${desc} - ${shDate}`;
               if (pr.title !== desiredTitle) {
                 await github.rest.pulls.update({
                   owner, repo, pull_number: pr.number, title: desiredTitle
@@ -53,10 +70,36 @@ jobs:
                 `- Commit: \`${context.sha}\``
               ].join('\n');
               await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: comment });
+              // Append brief Chinese change summary to PR description
+              try {
+                const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
+                const last = commits.slice(-10);
+                const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
+                const cn = ['变更要点（自动生成）', '', ...bullets].join('\n');
+                const mergedBody = (pr.body ? pr.body + '\n\n' : '') + cn;
+                await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: mergedBody });
+              } catch (e) { core.warning(`Update PR body failed: ${e.message}`); }
               return;
             }
 
-            const title = `chore: auto PR - ${branchName} - ${shDate}`;
+            const cnMap = [
+              { re: /^feat[\/-]/i, cn: '功能' },
+              { re: /^fix[\/-]/i, cn: '修复' },
+              { re: /^docs[\/-]/i, cn: '文档' },
+              { re: /^ci[\/-]/i, cn: 'CI' },
+              { re: /^chore[\/-]/i, cn: '杂务' },
+            ];
+            let kind = '更新';
+            let desc = branchName;
+            for (const it of cnMap) {
+              if (it.re.test(branchName)) {
+                kind = it.cn;
+                desc = branchName.replace(it.re, '');
+                break;
+              }
+            }
+            desc = desc.replace(/(^-|^_|\/-)/, '').replace(/[-_]/g, ' ').replace(/\b\d{4}-\d{2}-\d{2}\b/g, '').trim() || '更新';
+            const title = `${kind}: ${desc} - ${shDate}`;
             const bodyLines = [
               'This pull request was automatically created by GitHub Actions.',
               '',
@@ -74,4 +117,27 @@ jobs:
             try {
               await github.rest.issues.addAssignees({ owner, repo, issue_number: pr.number, assignees: [owner] });
             } catch (e) { core.warning(`Assign failed: ${e.message}`); }
+            // Label based on branch prefix
+            const lower = branchName.toLowerCase();
+            const map = [
+              { p: 'fix-', l: 'fix' },
+              { p: 'feat-', l: 'feature' },
+              { p: 'docs-', l: 'docs' },
+              { p: 'ci-', l: 'ci' },
+              { p: 'chore-', l: 'chore' },
+            ];
+            for (const it of map) {
+              if (lower.startsWith(it.p)) {
+                try { await github.rest.issues.addLabels({ owner, repo, issue_number: pr.number, labels: [it.l] }); } catch {}
+                break;
+              }
+            }
+            // Add brief Chinese change summary into PR body
+            try {
+              const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
+              const last = commits.slice(-10);
+              const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
+              const cn = ['变更要点（自动生成）', '', ...bullets].join('\n');
+              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: body + '\n\n' + cn });
+            } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
             core.info(`Created PR: ${pr.html_url}`);

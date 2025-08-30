@@ -41,6 +41,27 @@ exec $SHELL -l
 
 > 注意：`install.conf.yaml` 会在需要时自动创建目录并建立链接；macOS 与 Linux 均可使用。
 
+### 安装器参数
+
+```bash
+# 仅建立链接（跳过 Homebrew）
+./install --only-links
+
+# 启用 Homebrew 安装；可选升级与清理
+INSTALL_WITH_BREW=1 ./install --brew --brew-upgrade --brew-cleanup
+
+# 环境变量开关（与参数等效）
+INSTALL_WITH_BREW=0 ./install
+INSTALL_BREW_UPGRADE=1 INSTALL_BREW_CLEANUP=1 ./install
+
+# 镜像与代理（可选）
+# 镜像：ustc 或 tsinghua
+BREW_MIRROR=ustc ./install --brew
+
+# 代理：如 http://127.0.0.1:7890
+BREW_PROXY=http://127.0.0.1:7890 ./install --brew
+```
+
 ## dotfiles管理方法1
 
 1. 新建一个`dotfiles/`文件夹
@@ -178,6 +199,18 @@ pre-commit run --all-files
 ```
 
 - CI：push/PR 将自动运行 pre-commit；非默认分支 push 会自动创建 PR（见 `.github/workflows/`）。
+
+## 故障排查（Troubleshooting）
+
+- tmux 进入后不是 zsh
+  - 运行 `tmux kill-server` 后重启；检查 `tmux/tmux.conf` 的 `default-shell` 与 `default-command`。
+  - macOS 确认 `/opt/homebrew/bin/zsh` 在 `/etc/shells` 中，必要时 `chsh -s /opt/homebrew/bin/zsh`。
+- 剪贴板复制无效
+  - macOS 需要 `pbcopy`；Linux 安装 `xclip` 或 `xsel`。
+- Homebrew 太慢或报错
+  - 可使用 `--only-links` 跳过，或启用 `--brew-upgrade/--brew-cleanup` 控制行为。
+- 自动 PR 权限问题
+  - 使用侧分支 + PR 由网页合并；或给使用的令牌开启 Workflows 权限，或改用 SSH 推送。
 
 ## 参考
 

@@ -11,6 +11,12 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 export TERM="xterm-256color"
 
+# Skip heavy init for non-interactive shells
+case $- in
+  *i*) ;; # interactive
+  *) return ;; # non-interactive
+esac
+
 # Detect OS
 OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
