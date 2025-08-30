@@ -193,6 +193,18 @@ pre-commit run --all-files
 
 - CI：push/PR 将自动运行 pre-commit；非默认分支 push 会自动创建 PR（见 `.github/workflows/`）。
 
+## 故障排查（Troubleshooting）
+
+- tmux 进入后不是 zsh
+  - 运行 `tmux kill-server` 后重启；检查 `tmux/tmux.conf` 的 `default-shell` 与 `default-command`。
+  - macOS 确认 `/opt/homebrew/bin/zsh` 在 `/etc/shells` 中，必要时 `chsh -s /opt/homebrew/bin/zsh`。
+- 剪贴板复制无效
+  - macOS 需要 `pbcopy`；Linux 安装 `xclip` 或 `xsel`。
+- Homebrew 太慢或报错
+  - 可使用 `--only-links` 跳过，或启用 `--brew-upgrade/--brew-cleanup` 控制行为。
+- 自动 PR 权限问题
+  - 使用侧分支 + PR 由网页合并；或给使用的令牌开启 Workflows 权限，或改用 SSH 推送。
+
 ## 参考
 
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
