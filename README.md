@@ -6,6 +6,24 @@
 
 [Shell生产力环境恢复][4]
 
+## 主要配置一览
+
+下表展示本仓库维护的常用工具配置（路径为仓库内相对路径）：
+
+| 工具 | 配置路径 | 项目链接 |
+| --- | --- | --- |
+| Zsh | `zshrc` | [oh-my-zsh](https://ohmyz.sh) |
+| Tmux | `tmux/tmux.conf` | [tmux](https://github.com/tmux/tmux) |
+| Vim | `vim/vimrc` | [Vim](https://www.vim.org/) |
+| Neovim | `nvim/init.vim` | [Neovim](https://neovim.io) |
+| Git | `git/gitconfig` | [Git](https://git-scm.com) |
+| Homebrew | `brew/` | [Homebrew](https://brew.sh) |
+| fzf | `.fzf` | [fzf](https://github.com/junegunn/fzf) |
+| GDB | `.gdbinit`, `.gdb/` | [GDB](https://www.gnu.org/software/gdb/) |
+| Pip | `.pip/pip.conf` | [pip](https://pip.pypa.io/) |
+| Rime 输入法 | `rime-config` | [Rime](https://rime.im/) |
+| Dotbot | `install`, `install.conf.yaml`, `dotbot/` | [Dotbot](https://github.com/anishathalye/dotbot) |
+
 ## 快速开始（推荐）
 
 ```bash
