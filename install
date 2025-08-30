@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 CONFIG="install.conf.yaml"
 DOTBOT_DIR="dotbot"
@@ -32,10 +32,31 @@ else
   fi
 fi
 
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
+## Parse options (ours) and forward rest to Dotbot
+DO_BREW=${INSTALL_WITH_BREW:-1}
+FORWARD_ARGS=()
+while (( "$#" )); do
+  case "$1" in
+    --no-brew)
+      DO_BREW=0; shift ;;
+    --only-links)
+      DO_BREW=0; shift ;;
+    --brew)
+      DO_BREW=1; shift ;;
+    *)
+      FORWARD_ARGS+=("$1"); shift ;;
+  esac
+done
+
+## Pre-check for privileged links (arthas)
+if [ ! -w "/usr/local" ]; then
+  printf "[hint] /usr/local is not writable. Links targeting /usr/local may require sudo.\n"
+fi
+
+"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${FORWARD_ARGS[@]}"
 
 # Brew update & bundle, and report newly installed items
-if command -v brew >/dev/null 2>&1; then
+if [ "$DO_BREW" = "1" ] && command -v brew >/dev/null 2>&1; then
 printf "[info] Homebrew detected. Updating and bundling...\n"
 
 BREWFILES=("brew/Brewfile.common")
@@ -79,5 +100,5 @@ else
   echo "  Casks: none"
 fi
 else
-printf "[hint] Homebrew not found. Skip brew bundle.\n"
+printf "[hint] Skip brew bundle (Homebrew missing or disabled).\n"
 fi
