@@ -11,6 +11,24 @@
 - Dotbot：特权路径链接有条件执行（如 `arthas.properties`）
 - CI/PR：自动 PR（中文标题+摘要）、pre-commit、pytest（`std_my_dir`）
 
+### 可选增强
+
+- 一键安装 tmux 插件（TPM）：
+
+```bash
+./install --tpm   # 或环境变量：INSTALL_WITH_TPM=1 ./install
+```
+
+- Makefile 常用命令：
+
+```bash
+make install     # 安装（默认启用 brew）
+make lint        # 运行 pre-commit 检查
+make fmt         # 运行 pre-commit 全量格式化
+make pre-commit  # 安装并启用 pre-commit
+make test        # 运行 pytest
+```
+
 最好在家目录下建立的配置文件都是link类型的，放引用在家目录下，让引用指向你dotfiles文件夹下真正的配置文件。
 
 存放文本三巨头[zsh][1]、[vim][2]、[tmux][3]的设置文件.
