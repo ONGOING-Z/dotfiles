@@ -53,6 +53,13 @@ INSTALL_WITH_BREW=1 ./install --brew --brew-upgrade --brew-cleanup
 # 环境变量开关（与参数等效）
 INSTALL_WITH_BREW=0 ./install
 INSTALL_BREW_UPGRADE=1 INSTALL_BREW_CLEANUP=1 ./install
+
+# 镜像与代理（可选）
+# 镜像：ustc 或 tsinghua
+BREW_MIRROR=ustc ./install --brew
+
+# 代理：如 http://127.0.0.1:7890
+BREW_PROXY=http://127.0.0.1:7890 ./install --brew
 ```
 
 ## dotfiles管理方法1

@@ -74,4 +74,19 @@ jobs:
             try {
               await github.rest.issues.addAssignees({ owner, repo, issue_number: pr.number, assignees: [owner] });
             } catch (e) { core.warning(`Assign failed: ${e.message}`); }
+            // Label based on branch prefix
+            const lower = branchName.toLowerCase();
+            const map = [
+              { p: 'fix-', l: 'fix' },
+              { p: 'feat-', l: 'feature' },
+              { p: 'docs-', l: 'docs' },
+              { p: 'ci-', l: 'ci' },
+              { p: 'chore-', l: 'chore' },
+            ];
+            for (const it of map) {
+              if (lower.startsWith(it.p)) {
+                try { await github.rest.issues.addLabels({ owner, repo, issue_number: pr.number, labels: [it.l] }); } catch {}
+                break;
+              }
+            }
             core.info(`Created PR: ${pr.html_url}`);
