@@ -52,7 +52,7 @@
 
 ## YAML 与编辑器
 
-- YAML：行宽 140、2 空格缩进、文档头可选（已配置 `.yamllint.yaml`）。
+- YAML：行宽 140、2 空格缩进、禁止使用文档头 `---`，键名如 `on` 需加引号（已在 `.yamllint.yaml` 配置）。
 - 编辑器：遵循 `.editorconfig`（LF、UTF-8、2 空格缩进；Makefile 使用 tab）。
 
 ## Makefile（约定）
