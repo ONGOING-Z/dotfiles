@@ -13,7 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          # Ensure we are on a branch ref (not detached) when possible
+          ref: ${{ github.head_ref || github.ref }}
+          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
@@ -36,13 +40,39 @@ jobs:
           extra_args: --from-ref ${{ steps.diff.outputs.from }} --to-ref ${{ steps.diff.outputs.to }} --show-diff-on-failure
       - name: Auto-commit pre-commit fixes (if any)
         if: ${{ always() }}
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
         run: |
           if ! git diff --quiet --exit-code; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -A
             git commit -m "chore(pre-commit): auto-apply formatting and fixes"
-            git push
+
+            # Determine branch to push to
+            BRANCH="$HEAD_REF"
+            if [ -z "$BRANCH" ]; then
+              BRANCH="$REF_NAME"
+            fi
+
+            # Allow push only for push events or same-repo PRs
+            CAN_PUSH="false"
+            if [ "$EVENT_NAME" = "push" ]; then
+              CAN_PUSH="true"
+            elif [ -n "$PR_HEAD_REPO" ] && [ "$PR_HEAD_REPO" = "$REPO" ]; then
+              CAN_PUSH="true"
+            fi
+
+            if [ -n "$BRANCH" ] && [ "$CAN_PUSH" = "true" ]; then
+              echo "Pushing auto-fixes to $BRANCH"
+              git push origin HEAD:"$BRANCH"
+            else
+              echo "Skip pushing auto-fixes (detached HEAD or forked PR)."
+            fi
           else
             echo "No changes to commit"
           fi
