@@ -68,7 +68,7 @@ if [ ! -w "/usr/local" ]; then
   printf "[hint] /usr/local is not writable. Links targeting /usr/local may require sudo.\n"
 fi
 
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${FORWARD_ARGS[@]}"
+"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
 
 # Brew update & bundle, and report newly installed items
 if [ "$DO_BREW" = "1" ] && command -v brew >/dev/null 2>&1; then
