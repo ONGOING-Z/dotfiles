@@ -39,8 +39,8 @@ Plug 'plasticboy/vim-markdown' "20.3.24 markdown
 "下边这个star比较多
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'} " 20.7.13
 "Plug 'junegunn/goyo.vim'       "20.4.12 concentrate
-"Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-"Plug 'junegunn/fzf.vim'        "20.5.4
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'        "20.5.4
 Plug 'wincent/command-t'       " 20.6.14
 "Plug 'luochen1990/rainbow'      " 20.6.15
 " 20.7.13 注释掉此插件，觉得这个颜色对我干扰较大。
