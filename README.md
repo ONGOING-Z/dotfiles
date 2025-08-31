@@ -36,7 +36,8 @@ make test        # 运行 pytest
 
 ```bash
 # 已在 zshrc 中自动初始化（检测到 zoxide 后优先使用）
-z <keyword>   # 交互式选择并跳转（别名 `zi`）
+z <keyword>   # 直接跳转到最匹配目录
+zi            # 交互式选择并跳转
 za            # 将当前目录加入权重
 cd -          # 常用返回
 ```

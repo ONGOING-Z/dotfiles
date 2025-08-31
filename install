@@ -42,6 +42,8 @@ DO_TPM=${INSTALL_WITH_TPM:-0}
 DO_FZF_BINDS=${INSTALL_WITH_FZF_BINDS:-0}
 DO_ZOXIDE=${INSTALL_WITH_ZOXIDE_SETUP:-0}
 DO_INTERACTIVE=0
+PROFILE_SAVE=""
+PROFILE_LOAD=""
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
@@ -67,10 +69,26 @@ while (( "$#" )); do
       DO_ZOXIDE=1; shift ;;
     --interactive)
       DO_INTERACTIVE=1; shift ;;
+    --profile-save=*)
+      PROFILE_SAVE="${1#*=}"; shift ;;
+    --profile-load=*)
+      PROFILE_LOAD="${1#*=}"; shift ;;
     *)
       FORWARD_ARGS+=("$1"); shift ;;
   esac
 done
+
+## Load profile if provided (whitelisted vars only)
+if [ -n "$PROFILE_LOAD" ] && [ -f "$PROFILE_LOAD" ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      \#*|'') continue ;;
+      DO_BREW=*|DO_BREW_UPGRADE=*|DO_BREW_CLEANUP=*|DO_TPM=*|DO_FZF_BINDS=*|DO_ZOXIDE=*|BREW_MIRROR=*|BREW_PROXY=*)
+        eval "$line"
+        ;;
+    esac
+  done < "$PROFILE_LOAD"
+fi
 
 ## Interactive mode (optional - TTY only, safe defaults otherwise)
 if [ "$DO_INTERACTIVE" = "1" ] && [ -t 0 ] && [ -z "${CI:-}" ]; then
@@ -252,4 +270,20 @@ if [ "$DO_ZOXIDE" = "1" ]; then
     printf "[info] zoxide already installed.\n"
   fi
   printf "[info] zoxide is initialized automatically in zshrc when detected.\n"
+fi
+
+# Save profile if requested
+if [ -n "$PROFILE_SAVE" ]; then
+  {
+    echo "# install profile generated on $(date)"
+    echo "DO_BREW=$DO_BREW"
+    echo "DO_BREW_UPGRADE=$DO_BREW_UPGRADE"
+    echo "DO_BREW_CLEANUP=$DO_BREW_CLEANUP"
+    echo "DO_TPM=$DO_TPM"
+    echo "DO_FZF_BINDS=$DO_FZF_BINDS"
+    echo "DO_ZOXIDE=$DO_ZOXIDE"
+    [ -n "$BREW_MIRROR" ] && echo "BREW_MIRROR=$BREW_MIRROR"
+    [ -n "$BREW_PROXY" ] && echo "BREW_PROXY=$BREW_PROXY"
+  } > "$PROFILE_SAVE"
+  printf "[info] Profile saved to %s\n" "$PROFILE_SAVE"
 fi

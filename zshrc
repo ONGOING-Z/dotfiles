@@ -127,7 +127,7 @@ fi
 # Prefer zoxide over z if available
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
-  alias z='zoxide query -i'
+  z() { local dest; dest="$(zoxide query -i "$@")" || return; [ -n "$dest" ] && builtin cd -- "$dest"; }
   alias zi='zoxide query -i'
   alias za='zoxide add'
   alias cd='zoxide cd'
