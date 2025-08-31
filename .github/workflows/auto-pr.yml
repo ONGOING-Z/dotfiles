@@ -80,8 +80,8 @@ jobs:
                 const start = '<!-- auto-summary:start -->';
                 const end = '<!-- auto-summary:end -->';
                 // remove all existing auto-summary blocks to avoid duplicates
-                const reAll = new RegExp(`${start}[\s\S]*?${end}`, 'g');
-                body = body.replace(reAll, '').trim();
+                const reAuto = new RegExp(`${start}[\s\S]*?${end}`, 'g');
+                body = body.replace(reAuto, '').trim();
                 const nextBody = (body ? body + '\n\n' : '') + cn;
                 await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: nextBody });
               } catch (e) { core.warning(`Update PR body failed: ${e.message}`); }
@@ -147,8 +147,8 @@ jobs:
               // ensure no duplicates on first write as well (defensive)
               const start = '<!-- auto-summary:start -->';
               const end = '<!-- auto-summary:end -->';
-              const reAll = new RegExp(`${start}[\s\S]*?${end}`, 'g');
-              const baseBody = (body || '').replace(reAll, '').trim();
+              const reAuto = new RegExp(`${start}[\s\S]*?${end}`, 'g');
+              const baseBody = (body || '').replace(reAuto, '').trim();
               await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: (baseBody ? baseBody + '\n\n' : '') + cn });
             } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
             core.info(`Created PR: ${pr.html_url}`);

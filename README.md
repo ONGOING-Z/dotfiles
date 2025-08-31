@@ -50,7 +50,7 @@ make test        # 运行 pytest
 | fzf         | `.fzf`                                    | [fzf](https://github.com/junegunn/fzf)           |
 | GDB         | `.gdbinit`, `.gdb/`                       | [GDB](https://www.gnu.org/software/gdb/)         |
 | Pip         | `.pip/pip.conf`                           | [pip](https://pip.pypa.io/)                      |
-| Rime 输入法 | `rime-config`                             | [Rime](https://rime.im/)                         |
+| Rime 输入法 | `rime-config`                             | [Rime](https://rime.im/) <!-- codespell:ignore Rime rime --> |
 | Dotbot      | `install`, `install.conf.yaml`, `dotbot/` | [Dotbot](https://github.com/anishathalye/dotbot) |
 
 ## 快速开始（推荐）

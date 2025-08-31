@@ -145,7 +145,7 @@ export LC_ALL=en_US.UTF-8
 ######## Plugin ###### by zplug (enabled when manager=zplug or auto with zplug present)
 if [ "$ZSH_MANAGER" = "zplug" ] || { [ "$ZSH_MANAGER" = "auto" ] && [ -f "$HOME/.zplug/init.zsh" ]; }; then
   zplug "zsh-users/zsh-syntax-highlighting", defer:2
-  zplug "b4b4r07/enhancd", use:init.sh
+  zplug "b4b4r07/enhancd", use:init.sh  # codespell: ignore plugin name
   zplug "zsh-users/zsh-history-substring-search"
 fi
 
@@ -241,7 +241,7 @@ unsetopt correct_all
 #. ~/.bashrc
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# 21-9-5 Sun the sdkman is a tool that install softwares like apache tomcat.
+# 21-9-5 Sun the sdkman is a tool that installs software like apache tomcat.
 export SDKMAN_DIR="/home/${USER}/.sdkman"
 [[ -s "/home/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/home/${USER}/.sdkman/bin/sdkman-init.sh"
 
