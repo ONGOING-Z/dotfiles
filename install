@@ -101,6 +101,20 @@ if [ "$DO_INTERACTIVE" = "1" ] && [ -t 0 ] && [ -z "${CI:-}" ]; then
     read -r -p "Install fzf key bindings & completion? [y/N]: " a; a=${a:-N}; [ "${a^}" = "Y" ] && DO_FZF_BINDS=1 || DO_FZF_BINDS=0
     read -r -p "Setup zoxide (install via brew if missing)? [y/N]: " a; a=${a:-N}; [ "${a^}" = "Y" ] && DO_ZOXIDE=1 || DO_ZOXIDE=0
   fi
+
+  # Print reusable command summary
+  printf "[info] Summary of selections (reusable command):\n"
+  summary_env=""
+  [ -n "$BREW_MIRROR" ] && summary_env="BREW_MIRROR=$BREW_MIRROR $summary_env"
+  [ -n "$BREW_PROXY" ] && summary_env="BREW_PROXY=$BREW_PROXY $summary_env"
+  summary_cmd="./install"
+  if [ "$DO_BREW" = "1" ]; then summary_cmd="$summary_cmd --brew"; else summary_cmd="$summary_cmd --only-links"; fi
+  [ "$DO_BREW_UPGRADE" = "1" ] && summary_cmd="$summary_cmd --brew-upgrade"
+  [ "$DO_BREW_CLEANUP" = "1" ] && summary_cmd="$summary_cmd --brew-cleanup"
+  [ "$DO_TPM" = "1" ] && summary_cmd="$summary_cmd --tpm"
+  [ "$DO_FZF_BINDS" = "1" ] && summary_cmd="$summary_cmd --fzf-bindings"
+  [ "$DO_ZOXIDE" = "1" ] && summary_cmd="$summary_cmd --zoxide-setup"
+  printf "  %s%s\n" "$summary_env" "$summary_cmd"
 fi
 
 ## Pre-check for privileged links (arthas)
