@@ -17,9 +17,8 @@ jobs:
           # Ensure we are on a branch ref (not detached) when possible
           ref: ${{ github.head_ref || github.ref }}
           persist-credentials: true
-          token: ${{ secrets.SUBMODULE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          submodules: recursive
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
