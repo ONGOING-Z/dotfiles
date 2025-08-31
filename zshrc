@@ -111,7 +111,7 @@ ZSH_MANAGER=${ZSH_MANAGER:-auto} # auto|ohmyzsh|zplug
 plugins=(
     zsh-autosuggestions
     extract
-    z
+    # z (replaced by zoxide if available)
     colored-man-pages # 彩版man page
     web-search # open search engine in cli by key words
     #git-open # open remote repo address
@@ -122,6 +122,15 @@ plugins=(
 
 if [ "$ZSH_MANAGER" = "ohmyzsh" ] || { [ "$ZSH_MANAGER" = "auto" ] && [ -d "$ZSH" ]; }; then
   source $ZSH/oh-my-zsh.sh
+fi
+
+# Prefer zoxide over z if available
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+  alias z='zoxide query -i'
+  alias zi='zoxide query -i'
+  alias za='zoxide add'
+  alias cd='zoxide cd'
 fi
 
 # User configuration
@@ -279,6 +288,47 @@ alias cat="bat"
 alias dms="docker images"
 alias dm="docker image"
 alias dcl="docker container ls -a"
+
+# Search helpers
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_OPTS='--height 60% --layout=reverse --border --preview-window=right,60%:wrap'
+
+_fzf_preview() {
+  local file="$1"
+  if command -v bat >/dev/null 2>&1; then
+    bat --style=numbers --color=always --line-range=:500 "$file"
+  else
+    sed -n '1,500p' "$file"
+  fi
+}
+
+ff() {
+  local file
+  file="$(
+    ${FZF_DEFAULT_COMMAND:-fd --type f --hidden --follow --exclude .git} \
+      | fzf --preview '_fzf_preview {}'
+  )" || return
+  [ -n "$file" ] && ${EDITOR:-vim} "$file"
+}
+
+f() {
+  local query="$1"
+  local sel file line
+  sel="$(
+    rg --line-number --no-heading --hidden --smart-case "$query" \
+      | fzf --delimiter : --nth=3.. \
+            --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
+            --preview-window=right,60%:wrap
+  )" || return
+  file="$(printf "%s" "$sel" | cut -d: -f1)"
+  line="$(printf "%s" "$sel" | cut -d: -f2)"
+  [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"
+}
+
+alias rgc='rg --smart-case --hidden'
+alias rgi='rg --ignore-case --hidden'
+alias rgt='rg --type-add web:*.{js,ts,jsx,tsx,vue} --type web --hidden'
 
 export GPG_TTY=$(tty)
 if [ "$OS_NAME" = "darwin" ] && [ -d "/opt/homebrew/bin" ]; then
