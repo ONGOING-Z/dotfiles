@@ -157,13 +157,9 @@ else
     echo 'zoxide is not installed. Hint: brew install zoxide'
     return 1
   }
-  zi() {
-    if command -v zoxide >/dev/null 2>&1; then
-      local dest; dest="$(zoxide query -i "$@")" || return; [ -n "$dest" ] && builtin cd -- "$dest"; return
-    fi
-    z "$@"
-  }
-  za() { echo 'zoxide is not installed. Hint: brew install zoxide'; return 1; }
+  alias zi=z
+  __z_no_zoxide_za() { echo 'zoxide is not installed. Hint: brew install zoxide'; return 1; }
+  alias za=__z_no_zoxide_za
 fi
 
 # User configuration
