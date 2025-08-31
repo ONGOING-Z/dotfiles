@@ -39,6 +39,7 @@ DO_BREW_CLEANUP=${INSTALL_BREW_CLEANUP:-0}
 BREW_MIRROR=${BREW_MIRROR:-}
 BREW_PROXY=${BREW_PROXY:-}
 DO_TPM=${INSTALL_WITH_TPM:-0}
+DO_FZF_BINDS=${INSTALL_WITH_FZF_BINDS:-0}
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
@@ -58,6 +59,8 @@ while (( "$#" )); do
       BREW_PROXY="${1#*=}"; shift ;;
     --tpm)
       DO_TPM=1; shift ;;
+    --fzf-bindings)
+      DO_FZF_BINDS=1; shift ;;
     *)
       FORWARD_ARGS+=("$1"); shift ;;
   esac
@@ -171,5 +174,16 @@ if [ "$DO_TPM" = "1" ]; then
     tmux start-server
     TMUX='' "$HOME/.tmux/plugins/tpm/bin/install_plugins" || true
     TMUX='' "$HOME/.tmux/plugins/tpm/bin/update_plugins" all || true
+  fi
+fi
+
+# Optional: fzf key bindings and completion
+if [ "$DO_FZF_BINDS" = "1" ]; then
+  if [ -f /usr/local/opt/fzf/install ]; then
+    /usr/local/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+  elif [ -f /opt/homebrew/opt/fzf/install ]; then
+    /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+  elif command -v fzf >/dev/null 2>&1 && [ -f "$HOME/.fzf/install" ]; then
+    "$HOME/.fzf/install" --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
   fi
 fi

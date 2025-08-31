@@ -17,6 +17,9 @@
 
 ```bash
 ./install --tpm   # 或环境变量：INSTALL_WITH_TPM=1 ./install
+
+# fzf key bindings 与 completion（可选）
+./install --fzf-bindings   # 或环境变量：INSTALL_WITH_FZF_BINDS=1 ./install
 ```
 
 - Makefile 常用命令：
