@@ -33,6 +33,7 @@ make test        # 运行 pytest
 ```
 
 - 目录跳转（zoxide）：
+todo 这种是更加优秀吗？在这里要添加原因。
 
 ```bash
 # 已在 zshrc 中自动初始化（检测到 zoxide 后优先使用）
@@ -197,15 +198,15 @@ $ sudo apt install tmux
 当前以`tmux 3.1c`版本为例
 
 1. 首先到[tmux release页面][5]下载自己的版本,这里下载的是[tmux 3.1c][6]
-1. 解压这个`.tar.gz`包
-1. `cd tmux-3.1c`
-1. 运行`./configure`
-1. 这时可能会出现`error: libevent not found`的错误,因为这个没有安装
+2. 解压这个`.tar.gz`包
+3. `cd tmux-3.1c`
+4. 运行`./configure`
+5. 这时可能会出现`error: libevent not found`的错误,因为这个没有安装
    解决: `sudo apt-get install libevent-dev`
    安装完成后重新执行`./configure`
-1. 运行`make`
-1. `sudo make install`
-1. 重启终端后输入`tmux -V`检查版本是否正确.
+6. 运行`make`
+7. `sudo make install`
+8. 重启终端后输入`tmux -V`检查版本是否正确.
 
 更新tmux.conf: `tmux source ~/.tmux.conf`
 
@@ -261,7 +262,7 @@ pre-commit run --all-files
 ## 参考
 
 1. [为初学者准备的 ln 命令教程（5 个示例）](https://linux.cn/article-9501-1.html)
-1. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
+2. [文本三巨头：zsh、tmux 和 vim](https://linux.cn/article-5399-1.html)
 
 [1]: http://www.zsh.org/
 [2]: http://www.vim.org/
