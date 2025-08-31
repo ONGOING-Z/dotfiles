@@ -329,10 +329,21 @@ fi
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height 60% --layout=reverse --border --preview-window=right,60%:wrap'
 
+# High-contrast preview for bat
+if command -v bat >/dev/null 2>&1; then
+  if [ -z "${BAT_THEME:-}" ]; then
+    if bat --list-themes 2>/dev/null | grep -qx "TwoDark"; then
+      export BAT_THEME="TwoDark"
+    else
+      export BAT_THEME="GitHub"
+    fi
+  fi
+fi
+
 _fzf_preview() {
   local file="$1"
   if command -v bat >/dev/null 2>&1; then
-    bat --style=numbers --color=always --line-range=:500 "$file"
+    bat --style=numbers,grid --paging=never --color=always --line-range=:500 "$file"
   else
     sed -n '1,500p' "$file"
   fi
@@ -358,7 +369,7 @@ f() {
     rg_cmd="$rg_cmd --type $type_filter"
   fi
   sel="$(eval "$rg_cmd \"$query\"" | fzf --delimiter : --nth=3.. \
-            --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
+            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1}' \
             --preview-window=right,60%:wrap)" || return
   file="$(printf "%s" "$sel" | cut -d: -f1)"
   line="$(printf "%s" "$sel" | cut -d: -f2)"
@@ -377,13 +388,13 @@ rgp() {
     sel="$(FZF_DEFAULT_COMMAND='' fzf-tmux -p 80%,80% --ansi --disabled --query '' \
             --bind "change:reload:$RG_PREFIX -- {q} || true" \
             --delimiter : --nth=3.. \
-            --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
+            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1}' \
             --preview-window=right,60%:wrap)" || return
   else
     sel="$(FZF_DEFAULT_COMMAND='' fzf --ansi --disabled --query '' \
             --bind "change:reload:$RG_PREFIX -- {q} || true" \
             --delimiter : --nth=3.. \
-            --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
+            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1}' \
             --preview-window=right,60%:wrap)" || return
   fi
   file="$(printf "%s" "$sel" | cut -d: -f1)"
