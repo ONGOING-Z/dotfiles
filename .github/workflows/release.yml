@@ -1,8 +1,8 @@
-on:
+"on":
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v*'  # Push events to matching v*, i.e. v1.0, v20.15.10
 
 name: Create Release
 
@@ -36,7 +36,9 @@ jobs:
         run: |
           # 生成两个 tag 之间的提交记录
           echo "Changelog since ${{ steps.prev_tag.outputs.prev_tag }}:" > changelog.md
-          git log --pretty=format:"- %h %s (%an)" ${{ steps.prev_tag.outputs.prev_tag }}..${{ steps.prev_tag.outputs.current_tag }} >> changelog.md
+          git log --pretty=format:"- %h %s (%an)" \
+            ${{ steps.prev_tag.outputs.prev_tag }}..${{ steps.prev_tag.outputs.current_tag }} \
+            >> changelog.md
           
           # 保存为多行输出
           CHANGELOG=$(cat changelog.md)
@@ -47,7 +49,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ steps.prev_tag.outputs.current_tag }}
           release_name: Release ${{ steps.prev_tag.outputs.current_tag }}
