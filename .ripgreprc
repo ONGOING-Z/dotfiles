@@ -1,0 +1,11 @@
+--smart-case
+--hidden
+--follow
+--max-columns=200
+--colors=match:fg:yellow
+--colors=line:fg:blue
+--colors=path:fg:green
+--glob=!.git
+--glob=!node_modules
+--glob=!dist
+--glob=!build
