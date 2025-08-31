@@ -131,6 +131,36 @@ if command -v zoxide >/dev/null 2>&1; then
   alias zi='zoxide query -i'
   alias za='zoxide add'
   alias cd='zoxide cd'
+else
+  # Fallback: prompt to install zoxide on first use of z/zi when brew is available
+  _Z_FALLBACK_PROMPTED=0
+  z() {
+    if command -v zoxide >/dev/null 2>&1; then
+      local dest; dest="$(zoxide query -i "$@")" || return; [ -n "$dest" ] && builtin cd -- "$dest"; return
+    fi
+    if [ "${_Z_FALLBACK_PROMPTED:-0}" = "0" ] && command -v brew >/dev/null 2>&1; then
+      printf 'zoxide is not installed. Install via Homebrew now? [y/N]: '
+      if read -q; then
+        echo; brew install zoxide || true
+      else
+        echo
+      fi
+      _Z_FALLBACK_PROMPTED=1
+      if command -v zoxide >/dev/null 2>&1; then
+        eval "$(zoxide init zsh)"
+        local dest; dest="$(zoxide query -i "$@")" || return; [ -n "$dest" ] && builtin cd -- "$dest"; return
+      fi
+    fi
+    echo 'zoxide is not installed. Hint: brew install zoxide'
+    return 1
+  }
+  zi() {
+    if command -v zoxide >/dev/null 2>&1; then
+      local dest; dest="$(zoxide query -i "$@")" || return; [ -n "$dest" ] && builtin cd -- "$dest"; return
+    fi
+    z "$@"
+  }
+  za() { echo 'zoxide is not installed. Hint: brew install zoxide'; return 1; }
 fi
 
 # User configuration
