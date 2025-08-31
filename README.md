@@ -29,6 +29,15 @@ make pre-commit  # 安装并启用 pre-commit
 make test        # 运行 pytest
 ```
 
+- 目录跳转（zoxide）：
+
+```bash
+# 已在 zshrc 中自动初始化（检测到 zoxide 后优先使用）
+z <keyword>   # 交互式选择并跳转（别名 `zi`）
+za            # 将当前目录加入权重
+cd -          # 常用返回
+```
+
 最好在家目录下建立的配置文件都是link类型的，放引用在家目录下，让引用指向你dotfiles文件夹下真正的配置文件。
 
 存放文本三巨头[zsh][1]、[vim][2]、[tmux][3]的设置文件.

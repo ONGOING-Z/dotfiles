@@ -111,7 +111,7 @@ ZSH_MANAGER=${ZSH_MANAGER:-auto} # auto|ohmyzsh|zplug
 plugins=(
     zsh-autosuggestions
     extract
-    z
+    # z (replaced by zoxide if available)
     colored-man-pages # 彩版man page
     web-search # open search engine in cli by key words
     #git-open # open remote repo address
@@ -122,6 +122,15 @@ plugins=(
 
 if [ "$ZSH_MANAGER" = "ohmyzsh" ] || { [ "$ZSH_MANAGER" = "auto" ] && [ -d "$ZSH" ]; }; then
   source $ZSH/oh-my-zsh.sh
+fi
+
+# Prefer zoxide over z if available
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+  alias z='zoxide query -i'
+  alias zi='zoxide query -i'
+  alias za='zoxide add'
+  alias cd='zoxide cd'
 fi
 
 # User configuration
