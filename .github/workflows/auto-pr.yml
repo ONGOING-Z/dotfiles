@@ -99,7 +99,11 @@ jobs:
                 let body = pr.body || '';
                 const reSection = new RegExp('<!-- auto-section:start -->[\\s\\S]*?<!-- auto-section:end -->', 'g');
                 const reSummary = new RegExp('<!-- auto-summary:start -->[\\s\\S]*?<!-- auto-summary:end -->', 'g');
-                const reHeader = new RegExp('This pull request was automatically created by GitHub Actions\.[\\s\\S]*?- Pusher: `.*?`', 'g');
+                const reHeader = new RegExp(
+                  'This pull request was automatically created by GitHub Actions.' +
+                  '[\\s\\S]*?- Pusher: `.*?`',
+                  'g'
+                );
                 body = body.replace(reSection, '').replace(reSummary, '').replace(reHeader, '').trim();
                 const nextBody = (body ? body + '\n\n' : '') + section;
                 await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: nextBody });
@@ -186,7 +190,11 @@ jobs:
               ].join('\n');
               const reSection = new RegExp('<!-- auto-section:start -->[\\s\\S]*?<!-- auto-section:end -->', 'g');
               const reSummary = new RegExp('<!-- auto-summary:start -->[\\s\\S]*?<!-- auto-summary:end -->', 'g');
-              const reHeader = new RegExp('This pull request was automatically created by GitHub Actions\.[\\s\\S]*?- Pusher: `.*?`', 'g');
+              const reHeader = new RegExp(
+                'This pull request was automatically created by GitHub Actions.' +
+                '[\\s\\S]*?- Pusher: `.*?`',
+                'g'
+              );
               const baseBody = (body || '').replace(reSection, '').replace(reSummary, '').replace(reHeader, '').trim();
               await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: (baseBody ? baseBody + '\n\n' : '') + section });
             } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
