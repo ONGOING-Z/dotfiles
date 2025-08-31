@@ -15,6 +15,7 @@
 ## 提交与检查
 
 - 提交信息遵循 Conventional Commits（`feat: ...`、`fix: ...` 等），可使用中文描述。
+- 提交信息不得包含显式的转义换行符（例如 `\n`）；多行正文请使用真实的换行分隔（标题行保持单行，正文空一行后展开）。
 - 在提交前运行 `pre-commit run --all-files`，确保通过以下检查：
   - 基础 hooks（trailing-whitespace、end-of-file-fixer 等）
   - yamllint（行宽 140，文档头可选）
