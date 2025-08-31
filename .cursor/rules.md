@@ -9,7 +9,7 @@
   - 例：`feat-brew-install-improvement-2025-08-30`
 - PR 标题：`<类型中文>: <简述> - <YYYY-MM-DD>`，例如：`功能: brew 安装优化 - 2025-08-30`
   - 工作流已自动按分支生成并在推送时更新；日期采用 Asia/Shanghai。
-- PR 描述：需包含中文“变更要点”简述；工作流会自动追加最近提交摘要，可在页面按需补充。
+- PR 描述：需包含中文“变更要点”简述；工作流会在描述中生成一个“自动 section（含固定头+摘要）”，每次推送会覆盖该 section，禁止重复堆叠。
 - 不直接向默认分支推送工作流文件；以分支+PR 合并。
 
 ## 提交与检查
@@ -37,6 +37,7 @@
 - 仅选择一个插件管理器：`ZSH_MANAGER=ohmyzsh|zplug|auto`（默认 auto）。
 - 非交互 shell 跳过重型初始化（`case $- in *i*) ... esac`）。
 - macOS 使用 Homebrew zsh 时，需在 `/etc/shells` 中登记并 `chsh -s`。
+- 目录跳转使用 zoxide（如检测到则自动启用，并提供 z/zi/za/cd 别名）。
 
 ## Tmux
 
@@ -52,7 +53,7 @@
 
 ## YAML 与编辑器
 
-- YAML：行宽 140、2 空格缩进、禁止使用文档头 `---`，键名如 `on` 需加引号（已在 `.yamllint.yaml` 配置）。
+- YAML：行宽 140、2 空格缩进、禁止使用文档头 `---`，键名如 `on` 需加引号；尽量避免超长行（>140），必要时使用多行/折叠块表达（已在 `.yamllint.yaml` 配置）。
 - 编辑器：遵循 `.editorconfig`（LF、UTF-8、2 空格缩进；Makefile 使用 tab）。
 
 ## Makefile（约定）
