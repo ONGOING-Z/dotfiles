@@ -364,6 +364,28 @@ alias rgc='rg --smart-case --hidden'
 alias rgi='rg --ignore-case --hidden'
 alias rgt='rg --type-add web:*.{js,ts,jsx,tsx,vue} --type web --hidden'
 
+# IDE-like ripgrep popup (live reload)
+rgp() {
+  local RG_PREFIX="rg --line-number --no-heading --hidden --smart-case --color=always"
+  local sel file line
+  if [ -n "$TMUX" ] && command -v fzf-tmux >/dev/null 2>&1; then
+    sel="$(fzf-tmux -p 80%,80% --ansi --disabled --query '' \
+            --bind "change:reload:$RG_PREFIX -- {q} || true" \
+            --delimiter : --nth=3.. \
+            --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
+            --preview-window=right,60%:wrap)" || return
+  else
+    sel="$(fzf --ansi --disabled --query '' \
+            --bind "change:reload:$RG_PREFIX -- {q} || true" \
+            --delimiter : --nth=3.. \
+            --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
+            --preview-window=right,60%:wrap)" || return
+  fi
+  file="$(printf "%s" "$sel" | cut -d: -f1)"
+  line="$(printf "%s" "$sel" | cut -d: -f2)"
+  [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"
+}
+
 export GPG_TTY=$(tty)
 if [ "$OS_NAME" = "darwin" ] && [ -d "/opt/homebrew/bin" ]; then
   export PATH="/opt/homebrew/bin:$PATH"
