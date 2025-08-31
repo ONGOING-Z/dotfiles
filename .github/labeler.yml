@@ -1,23 +1,23 @@
 docs:
-  - '**/*.md'
-  - 'README.md'
-  - '.cursor/**'
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.md', 'README.md', '.cursor/**']
 
 ci:
-  - '.github/workflows/**'
-  - '.pre-commit-config.yaml'
+  - changed-files:
+      - any-glob-to-any-file: ['.github/workflows/**', '.pre-commit-config.yaml']
 
 shell:
-  - 'install'
-  - 'tmux/**'
-  - 'zshrc'
+  - changed-files:
+      - any-glob-to-any-file: ['install', 'tmux/**', 'zshrc']
 
 vim:
-  - 'vim/**'
-  - 'nvim/**'
+  - changed-files:
+      - any-glob-to-any-file: ['vim/**', 'nvim/**']
 
 brew:
-  - 'brew/**'
+  - changed-files:
+      - any-glob-to-any-file: ['brew/**']
 
 python:
-  - 'std_my_dir/**/*.py'
+  - changed-files:
+      - any-glob-to-any-file: ['std_my_dir/**/*.py']
