@@ -70,19 +70,35 @@ jobs:
                 `- Commit: \`${context.sha}\``
               ].join('\n');
               await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: comment });
-              // Upsert brief Chinese change summary block in PR body
+              // Upsert generated section (header + summary) and dedupe any existing ones
               try {
                 const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
                 const last = commits.slice(-10);
                 const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
-                const cn = ['<!-- auto-summary:start -->', '变更要点（自动生成）', '', ...bullets, '<!-- auto-summary:end -->'].join('\n');
+                const header = [
+                  'This pull request was automatically created by GitHub Actions.',
+                  '',
+                  `- Source branch: \`${branchName}\``,
+                  `- Base: \`${base}\``,
+                  `- Pusher: \`${context.actor}\``
+                ].join('\n');
+                const section = [
+                  '<!-- auto-section:start -->',
+                  header,
+                  '',
+                  '<!-- auto-summary:start -->',
+                  '变更要点（自动生成）',
+                  '',
+                  ...bullets,
+                  '<!-- auto-summary:end -->',
+                  '<!-- auto-section:end -->',
+                ].join('\n');
                 let body = pr.body || '';
-                const start = '<!-- auto-summary:start -->';
-                const end = '<!-- auto-summary:end -->';
-                // remove all existing auto-summary blocks to avoid duplicates
-                const reAuto = new RegExp(`${start}[\s\S]*?${end}`, 'g');
-                body = body.replace(reAuto, '').trim();
-                const nextBody = (body ? body + '\n\n' : '') + cn;
+                const reSection = new RegExp('<!-- auto-section:start -->[\\s\\S]*?<!-- auto-section:end -->', 'g');
+                const reSummary = new RegExp('<!-- auto-summary:start -->[\\s\\S]*?<!-- auto-summary:end -->', 'g');
+                const reHeader = new RegExp('This pull request was automatically created by GitHub Actions\.[\\s\\S]*?- Pusher: `.*?`', 'g');
+                body = body.replace(reSection, '').replace(reSummary, '').replace(reHeader, '').trim();
+                const nextBody = (body ? body + '\n\n' : '') + section;
                 await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: nextBody });
               } catch (e) { core.warning(`Update PR body failed: ${e.message}`); }
               return;
@@ -138,17 +154,33 @@ jobs:
                 break;
               }
             }
-            // Add/replace brief Chinese change summary block into PR body
+            // Add initial generated section (header + summary) and dedupe defensively
             try {
               const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
               const last = commits.slice(-10);
               const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
-              const cn = ['<!-- auto-summary:start -->', '变更要点（自动生成）', '', ...bullets, '<!-- auto-summary:end -->'].join('\n');
-              // ensure no duplicates on first write as well (defensive)
-              const start = '<!-- auto-summary:start -->';
-              const end = '<!-- auto-summary:end -->';
-              const reAuto = new RegExp(`${start}[\s\S]*?${end}`, 'g');
-              const baseBody = (body || '').replace(reAuto, '').trim();
-              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: (baseBody ? baseBody + '\n\n' : '') + cn });
+              const header = [
+                'This pull request was automatically created by GitHub Actions.',
+                '',
+                `- Source branch: \`${branchName}\``,
+                `- Base: \`${base}\``,
+                `- Pusher: \`${context.actor}\``
+              ].join('\n');
+              const section = [
+                '<!-- auto-section:start -->',
+                header,
+                '',
+                '<!-- auto-summary:start -->',
+                '变更要点（自动生成）',
+                '',
+                ...bullets,
+                '<!-- auto-summary:end -->',
+                '<!-- auto-section:end -->',
+              ].join('\n');
+              const reSection = new RegExp('<!-- auto-section:start -->[\\s\\S]*?<!-- auto-section:end -->', 'g');
+              const reSummary = new RegExp('<!-- auto-summary:start -->[\\s\\S]*?<!-- auto-summary:end -->', 'g');
+              const reHeader = new RegExp('This pull request was automatically created by GitHub Actions\.[\\s\\S]*?- Pusher: `.*?`', 'g');
+              const baseBody = (body || '').replace(reSection, '').replace(reSummary, '').replace(reHeader, '').trim();
+              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: (baseBody ? baseBody + '\n\n' : '') + section });
             } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
             core.info(`Created PR: ${pr.html_url}`);
