@@ -134,6 +134,9 @@ if command -v zoxide >/dev/null 2>&1; then
 else
   # Fallback: prompt to install zoxide on first use of z/zi when brew is available
   _Z_FALLBACK_PROMPTED=0
+  unalias z 2>/dev/null || true
+  unalias zi 2>/dev/null || true
+  unalias za 2>/dev/null || true
   z() {
     if command -v zoxide >/dev/null 2>&1; then
       local dest; dest="$(zoxide query -i "$@")" || return; [ -n "$dest" ] && builtin cd -- "$dest"; return
