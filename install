@@ -44,6 +44,7 @@ DO_ZOXIDE=${INSTALL_WITH_ZOXIDE_SETUP:-0}
 DO_INTERACTIVE=0
 PROFILE_SAVE=""
 PROFILE_LOAD=""
+GUM_INSTALL=${INSTALL_GUM:-0}
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
@@ -69,6 +70,8 @@ while (( "$#" )); do
       DO_ZOXIDE=1; shift ;;
     --interactive)
       DO_INTERACTIVE=1; shift ;;
+    --gum-install)
+      GUM_INSTALL=1; shift ;;
     --profile-save=*)
       PROFILE_SAVE="${1#*=}"; shift ;;
     --profile-load=*)
@@ -107,17 +110,37 @@ if [ "$DO_INTERACTIVE" = "1" ] && [ -t 0 ] && [ -z "${CI:-}" ]; then
     if gum confirm "Install fzf key bindings & completion?"; then DO_FZF_BINDS=1; else DO_FZF_BINDS=0; fi
     if gum confirm "Setup zoxide (install via brew if missing)?"; then DO_ZOXIDE=1; else DO_ZOXIDE=0; fi
   else
-    echo "[info] 'gum' not found. Using basic interactive prompts."
-    read -r -p "Enable Homebrew actions? [Y/n]: " a; a=${a:-Y}; case "$a" in [Yy]*) : ;; *) DO_BREW=0 ;; esac
-    if [ "$DO_BREW" = "1" ]; then
-      read -r -p "brew upgrade existing packages? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_BREW_UPGRADE=1 ;; *) DO_BREW_UPGRADE=0 ;; esac
-      read -r -p "brew cleanup & autoremove after install? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_BREW_CLEANUP=1 ;; *) DO_BREW_CLEANUP=0 ;; esac
-      read -r -p "Mirror (none/ustc/tsinghua) [none]: " m; m=${m:-none}; [ "$m" = "none" ] || BREW_MIRROR="$m"
-      read -r -p "Proxy (e.g. http://127.0.0.1:7890) [empty]: " p; [ -n "$p" ] && BREW_PROXY="$p"
+    if [ "$GUM_INSTALL" = "1" ] && command -v brew >/dev/null 2>&1; then
+      printf "[info] 'gum' not found. Installing via brew...\n"
+      brew install gum || true
     fi
-    read -r -p "Install/Update tmux TPM plugins? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_TPM=1 ;; *) DO_TPM=0 ;; esac
-    read -r -p "Install fzf key bindings & completion? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_FZF_BINDS=1 ;; *) DO_FZF_BINDS=0 ;; esac
-    read -r -p "Setup zoxide (install via brew if missing)? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_ZOXIDE=1 ;; *) DO_ZOXIDE=0 ;; esac
+    if command -v gum >/dev/null 2>&1; then
+      gum style --bold "Interactive setup"
+      if gum confirm "Enable Homebrew actions?"; then DO_BREW=1; else DO_BREW=0; fi
+      if [ "$DO_BREW" = "1" ]; then
+        if gum confirm "brew upgrade existing packages?"; then DO_BREW_UPGRADE=1; else DO_BREW_UPGRADE=0; fi
+        if gum confirm "brew cleanup & autoremove after install?"; then DO_BREW_CLEANUP=1; else DO_BREW_CLEANUP=0; fi
+        sel=$(printf "none\nustc\ntsinghua" | gum choose --cursor ">" --selected "none")
+        [ "$sel" = "none" ] || BREW_MIRROR="$sel"
+        proxy=$(gum input --placeholder "http://127.0.0.1:7890" --prompt "Proxy (optional): ")
+        [ -n "$proxy" ] && BREW_PROXY="$proxy"
+      fi
+      if gum confirm "Install/Update tmux TPM plugins?"; then DO_TPM=1; else DO_TPM=0; fi
+      if gum confirm "Install fzf key bindings & completion?"; then DO_FZF_BINDS=1; else DO_FZF_BINDS=0; fi
+      if gum confirm "Setup zoxide (install via brew if missing)?"; then DO_ZOXIDE=1; else DO_ZOXIDE=0; fi
+    else
+      echo "[info] 'gum' not found. Using basic interactive prompts."
+      read -r -p "Enable Homebrew actions? [Y/n]: " a; a=${a:-Y}; case "$a" in [Yy]*) : ;; *) DO_BREW=0 ;; esac
+      if [ "$DO_BREW" = "1" ]; then
+        read -r -p "brew upgrade existing packages? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_BREW_UPGRADE=1 ;; *) DO_BREW_UPGRADE=0 ;; esac
+        read -r -p "brew cleanup & autoremove after install? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_BREW_CLEANUP=1 ;; *) DO_BREW_CLEANUP=0 ;; esac
+        read -r -p "Mirror (none/ustc/tsinghua) [none]: " m; m=${m:-none}; [ "$m" = "none" ] || BREW_MIRROR="$m"
+        read -r -p "Proxy (e.g. http://127.0.0.1:7890) [empty]: " p; [ -n "$p" ] && BREW_PROXY="$p"
+      fi
+      read -r -p "Install/Update tmux TPM plugins? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_TPM=1 ;; *) DO_TPM=0 ;; esac
+      read -r -p "Install fzf key bindings & completion? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_FZF_BINDS=1 ;; *) DO_FZF_BINDS=0 ;; esac
+      read -r -p "Setup zoxide (install via brew if missing)? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_ZOXIDE=1 ;; *) DO_ZOXIDE=0 ;; esac
+    fi
   fi
 
   # Print reusable command summary
