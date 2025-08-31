@@ -254,6 +254,27 @@ pre-commit run --all-files
 
 - CI：push/PR 将自动运行 pre-commit；非默认分支 push 会自动创建 PR（见 `.github/workflows/`）。
 
+### 示例安装配置（profiles）
+
+仓库支持将交互选择保存为配置文件并复用：
+
+```bash
+# 保存本次选择到文件
+./install --interactive --gum-install --profile-save examples/profile.cn-proxy
+
+# 在另一台机器复用
+./install --profile-load examples/profile.cn-proxy
+```
+
+示例 profiles 可按需自建：
+
+```
+examples/
+  profile.cn-proxy     # 中国网络 + 代理
+  profile.links-only   # 只建立链接（跳过 brew）
+  profile.full-dev     # 启用 brew/升级/清理 + tpm/fzf/zoxide
+```
+
 ## 故障排查（Troubleshooting）
 
 - tmux 进入后不是 zsh
