@@ -23,15 +23,15 @@ jobs:
         run: |
           # 获取当前推送的 tag
           CURRENT_TAG=${GITHUB_REF#refs/tags/}
-          
+
           # 获取上一个 tag (按版本号排序)
           PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "$CURRENT_TAG" | tail -n1)
-          
+
           # 如果是第一个 tag，则使用初始 commit
           if [ -z "$PREV_TAG" ]; then
             PREV_TAG=$(git rev-list --max-parents=0 HEAD)
           fi
-          
+
           echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
           echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
       - name: Generate Changelog
@@ -42,7 +42,7 @@ jobs:
           git log --pretty=format:"- %h %s (%an)" \
             ${{ steps.prev_tag.outputs.prev_tag }}..${{ steps.prev_tag.outputs.current_tag }} \
             >> changelog.md
-          
+
           # 保存为多行输出
           CHANGELOG=$(cat changelog.md)
           echo "changelog<<EOF" >> $GITHUB_ENV
