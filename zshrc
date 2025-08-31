@@ -305,22 +305,26 @@ _fzf_preview() {
 
 ff() {
   local file
-  file="$(
-    ${FZF_DEFAULT_COMMAND:-fd --type f --hidden --follow --exclude .git} \
-      | fzf --preview '_fzf_preview {}'
-  )" || return
+  local filter="${1:-}"
+  local base_cmd="${FZF_DEFAULT_COMMAND:-fd --type f --hidden --follow --exclude .git}"
+  if [ -n "$filter" ]; then
+    base_cmd="$base_cmd --extension $filter"
+  fi
+  file="$(eval "$base_cmd" | fzf --preview '_fzf_preview {}')" || return
   [ -n "$file" ] && ${EDITOR:-vim} "$file"
 }
 
 f() {
   local query="$1"
+  local type_filter="${2:-}"
   local sel file line
-  sel="$(
-    rg --line-number --no-heading --hidden --smart-case "$query" \
-      | fzf --delimiter : --nth=3.. \
+  local rg_cmd="rg --line-number --no-heading --hidden --smart-case"
+  if [ -n "$type_filter" ]; then
+    rg_cmd="$rg_cmd --type $type_filter"
+  fi
+  sel="$(eval "$rg_cmd \"$query\"" | fzf --delimiter : --nth=3.. \
             --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
-            --preview-window=right,60%:wrap
-  )" || return
+            --preview-window=right,60%:wrap)" || return
   file="$(printf "%s" "$sel" | cut -d: -f1)"
   line="$(printf "%s" "$sel" | cut -d: -f2)"
   [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"
