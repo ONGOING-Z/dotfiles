@@ -319,7 +319,13 @@ alias dm="docker image"
 alias dcl="docker container ls -a"
 
 # Search helpers
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+if command -v fd >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+elif command -v rg >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND='rg --files --hidden --follow -g !.git'
+else
+  export FZF_DEFAULT_COMMAND='find . -type f -not -path "*/.git/*"'
+fi
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height 60% --layout=reverse --border --preview-window=right,60%:wrap'
 
@@ -368,13 +374,13 @@ rgp() {
   local RG_PREFIX="rg --line-number --no-heading --hidden --smart-case --color=always"
   local sel file line
   if [ -n "$TMUX" ] && command -v fzf-tmux >/dev/null 2>&1; then
-    sel="$(fzf-tmux -p 80%,80% --ansi --disabled --query '' \
+    sel="$(FZF_DEFAULT_COMMAND='' fzf-tmux -p 80%,80% --ansi --disabled --query '' \
             --bind "change:reload:$RG_PREFIX -- {q} || true" \
             --delimiter : --nth=3.. \
             --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
             --preview-window=right,60%:wrap)" || return
   else
-    sel="$(fzf --ansi --disabled --query '' \
+    sel="$(FZF_DEFAULT_COMMAND='' fzf --ansi --disabled --query '' \
             --bind "change:reload:$RG_PREFIX -- {q} || true" \
             --delimiter : --nth=3.. \
             --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' \
