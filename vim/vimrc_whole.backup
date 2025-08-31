@@ -663,4 +663,6 @@ if executable('rg')
   " macOS 终端若不支持 <D-?>，可用 <Leader>r 作为后备
   nnoremap <silent> <D-C-r> :RgPopup<Space>
   nnoremap <silent> <leader>r :RgPopup<Space>
+  " 终端 Vim 额外后备：Alt/Option+R（需终端将 Option 作为 Meta 发送 ESC 前缀）
+  nnoremap <silent> <M-r> :RgPopup<Space>
 endif
