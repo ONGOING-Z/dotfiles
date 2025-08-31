@@ -14,3 +14,7 @@ pre-commit:
 
 test:
 	@pytest -q
+
+.PHONY: changelog
+changelog:
+	@which git-cliff >/dev/null 2>&1 && git-cliff -o CHANGELOG.md || echo "git-cliff not installed; skipping"
