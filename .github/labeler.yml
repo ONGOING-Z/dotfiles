@@ -1,0 +1,23 @@
+docs:
+  - '**/*.md'
+  - 'README.md'
+  - '.cursor/**'
+
+ci:
+  - '.github/workflows/**'
+  - '.pre-commit-config.yaml'
+
+shell:
+  - 'install'
+  - 'tmux/**'
+  - 'zshrc'
+
+vim:
+  - 'vim/**'
+  - 'nvim/**'
+
+brew:
+  - 'brew/**'
+
+python:
+  - 'std_my_dir/**/*.py'
