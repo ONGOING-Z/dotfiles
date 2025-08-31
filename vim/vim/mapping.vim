@@ -58,11 +58,3 @@ map <C-t> :tabedit ./
 nmap <Leader>s :source $MYVIMRC
 " Open $MYVIMRC for editing in a new tab
 nmap <Leader>v :tabedit $MYVIMRC
-
-" Ripgrep popup via fzf.vim (requires ripgrep)
-if executable('rg')
-  let g:rg_command = 'rg --vimgrep --no-heading --smart-case'
-  command! -nargs=* RgPopup call fzf#vim#grep(g:rg_command.' '.shellescape(<q-args>), 1, fzf#vim#with_preview(), 0)
-  " macOS iTerm: map Ctrl+Command+R to RgPopup
-  nnoremap <silent> <D-C-r> :RgPopup<Space>
-endif

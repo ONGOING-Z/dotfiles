@@ -655,14 +655,3 @@ set nrformats+=alpha
 " coc补全选项快捷键设置。<Tab> and <S-Tab>
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" ripgrep 弹窗搜索（需要安装 fzf.vim 与 ripgrep）
-if executable('rg')
-  let g:rg_command = 'rg --vimgrep --no-heading --smart-case'
-  command! -nargs=* RgPopup call fzf#vim#grep(g:rg_command.' '.shellescape(<q-args>), 1, fzf#vim#with_preview('right,60%'), 0)
-  " macOS 终端若不支持 <D-?>，可用 <Leader>r 作为后备
-  nnoremap <silent> <D-C-r> :RgPopup<Space>
-  nnoremap <silent> <leader>r :RgPopup<Space>
-  " 终端 Vim 额外后备：Alt/Option+R（需终端将 Option 作为 Meta 发送 ESC 前缀）
-  nnoremap <silent> <M-r> :RgPopup<Space>
-endif
