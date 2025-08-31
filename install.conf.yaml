@@ -25,11 +25,9 @@
     - ~/.config/nvim
 
 - shell:
-    - [git submodule update --init --recursive, Installing submodules]
-    - [
-        'test -d /usr/local/arthas-packaging-4.0.5-bin && \
-         ln -snf "${PWD}/arthas/arthas.properties" \
-         /usr/local/arthas-packaging-4.0.5-bin/arthas.properties || \
-         echo "[skip] arthas directory not found"',
-        'Link arthas properties if present'
-      ]
+    - git submodule update --init --recursive
+    - >-
+        test -d /usr/local/arthas-packaging-4.0.5-bin &&
+        ln -snf "${PWD}/arthas/arthas.properties"
+        /usr/local/arthas-packaging-4.0.5-bin/arthas.properties ||
+        echo "[skip] arthas directory not found"
