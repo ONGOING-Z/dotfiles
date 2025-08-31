@@ -109,6 +109,10 @@ BREW_PROXY=http://127.0.0.1:7890 ./install --brew
 # 交互模式与 gum（可选）
 # 若未安装 gum，可用下行命令自动安装后进入交互
 ./install --interactive --gum-install
+
+# 查看帮助、预演（不执行变更）
+./install --help
+./install --dry-run --brew --brew-upgrade
 ```
 
 ## dotfiles管理方法1

@@ -1,4 +1,3 @@
-source ~/.zplug/init.zsh
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -16,6 +15,9 @@ case $- in
   *i*) ;; # interactive
   *) return ;; # non-interactive
 esac
+if [ -f "$HOME/.zplug/init.zsh" ]; then
+  . "$HOME/.zplug/init.zsh"
+fi
 
 # Optional: quick profiling (enable with ZSH_PROFILE=1)
 if [ "${ZSH_PROFILE:-0}" = "1" ]; then

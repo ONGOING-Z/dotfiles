@@ -45,9 +45,32 @@ DO_INTERACTIVE=0
 PROFILE_SAVE=""
 PROFILE_LOAD=""
 GUM_INSTALL=${INSTALL_GUM:-0}
+DRY_RUN=${DRY_RUN:-0}
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
+    -h|--help)
+      cat <<'USAGE'
+Usage: ./install [options]
+
+Options:
+  --only-links           Only create symlinks (skip Homebrew)
+  --brew                 Enable Homebrew bundle/install
+  --brew-upgrade         Upgrade existing Homebrew packages
+  --brew-cleanup         Cleanup and autoremove after bundle
+  --brew-mirror=NAME     Set mirror (ustc|tsinghua)
+  --brew-proxy=URL       Set HTTP/HTTPS proxy for Homebrew
+  --tpm                  Bootstrap tmux TPM plugins
+  --fzf-bindings         Setup fzf keybindings and completion
+  --zoxide-setup         Install zoxide if missing
+  --interactive          TTY prompts to choose options
+  --gum-install          Auto-install gum if missing for interactive
+  --profile-save=FILE    Save chosen options to profile file
+  --profile-load=FILE    Load options from profile file
+  --dry-run              Show what would be done, make no changes
+  -h, --help             Show this help
+USAGE
+      exit 0 ;;
     --no-brew)
       DO_BREW=0; shift ;;
     --only-links)
@@ -76,6 +99,8 @@ while (( "$#" )); do
       PROFILE_SAVE="${1#*=}"; shift ;;
     --profile-load=*)
       PROFILE_LOAD="${1#*=}"; shift ;;
+    --dry-run)
+      DRY_RUN=1; shift ;;
     *)
       FORWARD_ARGS+=("$1"); shift ;;
   esac
@@ -163,7 +188,11 @@ if [ ! -w "/usr/local" ]; then
   printf "[hint] /usr/local is not writable. Links targeting /usr/local may require sudo.\n"
 fi
 
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+if [ "$DRY_RUN" = "1" ]; then
+  printf "[dry-run] Would run Dotbot with config %s and args: %s\n" "$CONFIG" "${FORWARD_ARGS+${FORWARD_ARGS[*]}}"
+else
+  "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+fi
 
 # Brew update & bundle, and report newly installed items
 if [ "$DO_BREW" = "1" ] && command -v brew >/dev/null 2>&1; then
@@ -209,15 +238,27 @@ fi
 before_formula=$(brew list --formula 2>/dev/null | sort || true)
 before_cask=$(brew list --cask 2>/dev/null | sort || true)
 
-brew update || true
+if [ "$DRY_RUN" = "1" ]; then
+  printf "[dry-run] Would run: brew update\n"
+else
+  brew update || true
+fi
 if [ "$DO_BREW_UPGRADE" = "1" ]; then
-  printf "[info] brew upgrade\n"
-  brew upgrade || true
+  if [ "$DRY_RUN" = "1" ]; then
+    printf "[dry-run] Would run: brew upgrade\n"
+  else
+    printf "[info] brew upgrade\n"
+    brew upgrade || true
+  fi
 fi
 for bf in "${BREWFILES[@]}"; do
   if [ -f "$bf" ]; then
-    printf "[info] brew bundle --file %s\n" "$bf"
-    brew bundle --file "$bf" --no-lock || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: brew bundle --file %s --no-lock\n" "$bf"
+    else
+      printf "[info] brew bundle --file %s\n" "$bf"
+      brew bundle --file "$bf" --no-lock || true
+    fi
   fi
 done
 
@@ -244,9 +285,13 @@ else
 fi
 
 if [ "$DO_BREW_CLEANUP" = "1" ]; then
-  printf "[info] brew cleanup & autoremove\n"
-  brew cleanup -s || true
-  brew autoremove || true
+  if [ "$DRY_RUN" = "1" ]; then
+    printf "[dry-run] Would run: brew cleanup -s && brew autoremove\n"
+  else
+    printf "[info] brew cleanup & autoremove\n"
+    brew cleanup -s || true
+    brew autoremove || true
+  fi
 fi
 else
 printf "[hint] Skip brew bundle (Homebrew missing or disabled).\n"
@@ -255,28 +300,52 @@ fi
 # Optional: bootstrap tmux TPM
 if [ "$DO_TPM" = "1" ]; then
   if [ -d "$HOME/.tmux/plugins/tpm" ]; then
-    printf "[info] TPM exists. Updating...\n"
-    git -C "$HOME/.tmux/plugins/tpm" pull --ff-only || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: git -C ~/.tmux/plugins/tpm pull --ff-only\n"
+    else
+      printf "[info] TPM exists. Updating...\n"
+      git -C "$HOME/.tmux/plugins/tpm" pull --ff-only || true
+    fi
   else
-    printf "[info] Installing TPM...\n"
-    git clone --depth 1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: git clone --depth 1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm\n"
+    else
+      printf "[info] Installing TPM...\n"
+      git clone --depth 1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" || true
+    fi
   fi
   # Install plugins non-interactively
   if command -v tmux >/dev/null 2>&1; then
-    tmux start-server
-    TMUX='' "$HOME/.tmux/plugins/tpm/bin/install_plugins" || true
-    TMUX='' "$HOME/.tmux/plugins/tpm/bin/update_plugins" all || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: tmux start-server && tpm install/update\n"
+    else
+      tmux start-server
+      TMUX='' "$HOME/.tmux/plugins/tpm/bin/install_plugins" || true
+      TMUX='' "$HOME/.tmux/plugins/tpm/bin/update_plugins" all || true
+    fi
   fi
 fi
 
 # Optional: fzf key bindings and completion
 if [ "$DO_FZF_BINDS" = "1" ]; then
   if [ -f /usr/local/opt/fzf/install ]; then
-    /usr/local/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: /usr/local/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh\n"
+    else
+      /usr/local/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    fi
   elif [ -f /opt/homebrew/opt/fzf/install ]; then
-    /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh\n"
+    else
+      /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    fi
   elif command -v fzf >/dev/null 2>&1 && [ -f "$HOME/.fzf/install" ]; then
-    "$HOME/.fzf/install" --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: ~/.fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh\n"
+    else
+      "$HOME/.fzf/install" --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    fi
   fi
 fi
 
@@ -284,8 +353,12 @@ fi
 if [ "$DO_ZOXIDE" = "1" ]; then
   if ! command -v zoxide >/dev/null 2>&1; then
     if command -v brew >/dev/null 2>&1; then
-      printf "[info] Installing zoxide via Homebrew...\n"
-      brew install zoxide || true
+      if [ "$DRY_RUN" = "1" ]; then
+        printf "[dry-run] Would run: brew install zoxide\n"
+      else
+        printf "[info] Installing zoxide via Homebrew...\n"
+        brew install zoxide || true
+      fi
     else
       printf "[hint] brew not found. Install zoxide manually: https://github.com/ajeetdsouza/zoxide\n"
     fi
