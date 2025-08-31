@@ -4,6 +4,8 @@ name: pre-commit
 on:
   push:
   pull_request:
+  schedule:
+    - cron: '0 1 * * 1' # 每周一 09:00 CST
 
 jobs:
   pre-commit:
