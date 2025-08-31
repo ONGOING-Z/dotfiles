@@ -40,6 +40,7 @@ BREW_MIRROR=${BREW_MIRROR:-}
 BREW_PROXY=${BREW_PROXY:-}
 DO_TPM=${INSTALL_WITH_TPM:-0}
 DO_FZF_BINDS=${INSTALL_WITH_FZF_BINDS:-0}
+DO_ZOXIDE=${INSTALL_WITH_ZOXIDE_SETUP:-0}
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
@@ -61,6 +62,8 @@ while (( "$#" )); do
       DO_TPM=1; shift ;;
     --fzf-bindings)
       DO_FZF_BINDS=1; shift ;;
+    --zoxide-setup)
+      DO_ZOXIDE=1; shift ;;
     *)
       FORWARD_ARGS+=("$1"); shift ;;
   esac
@@ -186,4 +189,19 @@ if [ "$DO_FZF_BINDS" = "1" ]; then
   elif command -v fzf >/dev/null 2>&1 && [ -f "$HOME/.fzf/install" ]; then
     "$HOME/.fzf/install" --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
   fi
+fi
+
+# Optional: zoxide setup (install via brew if missing)
+if [ "$DO_ZOXIDE" = "1" ]; then
+  if ! command -v zoxide >/dev/null 2>&1; then
+    if command -v brew >/dev/null 2>&1; then
+      printf "[info] Installing zoxide via Homebrew...\n"
+      brew install zoxide || true
+    else
+      printf "[hint] brew not found. Install zoxide manually: https://github.com/ajeetdsouza/zoxide\n"
+    fi
+  else
+    printf "[info] zoxide already installed.\n"
+  fi
+  printf "[info] zoxide is initialized automatically in zshrc when detected.\n"
 fi
