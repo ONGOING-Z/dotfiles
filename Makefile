@@ -1,4 +1,4 @@
-.PHONY: install lint fmt pre-commit
+.PHONY: install lint fmt pre-commit test
 
 install:
 	@./install --brew
@@ -11,3 +11,6 @@ fmt:
 
 pre-commit:
 	@pip install pre-commit && pre-commit install
+
+test:
+	@pytest -q

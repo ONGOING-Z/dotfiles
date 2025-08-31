@@ -23,7 +23,7 @@ repos:
     rev: v2.4.0
     hooks:
       - id: codespell
-        args: ["-L", "te,hist,ot,ser"]
+        args: ["-L", "te,hist,ot,ser,Rime,rime,enhancd"]
 
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.17

@@ -1,5 +1,34 @@
 # dotfiles
 
+> 规范速览（详细见 `.cursor/rules.md`）
+
+- 分支命名：`<类型>-<简述>-<YYYY-MM-DD>`（上海时区），如 `feat-brew-install-2025-08-30`
+- PR 标题：`<类型中文>: <简述> - <YYYY-MM-DD>`，自动生成并随推送更新
+- 提交规范：Conventional Commits（可中文），提交前跑 `pre-commit run --all-files`
+- 安装脚本：默认仅建链接；可用 `--brew/--brew-upgrade/--brew-cleanup` 与 `BREW_MIRROR/ BREW_PROXY`
+- Zsh：仅选一个管理器（oh-my-zsh 或 zplug），非交互 shell 跳过重型初始化
+- Tmux：`tmux-256color` + `RGB`，`default-command` 使用 `zsh -l`
+- Dotbot：特权路径链接有条件执行（如 `arthas.properties`）
+- CI/PR：自动 PR（中文标题+摘要）、pre-commit、pytest（`std_my_dir`）
+
+### 可选增强
+
+- 一键安装 tmux 插件（TPM）：
+
+```bash
+./install --tpm   # 或环境变量：INSTALL_WITH_TPM=1 ./install
+```
+
+- Makefile 常用命令：
+
+```bash
+make install     # 安装（默认启用 brew）
+make lint        # 运行 pre-commit 检查
+make fmt         # 运行 pre-commit 全量格式化
+make pre-commit  # 安装并启用 pre-commit
+make test        # 运行 pytest
+```
+
 最好在家目录下建立的配置文件都是link类型的，放引用在家目录下，让引用指向你dotfiles文件夹下真正的配置文件。
 
 存放文本三巨头[zsh][1]、[vim][2]、[tmux][3]的设置文件.
@@ -10,19 +39,19 @@
 
 下表展示本仓库维护的常用工具配置（路径为仓库内相对路径）：
 
-| 工具        | 配置路径                                  | 项目链接                                         |
-| ----------- | ----------------------------------------- | ------------------------------------------------ |
-| Zsh         | `zshrc`                                   | [oh-my-zsh](https://ohmyz.sh)                    |
-| Tmux        | `tmux/tmux.conf`                          | [tmux](https://github.com/tmux/tmux)             |
-| Vim         | `vim/vimrc`                               | [Vim](https://www.vim.org/)                      |
-| Neovim      | `nvim/init.vim`                           | [Neovim](https://neovim.io)                      |
-| Git         | `git/gitconfig`                           | [Git](https://git-scm.com)                       |
-| Homebrew    | `brew/`                                   | [Homebrew](https://brew.sh)                      |
-| fzf         | `.fzf`                                    | [fzf](https://github.com/junegunn/fzf)           |
-| GDB         | `.gdbinit`, `.gdb/`                       | [GDB](https://www.gnu.org/software/gdb/)         |
-| Pip         | `.pip/pip.conf`                           | [pip](https://pip.pypa.io/)                      |
-| Rime 输入法 | `rime-config`                             | [Rime](https://rime.im/)                         |
-| Dotbot      | `install`, `install.conf.yaml`, `dotbot/` | [Dotbot](https://github.com/anishathalye/dotbot) |
+| 工具        | 配置路径                                  | 项目链接                                                     |
+| ----------- | ----------------------------------------- | ------------------------------------------------------------ |
+| Zsh         | `zshrc`                                   | [oh-my-zsh](https://ohmyz.sh)                                |
+| Tmux        | `tmux/tmux.conf`                          | [tmux](https://github.com/tmux/tmux)                         |
+| Vim         | `vim/vimrc`                               | [Vim](https://www.vim.org/)                                  |
+| Neovim      | `nvim/init.vim`                           | [Neovim](https://neovim.io)                                  |
+| Git         | `git/gitconfig`                           | [Git](https://git-scm.com)                                   |
+| Homebrew    | `brew/`                                   | [Homebrew](https://brew.sh)                                  |
+| fzf         | `.fzf`                                    | [fzf](https://github.com/junegunn/fzf)                       |
+| GDB         | `.gdbinit`, `.gdb/`                       | [GDB](https://www.gnu.org/software/gdb/)                     |
+| Pip         | `.pip/pip.conf`                           | [pip](https://pip.pypa.io/)                                  |
+| Rime 输入法 | `rime-config`                             | [Rime](https://rime.im/) <!-- codespell:ignore Rime rime --> |
+| Dotbot      | `install`, `install.conf.yaml`, `dotbot/` | [Dotbot](https://github.com/anishathalye/dotbot)             |
 
 ## 快速开始（推荐）
 

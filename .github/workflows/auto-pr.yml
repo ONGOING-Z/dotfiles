@@ -70,14 +70,20 @@ jobs:
                 `- Commit: \`${context.sha}\``
               ].join('\n');
               await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: comment });
-              // Append brief Chinese change summary to PR description
+              // Upsert brief Chinese change summary block in PR body
               try {
                 const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
                 const last = commits.slice(-10);
                 const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
-                const cn = ['变更要点（自动生成）', '', ...bullets].join('\n');
-                const mergedBody = (pr.body ? pr.body + '\n\n' : '') + cn;
-                await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: mergedBody });
+                const cn = ['<!-- auto-summary:start -->', '变更要点（自动生成）', '', ...bullets, '<!-- auto-summary:end -->'].join('\n');
+                let body = pr.body || '';
+                const start = '<!-- auto-summary:start -->';
+                const end = '<!-- auto-summary:end -->';
+                // remove all existing auto-summary blocks to avoid duplicates
+                const reAuto = new RegExp(`${start}[\s\S]*?${end}`, 'g');
+                body = body.replace(reAuto, '').trim();
+                const nextBody = (body ? body + '\n\n' : '') + cn;
+                await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: nextBody });
               } catch (e) { core.warning(`Update PR body failed: ${e.message}`); }
               return;
             }
@@ -132,12 +138,17 @@ jobs:
                 break;
               }
             }
-            // Add brief Chinese change summary into PR body
+            // Add/replace brief Chinese change summary block into PR body
             try {
               const { data: commits } = await github.rest.pulls.listCommits({ owner, repo, pull_number: pr.number, per_page: 50 });
               const last = commits.slice(-10);
               const bullets = last.map(c => `- ${c.sha.substring(0,7)} ${c.commit.message.split('\n')[0]}`);
-              const cn = ['变更要点（自动生成）', '', ...bullets].join('\n');
-              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: body + '\n\n' + cn });
+              const cn = ['<!-- auto-summary:start -->', '变更要点（自动生成）', '', ...bullets, '<!-- auto-summary:end -->'].join('\n');
+              // ensure no duplicates on first write as well (defensive)
+              const start = '<!-- auto-summary:start -->';
+              const end = '<!-- auto-summary:end -->';
+              const reAuto = new RegExp(`${start}[\s\S]*?${end}`, 'g');
+              const baseBody = (body || '').replace(reAuto, '').trim();
+              await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: (baseBody ? baseBody + '\n\n' : '') + cn });
             } catch (e) { core.warning(`Init PR body summary failed: ${e.message}`); }
             core.info(`Created PR: ${pr.html_url}`);
