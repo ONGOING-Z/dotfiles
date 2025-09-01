@@ -1,5 +1,9 @@
 # dotfiles
 
+[![Tests with Coverage](https://github.com/ONGOING-Z/dotfiles/actions/workflows/tests-with-coverage.yml/badge.svg)](https://github.com/ONGOING-Z/dotfiles/actions/workflows/tests-with-coverage.yml)
+[![codecov](https://codecov.io/gh/ONGOING-Z/dotfiles/branch/macos/graph/badge.svg)](https://codecov.io/gh/ONGOING-Z/dotfiles)
+[![Pre-commit](https://github.com/ONGOING-Z/dotfiles/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/ONGOING-Z/dotfiles/actions/workflows/pre-commit.yml)
+
 > 规范速览（详细见 `.cursor/rules.md`）
 
 - 分支命名：`<类型>-<简述>-<YYYY-MM-DD>`（上海时区），如 `feat-brew-install-2025-08-30`

@@ -1,0 +1,79 @@
+# Codecov 配置文件
+# https://docs.codecov.io/docs/codecov-yaml
+
+codecov:
+  require_ci_to_pass: false
+  notify:
+    wait_for_ci: false
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  
+  status:
+    project:
+      default:
+        # 项目整体覆盖率设置
+        target: 80%
+        threshold: 5%
+        base: auto
+        if_not_found: success
+        if_ci_failed: error
+        informational: false
+        only_pulls: false
+    
+    patch:
+      default:
+        # PR 中新增/修改代码的覆盖率要求
+        target: 85%
+        threshold: 10%
+        base: auto
+        if_not_found: success
+        if_ci_failed: error
+        informational: false
+        only_pulls: true
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
+comment:
+  layout: "reach,diff,flags,tree,betaprofiling"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+  show_carryforward_flags: false
+  show_critical_paths: false
+
+ignore:
+  # 忽略测试文件本身
+  - "**/test_*.py"
+  - "**/tests/**"
+  - "**/*_test.py"
+  # 忽略配置文件
+  - "setup.py"
+  - "**/__init__.py"
+  # 忽略第三方代码
+  - "**/vendor/**"
+  - "**/node_modules/**"
+  # 忽略 vim 插件
+  - "vim/vim/**"
+  - "dotbot/**"
+
+flags:
+  python:
+    paths:
+      - "std_my_dir/"
+    carryforward: false
+  
+  shell:
+    paths:
+      - "install"
+      - "*.sh"
+    carryforward: false
