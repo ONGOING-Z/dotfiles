@@ -13,7 +13,7 @@ OS="$(uname -s)"
 # 检查并安装剪贴板工具
 install_clipboard_tools() {
     echo "📋 检查剪贴板工具..."
-    
+
     if [ "$OS" = "Darwin" ]; then
         # macOS
         if ! command -v pbcopy >/dev/null 2>&1; then
@@ -21,7 +21,7 @@ install_clipboard_tools() {
         else
             echo "✓ pbcopy 已就绪"
         fi
-        
+
         # 检查 reattach-to-user-namespace（某些旧版本 macOS 需要）
         if ! command -v reattach-to-user-namespace >/dev/null 2>&1; then
             echo "安装 reattach-to-user-namespace..."
@@ -55,7 +55,7 @@ install_clipboard_tools() {
 install_tpm() {
     echo ""
     echo "🔌 检查 tmux 插件管理器..."
-    
+
     TPM_DIR="$HOME/.tmux/plugins/tpm"
     if [ ! -d "$TPM_DIR" ]; then
         echo "安装 TPM..."
@@ -69,11 +69,11 @@ install_tpm() {
 reload_tmux() {
     echo ""
     echo "🔄 重新加载 tmux 配置..."
-    
+
     if tmux info &> /dev/null; then
         tmux source-file ~/.tmux.conf
         echo "✓ 配置已重新加载"
-        
+
         # 安装插件
         echo "📦 安装 tmux 插件..."
         ~/.tmux/plugins/tpm/bin/install_plugins
