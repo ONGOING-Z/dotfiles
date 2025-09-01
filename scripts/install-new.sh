@@ -52,6 +52,8 @@ fi
 INSTALL_MODE=""
 DO_BACKUP=1
 DRY_RUN=0
+VERBOSE=0
+LOG_FILE=""
 
 # ============================================================================
 # 辅助函数
@@ -106,6 +108,74 @@ print_error() {
 
 print_warning() {
     echo -e "${YELLOW}${WARN}${NC} $1"
+}
+
+# 日志函数
+init_log() {
+    if [ "$VERBOSE" = "1" ]; then
+        LOG_FILE="/tmp/dotfiles_install_$(date +%Y%m%d_%H%M%S).log"
+        echo "=== Dotfiles Installation Log ===" > "$LOG_FILE"
+        echo "Date: $(date)" >> "$LOG_FILE"
+        echo "User: $USER" >> "$LOG_FILE"
+        echo "System: $OS_NAME" >> "$LOG_FILE"
+        echo "=================================" >> "$LOG_FILE"
+        echo ""
+        print_info "详细日志将保存到: $LOG_FILE"
+        echo ""
+    fi
+}
+
+log_cmd() {
+    local cmd="$1"
+    local desc="${2:-}"
+    
+    if [ "$VERBOSE" = "1" ]; then
+        if [ -n "$desc" ]; then
+            echo -e "${BLUE}▶${NC} $desc"
+            [ -n "$LOG_FILE" ] && echo "[$(date +%H:%M:%S)] $desc" >> "$LOG_FILE"
+        fi
+        echo -e "${CYAN}  $ $cmd${NC}"
+        [ -n "$LOG_FILE" ] && echo "[$(date +%H:%M:%S)] CMD: $cmd" >> "$LOG_FILE"
+        
+        # 执行命令并捕获输出
+        local output
+        local exit_code
+        output=$(eval "$cmd" 2>&1)
+        exit_code=$?
+        
+        if [ -n "$output" ]; then
+            echo "$output" | sed 's/^/    /'
+            [ -n "$LOG_FILE" ] && echo "$output" >> "$LOG_FILE"
+        fi
+        
+        if [ $exit_code -ne 0 ]; then
+            echo -e "${RED}  ✗ 命令失败 (exit code: $exit_code)${NC}"
+            [ -n "$LOG_FILE" ] && echo "[ERROR] Command failed with exit code: $exit_code" >> "$LOG_FILE"
+        else
+            echo -e "${GREEN}  ✓ 完成${NC}"
+            [ -n "$LOG_FILE" ] && echo "[SUCCESS] Command completed successfully" >> "$LOG_FILE"
+        fi
+        
+        [ -n "$LOG_FILE" ] && echo "---" >> "$LOG_FILE"
+        return $exit_code
+    else
+        # 非详细模式，静默执行
+        eval "$cmd" 2>/dev/null
+    fi
+}
+
+# 询问是否启用详细日志
+ask_verbose_mode() {
+    echo ""
+    if confirm "是否显示详细安装日志？"; then
+        VERBOSE=1
+        init_log
+        print_success "已启用详细日志模式"
+    else
+        VERBOSE=0
+        print_info "使用静默模式（仅显示关键信息）"
+    fi
+    echo ""
 }
 
 # 确认函数
@@ -260,22 +330,48 @@ quick_install() {
     echo -e "  ${GREEN}✓${NC} 配置 fzf 键绑定"
     echo -e "  ${GREEN}✓${NC} 基础 Git 配置"
     echo ""
+    
+    # 询问是否启用详细日志
+    ask_verbose_mode
 
     if confirm "确认开始快速安装？"; then
         print_success "开始快速安装..."
+        echo ""
 
         # 执行实际安装
-        if [ "$HAS_GUM" = "1" ]; then
-            gum spin --spinner dot --title "正在安装..." -- sleep 3
-        else
-            echo "正在安装..."
-            sleep 3
+        print_section "执行安装步骤"
+        
+        # 获取基础目录
+        local ROOT_DIR="$(cd "$BASEDIR/.." && pwd)"
+        
+        # 创建符号链接
+        log_cmd "cd '$ROOT_DIR' && '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d . -c '$CONFIG'" "创建配置文件符号链接"
+        
+        # 检查并安装 Homebrew 包
+        if command -v brew >/dev/null 2>&1; then
+            if [ -f "$ROOT_DIR/brew/Brewfile.common" ]; then
+                log_cmd "brew bundle --file='$ROOT_DIR/brew/Brewfile.common'" "安装 Homebrew 通用包"
+            fi
         fi
-
-        # 这里调用实际的安装命令
-        # ./install-unified.sh --quick
-
+        
+        # 配置 Zsh
+        if command -v zsh >/dev/null 2>&1; then
+            log_cmd "chsh -s $(which zsh) 2>/dev/null || true" "设置 Zsh 为默认 Shell"
+        fi
+        
+        # 配置 tmux 插件管理器
+        if [ ! -d ~/.tmux/plugins/tpm ]; then
+            log_cmd "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm" "安装 tmux 插件管理器"
+        fi
+        
+        echo ""
         print_success "快速安装完成！"
+        
+        if [ "$VERBOSE" = "1" ] && [ -n "$LOG_FILE" ]; then
+            echo ""
+            print_info "完整日志已保存到: $LOG_FILE"
+        fi
+        
         show_completion_message
     else
         print_info "返回主菜单..."
@@ -292,6 +388,9 @@ quick_install() {
 custom_install() {
     print_header
     print_section "🎨 自定义安装模式"
+    
+    # 询问是否启用详细日志
+    ask_verbose_mode
 
     local selected_features=()
 
@@ -379,16 +478,56 @@ custom_install() {
 
     if confirm "确认安装以上组件？"; then
         print_success "开始自定义安装..."
-
+        echo ""
+        
+        # 获取基础目录
+        local ROOT_DIR="$(cd "$BASEDIR/.." && pwd)"
+        
         # 执行安装
-        if [ "$HAS_GUM" = "1" ]; then
-            gum spin --spinner dot --title "正在安装选定组件..." -- sleep 3
-        else
-            echo "正在安装选定组件..."
-            sleep 3
-        fi
-
+        print_section "执行选定的安装步骤"
+        
+        for feature in "${selected_features[@]}"; do
+            case "$feature" in
+                *"配置文件符号链接"*)
+                    log_cmd "cd '$ROOT_DIR' && '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d . -c '$CONFIG'" "创建配置文件符号链接"
+                    ;;
+                *"Homebrew"*)
+                    if command -v brew >/dev/null 2>&1 && [ -f "$ROOT_DIR/brew/Brewfile.common" ]; then
+                        log_cmd "brew bundle --file='$ROOT_DIR/brew/Brewfile.common'" "安装 Homebrew 包"
+                    fi
+                    ;;
+                *"Zsh 和 Oh-My-Zsh"*)
+                    if command -v zsh >/dev/null 2>&1; then
+                        log_cmd "chsh -s $(which zsh) 2>/dev/null || true" "设置 Zsh 为默认 Shell"
+                    fi
+                    if [ ! -d ~/.oh-my-zsh ]; then
+                        log_cmd "sh -c '$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)' '' --unattended" "安装 Oh-My-Zsh"
+                    fi
+                    ;;
+                *"tmux 配置"*)
+                    if [ ! -d ~/.tmux/plugins/tpm ]; then
+                        log_cmd "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm" "安装 tmux 插件管理器"
+                    fi
+                    ;;
+                *"fzf"*)
+                    if [ ! -d ~/.fzf ]; then
+                        log_cmd "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all --no-bash --no-fish" "安装 fzf"
+                    fi
+                    ;;
+                *"Git 配置"*)
+                    log_cmd "git config --global core.editor vim" "配置 Git 默认编辑器"
+                    ;;
+            esac
+        done
+        
+        echo ""
         print_success "自定义安装完成！"
+        
+        if [ "$VERBOSE" = "1" ] && [ -n "$LOG_FILE" ]; then
+            echo ""
+            print_info "完整日志已保存到: $LOG_FILE"
+        fi
+        
         show_completion_message
     else
         print_info "返回主菜单..."
@@ -405,6 +544,9 @@ custom_install() {
 expert_install() {
     print_header
     print_section "🔧 专家模式"
+    
+    # 询问是否启用详细日志
+    ask_verbose_mode
 
     echo "专家模式提供完全的控制权："
     echo ""
@@ -489,6 +631,9 @@ EOF
 minimal_install() {
     print_header
     print_section "📦 最小安装模式"
+    
+    # 询问是否启用详细日志
+    ask_verbose_mode
 
     echo "最小安装将只执行："
     echo ""
