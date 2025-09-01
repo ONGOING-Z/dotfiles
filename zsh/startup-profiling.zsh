@@ -6,10 +6,10 @@
 
 if [[ "${ZSH_PROFILE:-0}" == "1" ]]; then
   zmodload zsh/zprof 2>/dev/null || true
-  
+
   # 记录启动时间
   export ZSH_START_TIME=$(date +%s%N)
-  
+
   # 在 shell 完全加载后显示启动时间
   _show_startup_time() {
     if [[ -n "$ZSH_START_TIME" ]]; then
@@ -19,7 +19,7 @@ if [[ "${ZSH_PROFILE:-0}" == "1" ]]; then
       unset ZSH_START_TIME
     fi
   }
-  
+
   # 添加到 precmd 钩子（只运行一次）
   _startup_time_hook() {
     _show_startup_time

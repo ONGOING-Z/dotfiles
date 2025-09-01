@@ -47,23 +47,23 @@ fi
 
 if [[ "$ZSH_MANAGER" == "ohmyzsh" ]]; then
   export ZSH="$HOME/.oh-my-zsh"
-  
+
   # 禁用自动更新检查（提升启动速度）
   DISABLE_AUTO_UPDATE=true
-  
+
   # 简单主题（避免复杂主题影响性能）
   ZSH_THEME="robbyrussell"
-  
+
   # 只加载必要插件
   plugins=(
     git           # 必需
     z             # 目录跳转
     extract       # 解压工具
   )
-  
+
   # 延迟加载的插件
   # docker, kubectl, npm 等只在需要时加载
-  
+
   source "$ZSH/oh-my-zsh.sh"
 fi
 
@@ -73,20 +73,20 @@ fi
 
 if [[ "$ZSH_MANAGER" == "zplug" ]]; then
   source "$HOME/.zplug/init.zsh"
-  
+
   # 基础插件
   zplug "zsh-users/zsh-autosuggestions", defer:2
   zplug "zsh-users/zsh-syntax-highlighting", defer:2
   zplug "zsh-users/zsh-completions", defer:2
-  
+
   # 主题
   zplug "themes/robbyrussell", from:oh-my-zsh
-  
+
   # 安装插件
   if ! zplug check; then
     zplug install
   fi
-  
+
   zplug load
 fi
 
@@ -145,7 +145,7 @@ fi
 if command -v fzf &>/dev/null; then
   # 基础配置
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-  
+
   # 延迟加载键绑定和补全
   [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 fi
