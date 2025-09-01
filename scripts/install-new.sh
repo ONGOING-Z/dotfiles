@@ -318,7 +318,10 @@ custom_install() {
             "📗 Node.js 开发环境" \
             "🦀 Rust 开发环境")
 
-        selected_features=($choices)
+        # 将多行输出转换为数组
+        if [ -n "$choices" ]; then
+            IFS=$'\n' read -rd '' -a selected_features <<< "$choices"
+        fi
     else
         echo "选择要安装的组件（输入数字，空格分隔）："
         echo ""
