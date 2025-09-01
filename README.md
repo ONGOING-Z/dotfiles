@@ -33,7 +33,14 @@ make test        # 运行 pytest
 ```
 
 - 目录跳转（zoxide）：
-  todo 这种是更加优秀吗？在这里要添加原因。
+
+  **为什么 zoxide 更优秀？**
+
+  - **智能学习**：根据使用频率和最近访问时间自动排序目录
+  - **模糊匹配**：只需输入部分路径即可跳转，如 `z dot` 可跳转到 `~/dotfiles`
+  - **性能卓越**：使用 Rust 编写，比 autojump/z.sh 更快
+  - **跨平台**：支持 Linux/macOS/Windows，配置可跨系统同步
+  - **交互模式**：`zi` 提供 fzf 集成的交互式选择界面
 
 ```bash
 # 已在 zshrc 中自动初始化（检测到 zoxide 后优先使用）
@@ -277,15 +284,131 @@ examples/
 
 ## 故障排查（Troubleshooting）
 
-- tmux 进入后不是 zsh
-  - 运行 `tmux kill-server` 后重启；检查 `tmux/tmux.conf` 的 `default-shell` 与 `default-command`。
-  - macOS 确认 `/opt/homebrew/bin/zsh` 在 `/etc/shells` 中，必要时 `chsh -s /opt/homebrew/bin/zsh`。
-- 剪贴板复制无效
-  - macOS 需要 `pbcopy`；Linux 安装 `xclip` 或 `xsel`。
-- Homebrew 太慢或报错
-  - 可使用 `--only-links` 跳过，或启用 `--brew-upgrade/--brew-cleanup` 控制行为。
-- 自动 PR 权限问题
-  - 使用侧分支 + PR 由网页合并；或给使用的令牌开启 Workflows 权限，或改用 SSH 推送。
+### 常见问题
+
+#### tmux 相关
+
+- **问题**：tmux 进入后不是 zsh
+
+  - **解决**：运行 `tmux kill-server` 后重启；检查 `tmux/tmux.conf` 的 `default-shell` 与 `default-command`
+  - **macOS 特别注意**：确认 `/opt/homebrew/bin/zsh` 在 `/etc/shells` 中，必要时 `chsh -s /opt/homebrew/bin/zsh`
+
+- **问题**：tmux 状态栏显示异常
+
+  - **解决**：确保终端支持 256 色，设置 `export TERM=xterm-256color`
+  - **检查**：运行 `tmux info | grep -i color` 验证颜色支持
+
+#### 剪贴板问题
+
+- **问题**：剪贴板复制无效
+  - **macOS**：需要 `pbcopy`，通常系统自带
+  - **Linux**：安装 `xclip` 或 `xsel`
+    ```bash
+    # Ubuntu/Debian
+    sudo apt-get install xclip
+    # 或
+    sudo apt-get install xsel
+    ```
+  - **SSH 连接**：需要配置 X11 转发 `ssh -X user@host`
+
+#### Zsh 性能问题
+
+- **问题**：Zsh 启动缓慢
+  - **诊断**：运行 `zsh -xvf` 查看加载过程
+  - **优化方案**：
+    1. 选择单一插件管理器（oh-my-zsh 或 zplug）
+    1. 减少插件数量，只保留必要插件
+    1. 使用 `zsh-defer` 延迟加载重型插件
+    1. 添加到 `.zshrc` 开头测量启动时间：
+       ```bash
+       zmodload zsh/zprof  # 开头
+       # ... 配置内容 ...
+       zprof  # 结尾
+       ```
+
+#### 安装问题
+
+- **问题**：Homebrew 太慢或报错
+
+  - **解决**：
+    - 使用镜像：`BREW_MIRROR=ustc ./install --brew`
+    - 使用代理：`BREW_PROXY=http://127.0.0.1:7890 ./install --brew`
+    - 跳过 Homebrew：`./install --only-links`
+  - **调试**：`brew doctor` 检查 Homebrew 状态
+
+- **问题**：符号链接创建失败
+
+  - **原因**：目标文件已存在或权限不足
+  - **解决**：
+    1. 备份现有配置：`mv ~/.zshrc ~/.zshrc.backup`
+    1. 删除冲突文件后重试
+    1. 检查权限：`ls -la ~`
+
+#### Git 相关
+
+- **问题**：自动 PR 权限问题
+
+  - **解决方案**：
+    1. 使用侧分支 + PR 由网页合并
+    1. 给使用的令牌开启 Workflows 权限
+    1. 改用 SSH 推送：
+       ```bash
+       git remote set-url origin git@github.com:ONGOING-Z/dotfiles.git
+       ```
+
+- **问题**：pre-commit 钩子失败
+
+  - **解决**：
+    ```bash
+    # 更新 pre-commit
+    pip install --upgrade pre-commit
+    pre-commit install --install-hooks
+    # 手动运行检查
+    pre-commit run --all-files
+    ```
+
+#### 环境变量问题
+
+- **问题**：命令找不到（command not found）
+  - **检查 PATH**：`echo $PATH`
+  - **重新加载配置**：`source ~/.zshrc` 或 `exec $SHELL -l`
+  - **验证安装路径**：
+    - macOS：`/opt/homebrew/bin` (Apple Silicon) 或 `/usr/local/bin` (Intel)
+    - Linux：`/home/linuxbrew/.linuxbrew/bin` 或 `/usr/local/bin`
+
+### 调试技巧
+
+1. **启用详细日志**：
+
+   ```bash
+   # 安装脚本调试
+   bash -x ./install --dry-run
+
+   # Dotbot 调试
+   ./install -vv
+   ```
+
+1. **检查链接状态**：
+
+   ```bash
+   # 查看所有符号链接
+   find ~ -maxdepth 1 -type l -ls
+
+   # 验证链接目标
+   readlink ~/.zshrc
+   ```
+
+1. **重置配置**：
+
+   ```bash
+   # 备份当前配置
+   mkdir ~/dotfiles-backup
+   cp -r ~/.zshrc ~/.tmux.conf ~/.vimrc ~/dotfiles-backup/
+
+   # 清理并重新安装
+   rm ~/.zshrc ~/.tmux.conf ~/.vimrc
+   ./install
+   ```
 
 ## 参考
 
