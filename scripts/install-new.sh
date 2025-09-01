@@ -339,30 +339,39 @@ custom_install() {
         local choices
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择: ")" -a choices
 
-        for choice in "${choices[@]}"; do
-            case "$choice" in
-                1) selected_features+=("📁 配置文件符号链接") ;;
-                2) selected_features+=("📦 Homebrew 包管理") ;;
-                3) selected_features+=("🐚 Zsh 和 Oh-My-Zsh") ;;
-                4) selected_features+=("🔌 Zsh 插件") ;;
-                5) selected_features+=("🖥️ tmux 配置") ;;
-                6) selected_features+=("🔍 fzf 模糊查找") ;;
-                7) selected_features+=("📂 zoxide 目录跳转") ;;
-                8) selected_features+=("📝 Vim/Neovim 配置") ;;
-                9) selected_features+=("🔀 Git 配置") ;;
-                10) selected_features+=("🐍 Python 开发环境") ;;
-                11) selected_features+=("📗 Node.js 开发环境") ;;
-                12) selected_features+=("🦀 Rust 开发环境") ;;
-            esac
-        done
+        if [ ${#choices[@]} -gt 0 ]; then
+            for choice in "${choices[@]}"; do
+                case "$choice" in
+                    1) selected_features+=("📁 配置文件符号链接") ;;
+                    2) selected_features+=("📦 Homebrew 包管理") ;;
+                    3) selected_features+=("🐚 Zsh 和 Oh-My-Zsh") ;;
+                    4) selected_features+=("🔌 Zsh 插件") ;;
+                    5) selected_features+=("🖥️ tmux 配置") ;;
+                    6) selected_features+=("🔍 fzf 模糊查找") ;;
+                    7) selected_features+=("📂 zoxide 目录跳转") ;;
+                    8) selected_features+=("📝 Vim/Neovim 配置") ;;
+                    9) selected_features+=("🔀 Git 配置") ;;
+                    10) selected_features+=("🐍 Python 开发环境") ;;
+                    11) selected_features+=("📗 Node.js 开发环境") ;;
+                    12) selected_features+=("🦀 Rust 开发环境") ;;
+                esac
+            done
+        fi
     fi
 
     # 显示选择摘要
     echo ""
     print_section "已选择的组件"
-    for feature in "${selected_features[@]}"; do
-        echo -e "  ${GREEN}✓${NC} $feature"
-    done
+    if [ ${#selected_features[@]} -eq 0 ]; then
+        echo -e "  ${YELLOW}⚠${NC} 没有选择任何组件"
+        echo ""
+        print_warning "请至少选择一个组件进行安装"
+        return 1
+    else
+        for feature in "${selected_features[@]}"; do
+            echo -e "  ${GREEN}✓${NC} $feature"
+        done
+    fi
     echo ""
 
     if confirm "确认安装以上组件？"; then
