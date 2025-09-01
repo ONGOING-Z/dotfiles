@@ -15,7 +15,7 @@ denter() {
         docker ps --format "table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.Status}}"
         return 1
     fi
-    
+
     # 尝试使用 bash，如果失败则使用 sh
     docker exec -it "$container" /bin/bash 2>/dev/null || \
     docker exec -it "$container" /bin/sh
@@ -122,7 +122,7 @@ port() {
         echo "用法: port <端口号>"
         return 1
     fi
-    
+
     if command -v lsof &>/dev/null; then
         sudo lsof -i :"$port"
     elif command -v netstat &>/dev/null; then
@@ -140,7 +140,7 @@ myip() {
     elif command -v ifconfig &>/dev/null; then
         ifconfig | grep -oE 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -oE '([0-9]*\.){3}[0-9]*' | grep -v 127.0.0.1
     fi
-    
+
     echo -e "\n公网 IP:"
     curl -s ifconfig.me || curl -s icanhazip.com || curl -s ipinfo.io/ip
     echo
