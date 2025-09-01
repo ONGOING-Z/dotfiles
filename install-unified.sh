@@ -158,7 +158,7 @@ select_option() {
     local prompt="$1"
     shift
     local options=("$@")
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         local choice
         choice=$(printf '%s\n' "${options[@]}" | gum choose \
@@ -167,7 +167,7 @@ select_option() {
             --cursor.foreground="212" \
             --selected.foreground="212" \
             --height 10)
-        
+
         for i in "${!options[@]}"; do
             if [ "${options[$i]}" = "$choice" ]; then
                 echo "$i"
@@ -179,7 +179,7 @@ select_option() {
         for i in "${!options[@]}"; do
             echo -e "  ${WHITE}$((i+1)))${NC} ${options[$i]}"
         done
-        
+
         local choice
         while true; do
             read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择 [1-${#options[@]}]: ")" choice
@@ -198,7 +198,7 @@ multi_select() {
     local prompt="$1"
     shift
     local options=("$@")
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         local choices
         choices=$(printf '%s\n' "${options[@]}" | gum choose \
@@ -208,7 +208,7 @@ multi_select() {
             --cursor.foreground="212" \
             --selected.foreground="82" \
             --height 12)
-        
+
         local selected=()
         while IFS= read -r choice; do
             [ -z "$choice" ] && continue
@@ -219,23 +219,23 @@ multi_select() {
                 fi
             done
         done <<< "$choices"
-        
+
         echo "${selected[@]}"
     else
         echo -e "${YELLOW}${ARROW}${NC} $prompt (多选，空格分隔，如: 1 3 5)"
         for i in "${!options[@]}"; do
             echo -e "  ${WHITE}$((i+1)))${NC} ${options[$i]}"
         done
-        
+
         local choices selected=()
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择: ")" -a choices
-        
+
         for choice in "${choices[@]}"; do
             if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#options[@]}" ]; then
                 selected+=("$((choice-1))")
             fi
         done
-        
+
         echo "${selected[@]}"
     fi
 }
@@ -244,7 +244,7 @@ multi_select() {
 confirm() {
     local prompt="${1:-确认操作?}"
     local default="${2:-y}"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         if [ "$default" = "y" ]; then
             gum confirm --default "$prompt" && return 0 || return 1
@@ -267,7 +267,7 @@ confirm() {
 input_text() {
     local prompt="$1"
     local placeholder="${2:-}"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         gum input \
             --prompt "$prompt: " \
@@ -418,7 +418,7 @@ install_gum() {
     if [ "$HAS_GUM" = "0" ] && [ "$GUM_INSTALL" = "1" ]; then
         print_section "Gum 安装"
         print_info "Gum 可以提供更好的交互体验"
-        
+
         if confirm "是否安装 Gum 以获得更好的界面体验？"; then
             if command -v brew >/dev/null 2>&1; then
                 print_info "通过 Homebrew 安装 Gum..."
@@ -462,19 +462,19 @@ install_gum() {
 
 interactive_setup() {
     print_section "交互式配置向导"
-    
+
     # 基础选项
     if confirm "启用 Homebrew 包管理？" "y"; then
         DO_BREW=1
-        
+
         if confirm "  └─ 升级现有包？" "n"; then
             DO_BREW_UPGRADE=1
         fi
-        
+
         if confirm "  └─ 清理缓存？" "n"; then
             DO_BREW_CLEANUP=1
         fi
-        
+
         # 镜像选择
         local mirrors=(
             "不使用镜像"
@@ -486,12 +486,12 @@ interactive_setup() {
             1) BREW_MIRROR="ustc" ;;
             2) BREW_MIRROR="tsinghua" ;;
         esac
-        
+
         # 代理设置
         local proxy=$(input_text "HTTP 代理（可选）" "http://127.0.0.1:7890")
         [ "$proxy" != "http://127.0.0.1:7890" ] && [ -n "$proxy" ] && BREW_PROXY="$proxy"
     fi
-    
+
     # Zsh 主题
     print_section "Shell 配置"
     local themes=(
@@ -502,7 +502,7 @@ interactive_setup() {
         "pure - 极简主义，快速轻量"
         "不更改"
     )
-    
+
     local theme_idx=$(select_option "选择 Zsh 主题:" "${themes[@]}")
     case $theme_idx in
         0) ZSH_THEME="robbyrussell" ;;
@@ -511,20 +511,20 @@ interactive_setup() {
         3) ZSH_THEME="spaceship" ;;
         4) ZSH_THEME="pure" ;;
     esac
-    
+
     # 插件管理器
     local managers=(
         "Oh-My-Zsh - 最流行，插件丰富"
         "Zinit - 高性能，Turbo 模式"
         "不使用"
     )
-    
+
     local manager_idx=$(select_option "选择插件管理器:" "${managers[@]}")
     case $manager_idx in
         0) ZSH_MANAGER="ohmyzsh" ;;
         1) ZSH_MANAGER="zinit" ;;
     esac
-    
+
     # 插件选择
     if [ -n "$ZSH_MANAGER" ] && [ "$ZSH_MANAGER" != "none" ]; then
         local plugins=(
@@ -535,26 +535,26 @@ interactive_setup() {
             "fzf - 模糊查找"
             "z - 目录跳转"
         )
-        
+
         local selected=$(multi_select "选择插件:" "${plugins[@]}")
         ZSH_PLUGINS="$selected"
     fi
-    
+
     # 开发工具
     print_section "开发工具"
-    
+
     if confirm "配置 tmux TPM 插件管理器？" "n"; then
         DO_TPM=1
     fi
-    
+
     if confirm "配置 fzf 键绑定和补全？" "n"; then
         DO_FZF_BINDS=1
     fi
-    
+
     if confirm "安装配置 zoxide（更好的目录跳转）？" "n"; then
         DO_ZOXIDE=1
     fi
-    
+
     # 编辑器
     local editors=(
         "Vim - 经典编辑器"
@@ -562,14 +562,14 @@ interactive_setup() {
         "两者都配置"
         "跳过"
     )
-    
+
     local editor_idx=$(select_option "配置编辑器:" "${editors[@]}")
     case $editor_idx in
         0) CONFIGURE_VIM=1 ;;
         1) CONFIGURE_NVIM=1 ;;
         2) CONFIGURE_VIM=1; CONFIGURE_NVIM=1 ;;
     esac
-    
+
     # Git 配置
     if confirm "配置 Git？" "y"; then
         CONFIGURE_GIT=1
@@ -584,7 +584,7 @@ interactive_setup() {
 
 show_summary() {
     print_section "配置摘要"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         gum style \
             --border rounded \
@@ -646,7 +646,7 @@ Shell 配置
   配置 Git:              $([ "$CONFIGURE_GIT" = "1" ] && echo "是" || echo "否")
 EOF
     fi
-    
+
     # 生成可重用的命令
     print_info "可重用命令:"
     local cmd="./install-unified.sh"
@@ -668,7 +668,7 @@ EOF
 save_profile() {
     local profile_file="$1"
     print_info "保存配置到: $profile_file"
-    
+
     cat > "$profile_file" <<EOF
 # Dotfiles 安装配置
 # 生成时间: $(date)
@@ -697,7 +697,7 @@ CONFIGURE_GIT=$CONFIGURE_GIT
 GIT_USER_NAME="$GIT_USER_NAME"
 GIT_USER_EMAIL="$GIT_USER_EMAIL"
 EOF
-    
+
     print_success "配置已保存"
 }
 
@@ -709,14 +709,14 @@ backup_existing() {
     if [ "$DO_BACKUP" = "0" ]; then
         return
     fi
-    
+
     print_section "备份现有配置"
-    
+
     local files_to_backup=(
         ".zshrc" ".bashrc" ".bash_aliases"
         ".tmux.conf" ".vimrc" ".gitconfig"
     )
-    
+
     local need_backup=false
     for file in "${files_to_backup[@]}"; do
         if [ -f "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
@@ -724,11 +724,11 @@ backup_existing() {
             break
         fi
     done
-    
+
     if [ "$need_backup" = true ]; then
         if confirm "发现现有配置文件，是否备份？" "y"; then
             [ "$DRY_RUN" = "1" ] && print_info "[DRY-RUN] 创建备份目录: $BACKUP_DIR" || mkdir -p "$BACKUP_DIR"
-            
+
             for file in "${files_to_backup[@]}"; do
                 if [ -f "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
                     if [ "$DRY_RUN" = "1" ]; then
@@ -739,7 +739,7 @@ backup_existing() {
                     fi
                 fi
             done
-            
+
             print_success "备份完成: $BACKUP_DIR"
         fi
     else
@@ -753,9 +753,9 @@ backup_existing() {
 
 run_dotbot() {
     print_section "创建符号链接"
-    
+
     cd "${BASEDIR}"
-    
+
     # 初始化 dotbot submodule
     if [ "$DRY_RUN" = "1" ]; then
         print_info "[DRY-RUN] git submodule update --init --recursive"
@@ -763,7 +763,7 @@ run_dotbot() {
         git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive
         git submodule update --init --recursive "${DOTBOT_DIR}"
     fi
-    
+
     # 运行 dotbot
     if [ "$DRY_RUN" = "1" ]; then
         print_info "[DRY-RUN] 运行 Dotbot 创建符号链接"
@@ -780,9 +780,9 @@ install_homebrew() {
     if [ "$DO_BREW" = "0" ] || ! command -v brew >/dev/null 2>&1; then
         return
     fi
-    
+
     print_section "Homebrew 包管理"
-    
+
     # 设置镜像
     if [ -n "$BREW_MIRROR" ]; then
         case "$BREW_MIRROR" in
@@ -796,7 +796,7 @@ install_homebrew() {
                 ;;
         esac
     fi
-    
+
     # 设置代理
     if [ -n "$BREW_PROXY" ]; then
         export ALL_PROXY="$BREW_PROXY"
@@ -804,7 +804,7 @@ install_homebrew() {
         export HTTP_PROXY="$BREW_PROXY"
         print_info "使用代理: $BREW_PROXY"
     fi
-    
+
     # Brewfile 路径
     local BREWFILES=("brew/Brewfile.common")
     if [ "$OS_NAME" = "darwin" ]; then
@@ -812,7 +812,7 @@ install_homebrew() {
     else
         BREWFILES+=("brew/Brewfile.linux")
     fi
-    
+
     # 更新 Homebrew
     if [ "$DRY_RUN" = "1" ]; then
         print_info "[DRY-RUN] brew update"
@@ -820,7 +820,7 @@ install_homebrew() {
         print_info "更新 Homebrew..."
         brew update || true
     fi
-    
+
     # 升级包
     if [ "$DO_BREW_UPGRADE" = "1" ]; then
         if [ "$DRY_RUN" = "1" ]; then
@@ -830,7 +830,7 @@ install_homebrew() {
             brew upgrade || true
         fi
     fi
-    
+
     # 安装 Brewfile
     for bf in "${BREWFILES[@]}"; do
         if [ -f "$bf" ]; then
@@ -842,7 +842,7 @@ install_homebrew() {
             fi
         fi
     done
-    
+
     # 清理
     if [ "$DO_BREW_CLEANUP" = "1" ]; then
         if [ "$DRY_RUN" = "1" ]; then
@@ -864,7 +864,7 @@ install_tools() {
     if [ "$DO_TPM" = "1" ]; then
         print_section "tmux 插件管理器"
         local TPM_DIR="$HOME/.tmux/plugins/tpm"
-        
+
         if [ "$DRY_RUN" = "1" ]; then
             print_info "[DRY-RUN] 安装 tmux TPM"
         else
@@ -875,18 +875,18 @@ install_tools() {
                 print_info "更新 TPM..."
                 git -C "$TPM_DIR" pull
             fi
-            
+
             if command -v tmux >/dev/null 2>&1; then
                 print_info "安装 tmux 插件..."
                 "$TPM_DIR/bin/install_plugins" || true
             fi
         fi
     fi
-    
+
     # fzf
     if [ "$DO_FZF_BINDS" = "1" ]; then
         print_section "fzf 配置"
-        
+
         if [ "$DRY_RUN" = "1" ]; then
             print_info "[DRY-RUN] 配置 fzf 键绑定"
         else
@@ -897,7 +897,7 @@ install_tools() {
                 else
                     fzf_base="$HOME/.fzf"
                 fi
-                
+
                 if [ -f "$fzf_base/install" ]; then
                     print_info "配置 fzf..."
                     "$fzf_base/install" --key-bindings --completion --no-update-rc || true
@@ -907,11 +907,11 @@ install_tools() {
             fi
         fi
     fi
-    
+
     # zoxide
     if [ "$DO_ZOXIDE" = "1" ]; then
         print_section "zoxide 配置"
-        
+
         if [ "$DRY_RUN" = "1" ]; then
             print_info "[DRY-RUN] 安装配置 zoxide"
         else
@@ -937,9 +937,9 @@ configure_shell() {
     if [ -z "$ZSH_THEME" ] && [ -z "$ZSH_MANAGER" ]; then
         return
     fi
-    
+
     print_section "Shell 配置"
-    
+
     # 配置 Zsh 主题
     if [ -n "$ZSH_THEME" ]; then
         if [ "$DRY_RUN" = "1" ]; then
@@ -949,7 +949,7 @@ configure_shell() {
             print_info "配置 Zsh 主题: $ZSH_THEME"
         fi
     fi
-    
+
     # 配置插件管理器
     if [ -n "$ZSH_MANAGER" ]; then
         if [ "$DRY_RUN" = "1" ]; then
@@ -969,9 +969,9 @@ configure_git_settings() {
     if [ "$CONFIGURE_GIT" = "0" ]; then
         return
     fi
-    
+
     print_section "Git 配置"
-    
+
     if [ "$DRY_RUN" = "1" ]; then
         print_info "[DRY-RUN] 配置 Git 用户信息"
         [ -n "$GIT_USER_NAME" ] && print_info "  用户名: $GIT_USER_NAME"
@@ -981,7 +981,7 @@ configure_git_settings() {
             git config --global user.name "$GIT_USER_NAME"
             print_success "设置 Git 用户名: $GIT_USER_NAME"
         fi
-        
+
         if [ -n "$GIT_USER_EMAIL" ]; then
             git config --global user.email "$GIT_USER_EMAIL"
             print_success "设置 Git 邮箱: $GIT_USER_EMAIL"
@@ -996,23 +996,23 @@ configure_git_settings() {
 main() {
     # 显示欢迎界面
     print_header
-    
+
     # 系统检测
     print_info "检测到系统: $OS_NAME"
-    
+
     # 安装 Gum（如果请求）
     if [ "$DO_INTERACTIVE" = "1" ] || [ "$GUM_INSTALL" = "1" ]; then
         install_gum
     fi
-    
+
     # 交互式配置
     if [ "$DO_INTERACTIVE" = "1" ]; then
         interactive_setup
     fi
-    
+
     # 显示配置摘要
     show_summary
-    
+
     # 确认执行
     if [ "$DRY_RUN" = "0" ]; then
         if ! confirm "确认以上配置并开始安装？" "y"; then
@@ -1020,12 +1020,12 @@ main() {
             exit 0
         fi
     fi
-    
+
     # 保存配置（如果指定）
     if [ -n "${PROFILE_SAVE:-}" ]; then
         save_profile "$PROFILE_SAVE"
     fi
-    
+
     # 执行安装步骤
     if [ "$HAS_GUM" = "1" ] && [ "$DRY_RUN" = "0" ]; then
         # 使用 gum 显示进度
@@ -1036,7 +1036,7 @@ main() {
             $(declare -f install_tools)
             $(declare -f configure_shell)
             $(declare -f configure_git_settings)
-            
+
             backup_existing
             run_dotbot
             install_homebrew
@@ -1053,16 +1053,16 @@ main() {
         configure_shell
         configure_git_settings
     fi
-    
+
     # 完成
     print_success "安装完成！"
-    
+
     # 后续提示
     print_section "后续步骤"
     echo "1. 重新加载 shell 配置: source ~/.zshrc 或 source ~/.bashrc"
     echo "2. 安装 Vim/Neovim 插件: 打开编辑器运行 :PlugInstall"
     echo "3. 配置 tmux 插件: 按 prefix + I 安装插件"
-    
+
     if [ -n "${PROFILE_SAVE:-}" ]; then
         echo ""
         print_info "配置已保存到 $PROFILE_SAVE"
