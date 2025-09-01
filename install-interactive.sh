@@ -65,16 +65,16 @@ confirm() {
     local prompt="${1:-确认操作?}"
     local default="${2:-n}"
     local response
-    
+
     if [[ "$default" == "y" ]]; then
         prompt="$prompt [Y/n]: "
     else
         prompt="$prompt [y/N]: "
     fi
-    
+
     read -rp "$(echo -e "${YELLOW}${ARROW}${NC} $prompt")" response
     response=${response:-$default}
-    
+
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
@@ -83,13 +83,13 @@ select_option() {
     shift
     local options=("$@")
     local choice
-    
+
     echo -e "${YELLOW}${ARROW}${NC} $prompt"
-    
+
     for i in "${!options[@]}"; do
         print_option "$((i+1))" "${options[$i]}"
     done
-    
+
     while true; do
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择 [1-${#options[@]}]: ")" choice
         if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#options[@]}" ]; then
@@ -107,21 +107,21 @@ multi_select() {
     local options=("$@")
     local selected=()
     local choice
-    
+
     echo -e "${YELLOW}${ARROW}${NC} $prompt (多选，空格分隔，如: 1 3 5)"
-    
+
     for i in "${!options[@]}"; do
         print_option "$((i+1))" "${options[$i]}"
     done
-    
+
     read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择: ")" -a choices
-    
+
     for choice in "${choices[@]}"; do
         if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#options[@]}" ]; then
             selected+=("$((choice-1))")
         fi
     done
-    
+
     echo "${selected[@]}"
 }
 
@@ -145,15 +145,15 @@ spinner() {
 
 check_system() {
     print_section "系统环境检查"
-    
+
     # 操作系统
     OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
     print_info "操作系统: $OS_NAME"
-    
+
     # Shell
     CURRENT_SHELL="$(basename "$SHELL")"
     print_info "当前 Shell: $CURRENT_SHELL"
-    
+
     # Git
     if command -v git &>/dev/null; then
         GIT_VERSION=$(git --version | cut -d' ' -f3)
@@ -162,7 +162,7 @@ check_system() {
         print_error "Git 未安装"
         exit 1
     fi
-    
+
     # 检查必要工具
     local tools=("curl" "wget" "make")
     for tool in "${tools[@]}"; do
@@ -180,7 +180,7 @@ check_system() {
 
 backup_existing() {
     print_section "备份现有配置"
-    
+
     local files_to_backup=(
         ".zshrc"
         ".bashrc"
@@ -189,7 +189,7 @@ backup_existing() {
         ".vimrc"
         ".gitconfig"
     )
-    
+
     local need_backup=false
     for file in "${files_to_backup[@]}"; do
         if [ -f "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
@@ -197,7 +197,7 @@ backup_existing() {
             break
         fi
     done
-    
+
     if [ "$need_backup" = true ]; then
         if confirm "发现现有配置文件，是否备份？" "y"; then
             mkdir -p "$BACKUP_DIR"
@@ -220,7 +220,7 @@ backup_existing() {
 
 select_theme() {
     print_section "主题和外观"
-    
+
     # Zsh 主题选择
     local zsh_themes=(
         "robbyrussell (默认，简洁)"
@@ -230,7 +230,7 @@ select_theme() {
         "pure (极简主义)"
         "不更改"
     )
-    
+
     local theme_idx=$(select_option "选择 Zsh 主题:" "${zsh_themes[@]}")
     case $theme_idx in
         0) export SELECTED_ZSH_THEME="robbyrussell" ;;
@@ -240,7 +240,7 @@ select_theme() {
         4) export SELECTED_ZSH_THEME="pure" ;;
         5) export SELECTED_ZSH_THEME="" ;;
     esac
-    
+
     if [ -n "${SELECTED_ZSH_THEME:-}" ]; then
         print_success "已选择主题: $SELECTED_ZSH_THEME"
     fi
@@ -252,7 +252,7 @@ select_theme() {
 
 select_plugins() {
     print_section "插件和扩展"
-    
+
     # Zsh 插件管理器
     local managers=(
         "Oh-My-Zsh (最流行，插件丰富)"
@@ -260,7 +260,7 @@ select_plugins() {
         "Zinit (高性能，Turbo 模式)"
         "不使用插件管理器"
     )
-    
+
     local manager_idx=$(select_option "选择 Zsh 插件管理器:" "${managers[@]}")
     case $manager_idx in
         0) export ZSH_MANAGER="ohmyzsh" ;;
@@ -268,9 +268,9 @@ select_plugins() {
         2) export ZSH_MANAGER="zinit" ;;
         3) export ZSH_MANAGER="none" ;;
     esac
-    
+
     print_success "已选择: ${managers[$manager_idx]}"
-    
+
     # 选择要安装的插件
     if [ "$ZSH_MANAGER" != "none" ]; then
         local plugins=(
@@ -283,10 +283,10 @@ select_plugins() {
             "fzf (模糊查找)"
             "z/zoxide (智能目录跳转)"
         )
-        
+
         local selected_plugins=$(multi_select "选择要安装的插件:" "${plugins[@]}")
         export SELECTED_PLUGINS="$selected_plugins"
-        
+
         if [ -n "$SELECTED_PLUGINS" ]; then
             print_success "已选择 $(echo $SELECTED_PLUGINS | wc -w) 个插件"
         fi
@@ -299,7 +299,7 @@ select_plugins() {
 
 configure_dev_tools() {
     print_section "开发工具配置"
-    
+
     # 编辑器选择
     local editors=(
         "Vim (经典编辑器)"
@@ -307,7 +307,7 @@ configure_dev_tools() {
         "两者都配置"
         "跳过"
     )
-    
+
     local editor_idx=$(select_option "配置编辑器:" "${editors[@]}")
     case $editor_idx in
         0) export CONFIGURE_VIM=1 ;;
@@ -315,28 +315,28 @@ configure_dev_tools() {
         2) export CONFIGURE_VIM=1; export CONFIGURE_NVIM=1 ;;
         3) ;;
     esac
-    
+
     # Git 配置
     if confirm "是否配置 Git？" "y"; then
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} Git 用户名: ")" git_name
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} Git 邮箱: ")" git_email
-        
+
         if [ -n "$git_name" ] && [ -n "$git_email" ]; then
             export GIT_USER_NAME="$git_name"
             export GIT_USER_EMAIL="$git_email"
             print_success "Git 配置已保存"
         fi
     fi
-    
+
     # 包管理器
     if [ "$OS_NAME" = "darwin" ] || [ "$OS_NAME" = "linux" ]; then
         if confirm "是否安装/更新 Homebrew 包？" "n"; then
             export INSTALL_WITH_BREW=1
-            
+
             if confirm "  - 升级现有包？" "n"; then
                 export INSTALL_BREW_UPGRADE=1
             fi
-            
+
             if confirm "  - 清理旧版本？" "n"; then
                 export INSTALL_BREW_CLEANUP=1
             fi
@@ -350,7 +350,7 @@ configure_dev_tools() {
 
 configure_network() {
     print_section "网络配置（可选）"
-    
+
     if confirm "是否需要配置镜像/代理？" "n"; then
         # 镜像选择
         local mirrors=(
@@ -358,14 +358,14 @@ configure_network() {
             "Tsinghua (清华)"
             "不使用镜像"
         )
-        
+
         local mirror_idx=$(select_option "选择 Homebrew 镜像:" "${mirrors[@]}")
         case $mirror_idx in
             0) export BREW_MIRROR="ustc" ;;
             1) export BREW_MIRROR="tsinghua" ;;
             2) ;;
         esac
-        
+
         # 代理配置
         if confirm "是否配置代理？" "n"; then
             read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 代理地址 (如 http://127.0.0.1:7890): ")" proxy
@@ -383,18 +383,18 @@ configure_network() {
 
 execute_install() {
     print_section "执行安装"
-    
+
     # 构建安装命令
     local install_cmd="./install"
     local install_args=()
-    
+
     # 添加参数
     [ "${INSTALL_WITH_BREW:-0}" = "1" ] && install_args+=("--brew")
     [ "${INSTALL_BREW_UPGRADE:-0}" = "1" ] && install_args+=("--brew-upgrade")
     [ "${INSTALL_BREW_CLEANUP:-0}" = "1" ] && install_args+=("--brew-cleanup")
     [ -n "${BREW_MIRROR:-}" ] && install_args+=("--brew-mirror=$BREW_MIRROR")
     [ -n "${BREW_PROXY:-}" ] && install_args+=("--brew-proxy=$BREW_PROXY")
-    
+
     # 保存配置
     if confirm "是否保存本次配置以便将来使用？" "y"; then
         local profile_name
@@ -403,14 +403,14 @@ execute_install() {
         install_args+=("--profile-save=examples/profile.$profile_name")
         print_success "配置将保存为: examples/profile.$profile_name"
     fi
-    
+
     # 显示最终命令
     echo -e "\n${CYAN}将执行以下命令:${NC}"
     echo -e "${WHITE}$install_cmd ${install_args[*]}${NC}\n"
-    
+
     if confirm "开始安装？" "y"; then
         print_info "正在安装..."
-        
+
         # 执行安装
         if $install_cmd "${install_args[@]}"; then
             print_success "安装完成！"
@@ -430,20 +430,20 @@ execute_install() {
 
 post_install() {
     print_section "安装后配置"
-    
+
     # Git 用户配置
     if [ -n "${GIT_USER_NAME:-}" ] && [ -n "${GIT_USER_EMAIL:-}" ]; then
         git config --global user.name "$GIT_USER_NAME"
         git config --global user.email "$GIT_USER_EMAIL"
         print_success "Git 用户信息已配置"
     fi
-    
+
     # Zsh 主题配置
     if [ -n "${SELECTED_ZSH_THEME:-}" ] && [ -f "$HOME/.zshrc" ]; then
         sed -i.bak "s/^ZSH_THEME=.*/ZSH_THEME=\"$SELECTED_ZSH_THEME\"/" "$HOME/.zshrc"
         print_success "Zsh 主题已更新"
     fi
-    
+
     # 默认 Shell
     if [ "$CURRENT_SHELL" != "zsh" ]; then
         if confirm "是否将 Zsh 设为默认 Shell？" "y"; then
@@ -459,17 +459,17 @@ post_install() {
             print_success "默认 Shell 已更改为 Zsh"
         fi
     fi
-    
+
     # 显示下一步
     echo -e "\n${GREEN}╔════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${GREEN}║                      安装完成！                            ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════════════════════╝${NC}\n"
-    
+
     print_info "下一步操作:"
     echo -e "  1. 重启终端或运行: ${WHITE}exec \$SHELL -l${NC}"
     echo -e "  2. 如使用 tmux，运行: ${WHITE}tmux source ~/.tmux.conf${NC}"
     echo -e "  3. 查看自定义命令: ${WHITE}alias${NC}"
-    
+
     if [ -d "$BACKUP_DIR" ]; then
         echo -e "\n  ${YELLOW}${INFO}${NC} 原配置备份在: $BACKUP_DIR"
     fi
@@ -482,22 +482,22 @@ post_install() {
 main() {
     # 清屏
     clear
-    
+
     # 显示头部
     print_header
-    
+
     # 系统检查
     check_system
-    
+
     # 备份现有配置
     backup_existing
-    
+
     # 配置选择
     select_theme
     select_plugins
     configure_dev_tools
     configure_network
-    
+
     # 执行安装
     if execute_install; then
         post_install
