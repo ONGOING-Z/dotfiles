@@ -23,14 +23,14 @@ if command -v gum >/dev/null 2>&1; then
     echo ""
     echo "Gum 版本界面示例："
     echo ""
-    
+
     # 演示单选
     echo "📌 单选示例："
     theme=$(echo -e "robbyrussell - 默认主题\nagnoster - Git 状态\npowerlevel10k - 高度定制" | \
             gum choose --header "选择 Zsh 主题（使用方向键）")
     echo "您选择了: $theme"
     echo ""
-    
+
     # 演示多选
     echo "📌 多选示例："
     plugins=$(echo -e "zsh-autosuggestions\nzsh-syntax-highlighting\ngit\ndocker" | \
@@ -38,13 +38,13 @@ if command -v gum >/dev/null 2>&1; then
     echo "您选择了:"
     echo "$plugins"
     echo ""
-    
+
     # 演示输入
     echo "📌 输入示例："
     name=$(gum input --placeholder "Your Name" --prompt "Git 用户名: ")
     echo "您输入了: $name"
     echo ""
-    
+
     # 演示确认
     echo "📌 确认示例："
     if gum confirm "这样的界面是否更友好？"; then

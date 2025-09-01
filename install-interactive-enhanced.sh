@@ -112,7 +112,7 @@ select_option() {
     local prompt="$1"
     shift
     local options=("$@")
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         # Gum 模式：优雅的选择界面
         local choice
@@ -122,7 +122,7 @@ select_option() {
             --cursor.foreground="212" \
             --selected.foreground="212" \
             --height 10)
-        
+
         # 返回选择的索引
         for i in "${!options[@]}"; do
             if [ "${options[$i]}" = "$choice" ]; then
@@ -133,11 +133,11 @@ select_option() {
     else
         # Bash 模式：传统数字选择
         echo -e "${YELLOW}${ARROW}${NC} $prompt"
-        
+
         for i in "${!options[@]}"; do
             echo -e "  ${WHITE}$((i+1)))${NC} ${options[$i]}"
         done
-        
+
         local choice
         while true; do
             read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择 [1-${#options[@]}]: ")" choice
@@ -156,7 +156,7 @@ multi_select() {
     local prompt="$1"
     shift
     local options=("$@")
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         # Gum 模式：支持空格多选
         local choices
@@ -167,7 +167,7 @@ multi_select() {
             --cursor.foreground="212" \
             --selected.foreground="82" \
             --height 12)
-        
+
         # 返回选择的索引列表
         local selected=()
         while IFS= read -r choice; do
@@ -178,25 +178,25 @@ multi_select() {
                 fi
             done
         done <<< "$choices"
-        
+
         echo "${selected[@]}"
     else
         # Bash 模式：输入数字列表
         echo -e "${YELLOW}${ARROW}${NC} $prompt (多选，空格分隔，如: 1 3 5)"
-        
+
         for i in "${!options[@]}"; do
             echo -e "  ${WHITE}$((i+1)))${NC} ${options[$i]}"
         done
-        
+
         local choices selected=()
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择: ")" -a choices
-        
+
         for choice in "${choices[@]}"; do
             if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#options[@]}" ]; then
                 selected+=("$((choice-1))")
             fi
         done
-        
+
         echo "${selected[@]}"
     fi
 }
@@ -204,7 +204,7 @@ multi_select() {
 # 确认函数
 confirm() {
     local prompt="${1:-确认操作?}"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         gum confirm "$prompt"
         return $?
@@ -220,7 +220,7 @@ confirm() {
 input_text() {
     local prompt="$1"
     local placeholder="${2:-}"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         gum input \
             --prompt "$prompt " \
@@ -240,7 +240,7 @@ install_gum() {
     if [ "$HAS_GUM" = "0" ]; then
         print_section "Gum 安装"
         print_info "Gum 可以提供更好的交互体验"
-        
+
         if confirm "是否安装 Gum 以获得更好的界面体验？"; then
             if command -v brew >/dev/null 2>&1; then
                 print_info "通过 Homebrew 安装 Gum..."
@@ -278,7 +278,7 @@ install_gum() {
 
 select_theme() {
     print_section "主题和外观"
-    
+
     # Zsh 主题选择 - 带完整描述
     local zsh_themes=(
         "robbyrussell - 默认主题，简洁高效"
@@ -288,9 +288,9 @@ select_theme() {
         "pure - 极简主义，快速轻量"
         "不更改现有主题"
     )
-    
+
     local theme_idx=$(select_option "选择 Zsh 主题:" "${zsh_themes[@]}")
-    
+
     case $theme_idx in
         0) export SELECTED_ZSH_THEME="robbyrussell" ;;
         1) export SELECTED_ZSH_THEME="agnoster" ;;
@@ -299,10 +299,10 @@ select_theme() {
         4) export SELECTED_ZSH_THEME="pure" ;;
         5) export SELECTED_ZSH_THEME="" ;;
     esac
-    
+
     if [ -n "${SELECTED_ZSH_THEME:-}" ]; then
         print_success "已选择主题: $SELECTED_ZSH_THEME"
-        
+
         # 特殊主题的额外配置
         if [ "$SELECTED_ZSH_THEME" = "powerlevel10k" ]; then
             if confirm "是否运行 Powerlevel10k 配置向导？"; then
@@ -323,7 +323,7 @@ select_theme() {
 
 select_plugins() {
     print_section "插件和扩展"
-    
+
     # Zsh 插件管理器 - 带详细说明
     local managers=(
         "Oh-My-Zsh - 最流行，插件生态丰富，适合新手"
@@ -332,9 +332,9 @@ select_plugins() {
         "Antigen - 简单易用，类似 Vundle"
         "不使用插件管理器"
     )
-    
+
     local manager_idx=$(select_option "选择 Zsh 插件管理器:" "${managers[@]}")
-    
+
     case $manager_idx in
         0) export ZSH_MANAGER="ohmyzsh" ;;
         1) export ZSH_MANAGER="zplug" ;;
@@ -342,9 +342,9 @@ select_plugins() {
         3) export ZSH_MANAGER="antigen" ;;
         4) export ZSH_MANAGER="none" ;;
     esac
-    
+
     print_success "已选择: $(echo "${managers[$manager_idx]}" | cut -d' ' -f1)"
-    
+
     # 选择要安装的插件 - 带详细描述
     if [ "$ZSH_MANAGER" != "none" ]; then
         local plugins=(
@@ -361,14 +361,14 @@ select_plugins() {
             "thefuck - 命令纠错工具"
             "autojump - 另一个目录跳转工具"
         )
-        
+
         local selected_plugins=$(multi_select "选择要安装的插件:" "${plugins[@]}")
         export SELECTED_PLUGINS="$selected_plugins"
-        
+
         if [ -n "$SELECTED_PLUGINS" ]; then
             local count=$(echo $SELECTED_PLUGINS | wc -w)
             print_success "已选择 $count 个插件"
-            
+
             # 显示选中的插件
             for idx in $SELECTED_PLUGINS; do
                 print_info "  • $(echo "${plugins[$idx]}" | cut -d' ' -f1)"
@@ -383,7 +383,7 @@ select_plugins() {
 
 configure_dev_tools() {
     print_section "开发工具配置"
-    
+
     # 编辑器选择
     local editors=(
         "Vim - 经典编辑器，轻量高效"
@@ -391,29 +391,29 @@ configure_dev_tools() {
         "两者都配置"
         "跳过编辑器配置"
     )
-    
+
     local editor_idx=$(select_option "选择要配置的编辑器:" "${editors[@]}")
-    
+
     case $editor_idx in
         0) export CONFIGURE_VIM=1 ;;
         1) export CONFIGURE_NVIM=1 ;;
         2) export CONFIGURE_VIM=1; export CONFIGURE_NVIM=1 ;;
         3) ;;
     esac
-    
+
     # Git 配置
     if confirm "是否配置 Git（用户名、邮箱、别名等）？"; then
         export CONFIGURE_GIT=1
-        
+
         local git_name=$(input_text "Git 用户名" "Your Name")
         local git_email=$(input_text "Git 邮箱" "you@example.com")
-        
+
         export GIT_USER_NAME="$git_name"
         export GIT_USER_EMAIL="$git_email"
-        
+
         print_success "Git 配置已保存"
     fi
-    
+
     # 开发语言环境
     local languages=(
         "Node.js/JavaScript - nvm, npm 配置"
@@ -423,7 +423,7 @@ configure_dev_tools() {
         "Ruby - rbenv, gem 配置"
         "Java - JAVA_HOME, Maven 配置"
     )
-    
+
     local selected_langs=$(multi_select "选择要配置的开发语言环境:" "${languages[@]}")
     export SELECTED_LANGUAGES="$selected_langs"
 }
@@ -434,7 +434,7 @@ configure_dev_tools() {
 
 show_summary() {
     print_section "配置摘要"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         # 使用 Gum 创建漂亮的表格
         gum style \
@@ -472,38 +472,38 @@ EOF
 main() {
     # 显示欢迎界面
     print_header
-    
+
     # 提供安装 Gum 的选项
     install_gum
-    
+
     # 如果成功安装了 Gum，重新显示欢迎界面
     if [ "$HAS_GUM" = "1" ]; then
         clear
         print_header
     fi
-    
+
     # 运行配置步骤
     select_theme
     select_plugins
     configure_dev_tools
-    
+
     # 显示摘要
     show_summary
-    
+
     # 确认安装
     if confirm "确认以上配置并开始安装？"; then
         print_success "开始安装..."
-        
+
         # 这里调用实际的安装脚本
         # ./install --only-links ...
-        
+
         if [ "$HAS_GUM" = "1" ]; then
             gum spin --spinner dot --title "正在安装..." -- sleep 2
         else
             echo "正在安装..."
             sleep 2
         fi
-        
+
         print_success "安装完成！"
     else
         print_warning "安装已取消"
