@@ -159,8 +159,29 @@ log_cmd() {
         [ -n "$LOG_FILE" ] && echo "---" >> "$LOG_FILE"
         return $exit_code
     else
-        # 非详细模式，静默执行
-        eval "$cmd" 2>/dev/null
+        # 非详细模式，也显示基本信息
+        if [ -n "$desc" ]; then
+            echo -e "${BLUE}▶${NC} $desc"
+        fi
+        
+        # 执行命令但仍然返回错误码
+        local output
+        local exit_code
+        output=$(eval "$cmd" 2>&1)
+        exit_code=$?
+        
+        if [ $exit_code -ne 0 ]; then
+            echo -e "${RED}  ✗ 失败${NC}"
+            # 在非详细模式下，如果失败也显示错误信息
+            if [ -n "$output" ]; then
+                echo "$output" | head -5 | sed 's/^/    /'
+                echo "    ..."
+            fi
+        else
+            echo -e "${GREEN}  ✓ 完成${NC}"
+        fi
+        
+        return $exit_code
     fi
 }
 
@@ -344,8 +365,16 @@ quick_install() {
         # 获取基础目录
         local ROOT_DIR="$(cd "$BASEDIR/.." && pwd)"
         
+        # 备份已存在的配置文件
+        if [ -f ~/.bashrc ] && [ ! -L ~/.bashrc ]; then
+            log_cmd "mv ~/.bashrc ~/.bashrc.backup.$(date +%Y%m%d_%H%M%S)" "备份现有 .bashrc"
+        fi
+        if [ -f ~/.gitconfig ] && [ ! -L ~/.gitconfig ]; then
+            log_cmd "mv ~/.gitconfig ~/.gitconfig.backup.$(date +%Y%m%d_%H%M%S)" "备份现有 .gitconfig"
+        fi
+        
         # 创建符号链接
-        log_cmd "cd '$ROOT_DIR' && '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d . -c '$CONFIG'" "创建配置文件符号链接"
+        log_cmd "cd '$ROOT_DIR' && python3 '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d '$ROOT_DIR' -c '$ROOT_DIR/$CONFIG'" "创建配置文件符号链接"
         
         # 检查并安装 Homebrew 包
         if command -v brew >/dev/null 2>&1; then
@@ -489,7 +518,14 @@ custom_install() {
         for feature in "${selected_features[@]}"; do
             case "$feature" in
                 *"配置文件符号链接"*)
-                    log_cmd "cd '$ROOT_DIR' && '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d . -c '$CONFIG'" "创建配置文件符号链接"
+                    # 备份已存在的配置文件
+                    if [ -f ~/.bashrc ] && [ ! -L ~/.bashrc ]; then
+                        log_cmd "mv ~/.bashrc ~/.bashrc.backup.$(date +%Y%m%d_%H%M%S)" "备份现有 .bashrc"
+                    fi
+                    if [ -f ~/.gitconfig ] && [ ! -L ~/.gitconfig ]; then
+                        log_cmd "mv ~/.gitconfig ~/.gitconfig.backup.$(date +%Y%m%d_%H%M%S)" "备份现有 .gitconfig"
+                    fi
+                    log_cmd "cd '$ROOT_DIR' && python3 '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d '$ROOT_DIR' -c '$ROOT_DIR/$CONFIG'" "创建配置文件符号链接"
                     ;;
                 *"Homebrew"*)
                     if command -v brew >/dev/null 2>&1 && [ -f "$ROOT_DIR/brew/Brewfile.common" ]; then
