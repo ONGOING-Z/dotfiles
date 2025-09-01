@@ -6,6 +6,11 @@ if [ -f "$HOME/.bash_aliases" ]; then
     . "$HOME/.bash_aliases"
 fi
 
+# shell functions
+if [ -f "$HOME/dotfiles/shell/functions.sh" ]; then
+    . "$HOME/dotfiles/shell/functions.sh"
+fi
+
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 export TERM="xterm-256color"

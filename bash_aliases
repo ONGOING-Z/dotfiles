@@ -13,7 +13,27 @@ alias gdb='gdb -q'
 # at macos system, pbcopy/pbpaste are builtin tools.
 #alias pbcopy='xclip -selection clipboard'
 #alias pbpaste='xclip -selection clipboard -o'
-# 进入容器（替代 docker exec -it xxx /bin/bash）
+
+# Docker 容器操作
+alias dexec='docker exec -it'  # 用法: dexec <container> /bin/bash
+alias dsh='docker exec -it $1 /bin/sh'  # 进入容器 shell
+alias dbash='docker exec -it $1 /bin/bash'  # 进入容器 bash
+alias dps='docker ps'  # 列出运行中的容器
+alias dpsa='docker ps -a'  # 列出所有容器
+alias dimg='docker images'  # 列出镜像
+alias drm='docker rm'  # 删除容器
+alias drmi='docker rmi'  # 删除镜像
+alias dlog='docker logs'  # 查看日志
+alias dstop='docker stop'  # 停止容器
+alias dstart='docker start'  # 启动容器
+alias drestart='docker restart'  # 重启容器
+
+# Docker Compose
+alias dc='docker-compose'
+alias dcup='docker-compose up -d'  # 后台启动
+alias dcdown='docker-compose down'  # 停止并删除
+alias dcps='docker-compose ps'  # 查看状态
+alias dclogs='docker-compose logs -f'  # 查看日志
 
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
