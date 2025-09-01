@@ -252,13 +252,13 @@ quick_install() {
 
     echo "将安装以下配置："
     echo ""
-    echo "  ${GREEN}✓${NC} 创建所有配置文件的符号链接"
-    echo "  ${GREEN}✓${NC} 安装 Homebrew 包（如果可用）"
-    echo "  ${GREEN}✓${NC} 配置 Zsh 和 Oh-My-Zsh"
-    echo "  ${GREEN}✓${NC} 安装常用插件（autosuggestions, syntax-highlighting）"
-    echo "  ${GREEN}✓${NC} 配置 tmux 和插件管理器"
-    echo "  ${GREEN}✓${NC} 配置 fzf 键绑定"
-    echo "  ${GREEN}✓${NC} 基础 Git 配置"
+    echo -e "  ${GREEN}✓${NC} 创建所有配置文件的符号链接"
+    echo -e "  ${GREEN}✓${NC} 安装 Homebrew 包（如果可用）"
+    echo -e "  ${GREEN}✓${NC} 配置 Zsh 和 Oh-My-Zsh"
+    echo -e "  ${GREEN}✓${NC} 安装常用插件（autosuggestions, syntax-highlighting）"
+    echo -e "  ${GREEN}✓${NC} 配置 tmux 和插件管理器"
+    echo -e "  ${GREEN}✓${NC} 配置 fzf 键绑定"
+    echo -e "  ${GREEN}✓${NC} 基础 Git 配置"
     echo ""
 
     if confirm "确认开始快速安装？"; then
@@ -361,7 +361,7 @@ custom_install() {
     echo ""
     print_section "已选择的组件"
     for feature in "${selected_features[@]}"; do
-        echo "  ${GREEN}✓${NC} $feature"
+        echo -e "  ${GREEN}✓${NC} $feature"
     done
     echo ""
 
@@ -480,10 +480,10 @@ minimal_install() {
 
     echo "最小安装将只执行："
     echo ""
-    echo "  ${GREEN}✓${NC} 创建配置文件的符号链接"
-    echo "  ${YELLOW}○${NC} 不安装任何软件包"
-    echo "  ${YELLOW}○${NC} 不修改 Shell 配置"
-    echo "  ${YELLOW}○${NC} 不安装插件"
+    echo -e "  ${GREEN}✓${NC} 创建配置文件的符号链接"
+    echo -e "  ${YELLOW}○${NC} 不安装任何软件包"
+    echo -e "  ${YELLOW}○${NC} 不修改 Shell 配置"
+    echo -e "  ${YELLOW}○${NC} 不安装插件"
     echo ""
     echo "适合："
     echo "  • 已有环境的用户"
@@ -712,9 +712,9 @@ show_system_status() {
     for tool in "${tools[@]}"; do
         if command -v "$tool" >/dev/null 2>&1; then
             version=$($tool --version 2>/dev/null | head -n1 || echo "已安装")
-            echo "  ${GREEN}✓${NC} $tool: $version"
+            echo -e "  ${GREEN}✓${NC} $tool: $version"
         else
-            echo "  ${RED}✗${NC} $tool: 未安装"
+            echo -e "  ${RED}✗${NC} $tool: 未安装"
         fi
     done
 
@@ -734,13 +734,13 @@ show_completion_message() {
     echo "后续步骤："
     echo ""
     echo "  1. 重新加载 Shell 配置："
-    echo "     ${CYAN}source ~/.zshrc${NC} 或 ${CYAN}source ~/.bashrc${NC}"
+    echo -e "     ${CYAN}source ~/.zshrc${NC} 或 ${CYAN}source ~/.bashrc${NC}"
     echo ""
     echo "  2. 如果安装了 Vim/Neovim 插件："
-    echo "     打开编辑器运行 ${CYAN}:PlugInstall${NC}"
+    echo -e "     打开编辑器运行 ${CYAN}:PlugInstall${NC}"
     echo ""
     echo "  3. 如果配置了 tmux："
-    echo "     按 ${CYAN}prefix + I${NC} 安装插件"
+    echo -e "     按 ${CYAN}prefix + I${NC} 安装插件"
     echo ""
 
     if [ "$DRY_RUN" = "1" ]; then
