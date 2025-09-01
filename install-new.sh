@@ -111,7 +111,7 @@ print_warning() {
 # 确认函数
 confirm() {
     local prompt="${1:-确认操作?}"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         gum confirm "$prompt"
         return $?
@@ -130,10 +130,10 @@ confirm() {
 check_and_install_gum() {
     if [ "$HAS_GUM" = "0" ]; then
         echo -e "\n${YELLOW}${INFO}${NC} Gum 可以提供更好的交互体验"
-        
+
         if confirm "是否安装 Gum 以获得最佳界面体验？"; then
             echo -e "${BLUE}${INFO}${NC} 正在安装 Gum..."
-            
+
             if [ "$OS_NAME" = "darwin" ]; then
                 if command -v brew >/dev/null 2>&1; then
                     brew install gum && HAS_GUM=1
@@ -148,7 +148,7 @@ check_and_install_gum() {
                     brew install gum && HAS_GUM=1
                 fi
             fi
-            
+
             if [ "$HAS_GUM" = "1" ]; then
                 print_success "Gum 安装成功！"
                 sleep 1
@@ -167,7 +167,7 @@ check_and_install_gum() {
 
 select_install_mode() {
     print_section "选择安装模式"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         INSTALL_MODE=$(gum choose \
             --cursor "> " \
@@ -193,10 +193,10 @@ select_install_mode() {
         echo "  6) 📖 查看帮助 - 了解更多信息"
         echo "  7) ❌ 退出"
         echo ""
-        
+
         local choice
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择 [1-7]: ")" choice
-        
+
         case "$choice" in
             1) INSTALL_MODE="🚀 快速安装 - 推荐配置，一键完成" ;;
             2) INSTALL_MODE="🎨 自定义安装 - 详细配置每个选项" ;;
@@ -205,7 +205,7 @@ select_install_mode() {
             5) INSTALL_MODE="🔍 演示模式 - 查看将要执行的操作" ;;
             6) INSTALL_MODE="📖 查看帮助 - 了解更多信息" ;;
             7) INSTALL_MODE="❌ 退出" ;;
-            *) 
+            *)
                 print_error "无效选择"
                 sleep 1
                 select_install_mode
@@ -213,7 +213,7 @@ select_install_mode() {
                 ;;
         esac
     fi
-    
+
     # 处理选择
     case "$INSTALL_MODE" in
         *"快速安装"*)
@@ -249,7 +249,7 @@ select_install_mode() {
 quick_install() {
     print_header
     print_section "🚀 快速安装模式"
-    
+
     echo "将安装以下配置："
     echo ""
     echo "  ${GREEN}✓${NC} 创建所有配置文件的符号链接"
@@ -260,10 +260,10 @@ quick_install() {
     echo "  ${GREEN}✓${NC} 配置 fzf 键绑定"
     echo "  ${GREEN}✓${NC} 基础 Git 配置"
     echo ""
-    
+
     if confirm "确认开始快速安装？"; then
         print_success "开始快速安装..."
-        
+
         # 执行实际安装
         if [ "$HAS_GUM" = "1" ]; then
             gum spin --spinner dot --title "正在安装..." -- sleep 3
@@ -271,10 +271,10 @@ quick_install() {
             echo "正在安装..."
             sleep 3
         fi
-        
+
         # 这里调用实际的安装命令
         # ./install-unified.sh --quick
-        
+
         print_success "快速安装完成！"
         show_completion_message
     else
@@ -292,14 +292,14 @@ quick_install() {
 custom_install() {
     print_header
     print_section "🎨 自定义安装模式"
-    
+
     local selected_features=()
-    
+
     # 选择要安装的组件
     if [ "$HAS_GUM" = "1" ]; then
         print_info "选择要安装的组件（空格选择，回车确认）："
         echo ""
-        
+
         local choices=$(gum choose --no-limit \
             --cursor "> " \
             --cursor.foreground="212" \
@@ -317,7 +317,7 @@ custom_install() {
             "🐍 Python 开发环境" \
             "📗 Node.js 开发环境" \
             "🦀 Rust 开发环境")
-        
+
         selected_features=($choices)
     else
         echo "选择要安装的组件（输入数字，空格分隔）："
@@ -335,10 +335,10 @@ custom_install() {
         echo "  11) 📗 Node.js 开发环境"
         echo "  12) 🦀 Rust 开发环境"
         echo ""
-        
+
         local choices
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择: ")" -a choices
-        
+
         for choice in "${choices[@]}"; do
             case "$choice" in
                 1) selected_features+=("📁 配置文件符号链接") ;;
@@ -356,7 +356,7 @@ custom_install() {
             esac
         done
     fi
-    
+
     # 显示选择摘要
     echo ""
     print_section "已选择的组件"
@@ -364,10 +364,10 @@ custom_install() {
         echo "  ${GREEN}✓${NC} $feature"
     done
     echo ""
-    
+
     if confirm "确认安装以上组件？"; then
         print_success "开始自定义安装..."
-        
+
         # 执行安装
         if [ "$HAS_GUM" = "1" ]; then
             gum spin --spinner dot --title "正在安装选定组件..." -- sleep 3
@@ -375,7 +375,7 @@ custom_install() {
             echo "正在安装选定组件..."
             sleep 3
         fi
-        
+
         print_success "自定义安装完成！"
         show_completion_message
     else
@@ -393,7 +393,7 @@ custom_install() {
 expert_install() {
     print_header
     print_section "🔧 专家模式"
-    
+
     echo "专家模式提供完全的控制权："
     echo ""
     echo "  • 自定义安装路径"
@@ -403,7 +403,7 @@ expert_install() {
     echo "  • 自定义 Shell 配置"
     echo "  • 导入/导出配置"
     echo ""
-    
+
     local expert_choice
     if [ "$HAS_GUM" = "1" ]; then
         expert_choice=$(gum choose \
@@ -422,7 +422,7 @@ expert_install() {
         echo "  4) 查看当前系统状态"
         echo "  5) 返回主菜单"
         echo ""
-        
+
         read -rp "$(echo -e "${YELLOW}${ARROW}${NC} 请选择 [1-5]: ")" choice
         case "$choice" in
             1) expert_choice="执行完整配置向导" ;;
@@ -432,7 +432,7 @@ expert_install() {
             5) expert_choice="返回主菜单" ;;
         esac
     fi
-    
+
     case "$expert_choice" in
         *"配置向导"*)
             # 调用详细的配置向导
@@ -477,7 +477,7 @@ EOF
 minimal_install() {
     print_header
     print_section "📦 最小安装模式"
-    
+
     echo "最小安装将只执行："
     echo ""
     echo "  ${GREEN}✓${NC} 创建配置文件的符号链接"
@@ -490,19 +490,19 @@ minimal_install() {
     echo "  • 只需要配置文件的场景"
     echo "  • 测试环境"
     echo ""
-    
+
     if confirm "确认执行最小安装？"; then
         print_success "开始最小安装..."
-        
+
         if [ "$HAS_GUM" = "1" ]; then
             gum spin --spinner dot --title "创建符号链接..." -- sleep 2
         else
             echo "创建符号链接..."
             sleep 2
         fi
-        
+
         # ./install-unified.sh --minimal
-        
+
         print_success "最小安装完成！"
         show_completion_message
     else
@@ -520,10 +520,10 @@ minimal_install() {
 demo_install() {
     print_header
     print_section "🔍 演示模式"
-    
+
     echo "演示模式将展示所有操作，但不会实际执行"
     echo ""
-    
+
     local demo_choice
     if [ "$HAS_GUM" = "1" ]; then
         demo_choice=$(gum choose \
@@ -548,7 +548,7 @@ demo_install() {
             4) demo_choice="返回主菜单" ;;
         esac
     fi
-    
+
     case "$demo_choice" in
         *"快速"*)
             echo ""
@@ -578,7 +578,7 @@ demo_install() {
             return
             ;;
     esac
-    
+
     echo ""
     print_info "按回车键返回主菜单..."
     read
@@ -594,7 +594,7 @@ demo_install() {
 show_help() {
     print_header
     print_section "📖 帮助信息"
-    
+
     if [ "$HAS_GUM" = "1" ]; then
         gum pager <<EOF
 Dotfiles 智能安装器 - 帮助文档
@@ -686,7 +686,7 @@ A: 可以。运行 ./uninstall.sh 即可
 更多信息：https://github.com/ONGOING-Z/dotfiles
 EOF
     fi
-    
+
     echo ""
     print_info "按回车键返回主菜单..."
     read
@@ -700,14 +700,14 @@ EOF
 
 show_system_status() {
     print_section "系统状态"
-    
+
     echo "操作系统: $OS_NAME"
     echo "Shell: $SHELL"
     echo "用户: $USER"
     echo "主目录: $HOME"
     echo ""
     echo "已安装的工具："
-    
+
     local tools=("git" "zsh" "tmux" "vim" "nvim" "brew" "node" "python3" "cargo")
     for tool in "${tools[@]}"; do
         if command -v "$tool" >/dev/null 2>&1; then
@@ -717,7 +717,7 @@ show_system_status() {
             echo "  ${RED}✗${NC} $tool: 未安装"
         fi
     done
-    
+
     echo ""
     print_info "按回车键继续..."
     read
@@ -730,7 +730,7 @@ show_system_status() {
 show_completion_message() {
     echo ""
     print_section "✨ 安装完成"
-    
+
     echo "后续步骤："
     echo ""
     echo "  1. 重新加载 Shell 配置："
@@ -742,15 +742,15 @@ show_completion_message() {
     echo "  3. 如果配置了 tmux："
     echo "     按 ${CYAN}prefix + I${NC} 安装插件"
     echo ""
-    
+
     if [ "$DRY_RUN" = "1" ]; then
         print_warning "这是演示模式，实际未执行任何操作"
     fi
-    
+
     echo ""
     print_success "感谢使用 Dotfiles 智能安装器！"
     echo ""
-    
+
     if confirm "是否返回主菜单？"; then
         print_header
         select_install_mode
@@ -766,10 +766,10 @@ show_completion_message() {
 main() {
     # 显示欢迎界面
     print_header
-    
+
     # 检查并提示安装 Gum
     check_and_install_gum
-    
+
     # 显示主菜单
     select_install_mode
 }
