@@ -351,7 +351,7 @@ quick_install() {
     echo -e "  ${GREEN}✓${NC} 配置 fzf 键绑定"
     echo -e "  ${GREEN}✓${NC} 基础 Git 配置"
     echo ""
-    
+
     # 询问是否启用详细日志
     ask_verbose_mode
 
@@ -361,10 +361,10 @@ quick_install() {
 
         # 执行实际安装
         print_section "执行安装步骤"
-        
+
         # 获取基础目录
         local ROOT_DIR="$(cd "$BASEDIR/.." && pwd)"
-        
+
         # 备份已存在的配置文件
         if [ -f ~/.bashrc ] && [ ! -L ~/.bashrc ]; then
             log_cmd "mv ~/.bashrc ~/.bashrc.backup.$(date +%Y%m%d_%H%M%S)" "备份现有 .bashrc"
@@ -375,32 +375,32 @@ quick_install() {
         
         # 创建符号链接
         log_cmd "cd '$ROOT_DIR' && python3 '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d '$ROOT_DIR' -c '$ROOT_DIR/$CONFIG'" "创建配置文件符号链接"
-        
+
         # 检查并安装 Homebrew 包
         if command -v brew >/dev/null 2>&1; then
             if [ -f "$ROOT_DIR/brew/Brewfile.common" ]; then
                 log_cmd "brew bundle --file='$ROOT_DIR/brew/Brewfile.common'" "安装 Homebrew 通用包"
             fi
         fi
-        
+
         # 配置 Zsh
         if command -v zsh >/dev/null 2>&1; then
             log_cmd "chsh -s $(which zsh) 2>/dev/null || true" "设置 Zsh 为默认 Shell"
         fi
-        
+
         # 配置 tmux 插件管理器
         if [ ! -d ~/.tmux/plugins/tpm ]; then
             log_cmd "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm" "安装 tmux 插件管理器"
         fi
-        
+
         echo ""
         print_success "快速安装完成！"
-        
+
         if [ "$VERBOSE" = "1" ] && [ -n "$LOG_FILE" ]; then
             echo ""
             print_info "完整日志已保存到: $LOG_FILE"
         fi
-        
+
         show_completion_message
     else
         print_info "返回主菜单..."
@@ -417,7 +417,7 @@ quick_install() {
 custom_install() {
     print_header
     print_section "🎨 自定义安装模式"
-    
+
     # 询问是否启用详细日志
     ask_verbose_mode
 
@@ -508,13 +508,13 @@ custom_install() {
     if confirm "确认安装以上组件？"; then
         print_success "开始自定义安装..."
         echo ""
-        
+
         # 获取基础目录
         local ROOT_DIR="$(cd "$BASEDIR/.." && pwd)"
-        
+
         # 执行安装
         print_section "执行选定的安装步骤"
-        
+
         for feature in "${selected_features[@]}"; do
             case "$feature" in
                 *"配置文件符号链接"*)
@@ -555,15 +555,15 @@ custom_install() {
                     ;;
             esac
         done
-        
+
         echo ""
         print_success "自定义安装完成！"
-        
+
         if [ "$VERBOSE" = "1" ] && [ -n "$LOG_FILE" ]; then
             echo ""
             print_info "完整日志已保存到: $LOG_FILE"
         fi
-        
+
         show_completion_message
     else
         print_info "返回主菜单..."
@@ -580,7 +580,7 @@ custom_install() {
 expert_install() {
     print_header
     print_section "🔧 专家模式"
-    
+
     # 询问是否启用详细日志
     ask_verbose_mode
 
@@ -667,7 +667,7 @@ EOF
 minimal_install() {
     print_header
     print_section "📦 最小安装模式"
-    
+
     # 询问是否启用详细日志
     ask_verbose_mode
 
