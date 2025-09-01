@@ -128,7 +128,7 @@ init_log() {
 log_cmd() {
     local cmd="$1"
     local desc="${2:-}"
-    
+
     if [ "$VERBOSE" = "1" ]; then
         if [ -n "$desc" ]; then
             echo -e "${BLUE}▶${NC} $desc"
@@ -136,18 +136,18 @@ log_cmd() {
         fi
         echo -e "${CYAN}  $ $cmd${NC}"
         [ -n "$LOG_FILE" ] && echo "[$(date +%H:%M:%S)] CMD: $cmd" >> "$LOG_FILE"
-        
+
         # 执行命令并捕获输出
         local output
         local exit_code
         output=$(eval "$cmd" 2>&1)
         exit_code=$?
-        
+
         if [ -n "$output" ]; then
             echo "$output" | sed 's/^/    /'
             [ -n "$LOG_FILE" ] && echo "$output" >> "$LOG_FILE"
         fi
-        
+
         if [ $exit_code -ne 0 ]; then
             echo -e "${RED}  ✗ 命令失败 (exit code: $exit_code)${NC}"
             [ -n "$LOG_FILE" ] && echo "[ERROR] Command failed with exit code: $exit_code" >> "$LOG_FILE"
@@ -155,7 +155,7 @@ log_cmd() {
             echo -e "${GREEN}  ✓ 完成${NC}"
             [ -n "$LOG_FILE" ] && echo "[SUCCESS] Command completed successfully" >> "$LOG_FILE"
         fi
-        
+
         [ -n "$LOG_FILE" ] && echo "---" >> "$LOG_FILE"
         return $exit_code
     else
@@ -163,13 +163,13 @@ log_cmd() {
         if [ -n "$desc" ]; then
             echo -e "${BLUE}▶${NC} $desc"
         fi
-        
+
         # 执行命令但仍然返回错误码
         local output
         local exit_code
         output=$(eval "$cmd" 2>&1)
         exit_code=$?
-        
+
         if [ $exit_code -ne 0 ]; then
             echo -e "${RED}  ✗ 失败${NC}"
             # 在非详细模式下，如果失败也显示错误信息
@@ -180,7 +180,7 @@ log_cmd() {
         else
             echo -e "${GREEN}  ✓ 完成${NC}"
         fi
-        
+
         return $exit_code
     fi
 }
@@ -372,7 +372,7 @@ quick_install() {
         if [ -f ~/.gitconfig ] && [ ! -L ~/.gitconfig ]; then
             log_cmd "mv ~/.gitconfig ~/.gitconfig.backup.$(date +%Y%m%d_%H%M%S)" "备份现有 .gitconfig"
         fi
-        
+
         # 创建符号链接
         log_cmd "cd '$ROOT_DIR' && python3 '$ROOT_DIR/$DOTBOT_DIR/$DOTBOT_BIN' -d '$ROOT_DIR' -c '$ROOT_DIR/$CONFIG'" "创建配置文件符号链接"
 
