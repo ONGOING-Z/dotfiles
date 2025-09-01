@@ -17,3 +17,6 @@ venv/
 tags
 gtags*
 .vscode/
+
+# Vim plugin directories (managed by vim-plug)
+vim/vim/plugged/
