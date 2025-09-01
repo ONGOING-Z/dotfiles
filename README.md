@@ -17,6 +17,19 @@
 
 ### 可选增强
 
+- **交互式安装**（推荐新用户）：
+
+```bash
+./install-interactive.sh   # 图形化界面，逐步配置
+```
+
+- **卸载工具**：
+
+```bash
+./uninstall.sh            # 安全移除配置
+./uninstall.sh --restore  # 仅恢复备份
+```
+
 - 一键安装 tmux 插件（TPM）：
 
 ```bash
