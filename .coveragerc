@@ -1,0 +1,71 @@
+# Coverage.py 配置文件
+# https://coverage.readthedocs.io/en/latest/config.html
+
+[run]
+branch = True
+source = .
+omit = 
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */venv/*
+    */.venv/*
+    */site-packages/*
+    setup.py
+    */migrations/*
+    vim/vim/*
+    dotbot/*
+
+[report]
+# 报告中排除的行
+exclude_lines =
+    # 默认排除
+    pragma: no cover
+    
+    # 调试相关
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    
+    # 防御性编程
+    raise AssertionError
+    raise NotImplementedError
+    
+    # 不会执行到的代码
+    if 0:
+    if False:
+    if __name__ == .__main__.:
+    
+    # 类型检查
+    if TYPE_CHECKING:
+    @(abc\.)?abstractmethod
+
+ignore_errors = True
+
+# 精度设置
+precision = 2
+
+# 显示未覆盖的行号
+show_missing = True
+
+# 跳过覆盖率为 100% 的文件
+skip_covered = False
+
+# 跳过空文件
+skip_empty = True
+
+# 排序
+sort = Cover
+
+[html]
+directory = htmlcov
+title = Dotfiles Coverage Report
+show_contexts = True
+
+[xml]
+output = coverage.xml
+
+[json]
+output = coverage.json
+pretty_print = True
+show_contexts = True
