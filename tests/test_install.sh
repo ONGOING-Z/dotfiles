@@ -59,7 +59,7 @@ test_help() {
 test_dry_run() {
     test_start "dry-run 模式"
     setup_test_env
-    
+
     # 运行 dry-run
     if ./install --dry-run --only-links > /dev/null 2>&1; then
         # 检查是否没有创建实际文件
@@ -71,7 +71,7 @@ test_dry_run() {
     else
         test_fail "dry-run 模式执行失败"
     fi
-    
+
     cleanup_test_env
 }
 
@@ -79,7 +79,7 @@ test_dry_run() {
 test_only_links() {
     test_start "仅链接模式"
     setup_test_env
-    
+
     # 运行仅链接模式
     if ./install --only-links > /dev/null 2>&1; then
         # 检查关键链接是否创建
@@ -92,14 +92,14 @@ test_only_links() {
         # 可能由于权限问题失败，这是可接受的
         test_pass "仅链接模式执行完成（可能由于权限限制）"
     fi
-    
+
     cleanup_test_env
 }
 
 # 测试: 参数解析
 test_parameter_parsing() {
     test_start "参数解析"
-    
+
     # 测试环境变量
     if INSTALL_WITH_BREW=0 ./install --help > /dev/null 2>&1; then
         test_pass "环境变量参数解析正常"
@@ -112,9 +112,9 @@ test_parameter_parsing() {
 test_profile() {
     test_start "Profile 保存和加载"
     setup_test_env
-    
+
     PROFILE_FILE="$TEST_DIR/test_profile"
-    
+
     # 测试保存 profile
     if ./install --dry-run --only-links --profile-save="$PROFILE_FILE" > /dev/null 2>&1; then
         if [ -f "$PROFILE_FILE" ]; then
@@ -125,14 +125,14 @@ test_profile() {
     else
         test_pass "Profile 保存功能执行（可能需要交互）"
     fi
-    
+
     cleanup_test_env
 }
 
 # 测试: 检测操作系统
 test_os_detection() {
     test_start "操作系统检测"
-    
+
     OUTPUT=$(./install --help 2>&1 | head -20)
     if echo "$OUTPUT" | grep -q "Detected OS:"; then
         test_pass "操作系统检测功能正常"
@@ -148,7 +148,7 @@ run_tests() {
     echo "        Install 脚本测试套件"
     echo "========================================="
     echo ""
-    
+
     # 运行所有测试
     test_help
     test_dry_run
@@ -156,7 +156,7 @@ run_tests() {
     test_parameter_parsing
     test_profile
     test_os_detection
-    
+
     # 显示测试结果
     echo ""
     echo "========================================="
@@ -165,7 +165,7 @@ run_tests() {
     echo -e "运行测试: $TESTS_RUN"
     echo -e "${GREEN}通过: $TESTS_PASSED${NC}"
     echo -e "${RED}失败: $TESTS_FAILED${NC}"
-    
+
     if [ "$TESTS_FAILED" -eq 0 ]; then
         echo -e "${GREEN}所有测试通过！${NC}"
         exit 0
