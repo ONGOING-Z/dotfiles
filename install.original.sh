@@ -1,0 +1,415 @@
+#!/usr/bin/env bash
+# ============================================================================
+# Dotfiles 安装器 - 单一入口
+# 直接运行 ./install 即可，无需记忆任何参数
+# ============================================================================
+
+# 如果用户提供了参数（向后兼容），使用原始脚本
+if [ $# -gt 0 ]; then
+    # 检查是否是求助信息
+    case "$1" in
+        -h|--help|help)
+            echo "用法: ./install [选项]"
+            echo ""
+            echo "无参数运行:"
+            echo "  ./install              启动智能安装向导（推荐）"
+            echo ""
+            echo "带参数运行（高级用户）:"
+            echo "  ./install --help       显示所有可用参数"
+            echo "  ./install --quick      快速安装"
+            echo "  ./install --minimal    最小安装"
+            echo ""
+            echo "推荐: 直接运行 ./install 使用交互式向导"
+            exit 0
+            ;;
+        *)
+            # 传递给完整功能脚本
+            exec ./install-unified.sh "$@"
+            ;;
+    esac
+fi
+
+# 无参数时，启动智能向导
+exec ./install-new.sh
+
+CONFIG="install.conf.yaml"
+DOTBOT_DIR="dotbot"
+
+DOTBOT_BIN="bin/dotbot"
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+cd "${BASEDIR}"
+git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive
+git submodule update --init --recursive "${DOTBOT_DIR}"
+
+# OS detection and helpful tips
+OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
+printf "[info] Detected OS: %s\n" "$OS_NAME"
+
+if command -v tmux >/dev/null 2>&1; then
+  :
+else
+  printf "[hint] tmux is not installed. You can install it via brew/apt.\n"
+fi
+
+if [ "$OS_NAME" = "darwin" ]; then
+  if ! command -v pbcopy >/dev/null 2>&1; then
+    printf "[hint] pbcopy not found. Clipboard integration in tmux may be limited.\n"
+  fi
+else
+  if ! command -v xclip >/dev/null 2>&1 && ! command -v xsel >/dev/null 2>&1; then
+    printf "[hint] Install xclip or xsel for tmux clipboard integration.\n"
+  fi
+fi
+
+## Parse options (ours) and forward rest to Dotbot
+DO_BREW=${INSTALL_WITH_BREW:-1}
+DO_BREW_UPGRADE=${INSTALL_BREW_UPGRADE:-0}
+DO_BREW_CLEANUP=${INSTALL_BREW_CLEANUP:-0}
+BREW_MIRROR=${BREW_MIRROR:-}
+BREW_PROXY=${BREW_PROXY:-}
+DO_TPM=${INSTALL_WITH_TPM:-0}
+DO_FZF_BINDS=${INSTALL_WITH_FZF_BINDS:-0}
+DO_ZOXIDE=${INSTALL_WITH_ZOXIDE_SETUP:-0}
+DO_INTERACTIVE=0
+PROFILE_SAVE=""
+PROFILE_LOAD=""
+GUM_INSTALL=${INSTALL_GUM:-0}
+DRY_RUN=${DRY_RUN:-0}
+FORWARD_ARGS=()
+while (( "$#" )); do
+  case "$1" in
+    -h|--help)
+      cat <<'USAGE'
+Usage: ./install [options]
+
+Options:
+  --only-links           Only create symlinks (skip Homebrew)
+  --brew                 Enable Homebrew bundle/install
+  --brew-upgrade         Upgrade existing Homebrew packages
+  --brew-cleanup         Cleanup and autoremove after bundle
+  --brew-mirror=NAME     Set mirror (ustc|tsinghua)
+  --brew-proxy=URL       Set HTTP/HTTPS proxy for Homebrew
+  --tpm                  Bootstrap tmux TPM plugins
+  --fzf-bindings         Setup fzf keybindings and completion
+  --zoxide-setup         Install zoxide if missing
+  --interactive          TTY prompts to choose options
+  --gum-install          Auto-install gum if missing for interactive
+  --profile-save=FILE    Save chosen options to profile file
+  --profile-load=FILE    Load options from profile file
+  --dry-run              Show what would be done, make no changes
+  -h, --help             Show this help
+USAGE
+      exit 0 ;;
+    --no-brew)
+      DO_BREW=0; shift ;;
+    --only-links)
+      DO_BREW=0; shift ;;
+    --brew)
+      DO_BREW=1; shift ;;
+    --brew-upgrade)
+      DO_BREW_UPGRADE=1; shift ;;
+    --brew-cleanup)
+      DO_BREW_CLEANUP=1; shift ;;
+    --brew-mirror=*)
+      BREW_MIRROR="${1#*=}"; shift ;;
+    --brew-proxy=*)
+      BREW_PROXY="${1#*=}"; shift ;;
+    --tpm)
+      DO_TPM=1; shift ;;
+    --fzf-bindings)
+      DO_FZF_BINDS=1; shift ;;
+    --zoxide-setup)
+      DO_ZOXIDE=1; shift ;;
+    --interactive)
+      DO_INTERACTIVE=1; shift ;;
+    --gum-install)
+      GUM_INSTALL=1; shift ;;
+    --profile-save=*)
+      PROFILE_SAVE="${1#*=}"; shift ;;
+    --profile-load=*)
+      PROFILE_LOAD="${1#*=}"; shift ;;
+    --dry-run)
+      DRY_RUN=1; shift ;;
+    *)
+      FORWARD_ARGS+=("$1"); shift ;;
+  esac
+done
+
+## Load profile if provided (whitelisted vars only)
+if [ -n "$PROFILE_LOAD" ] && [ -f "$PROFILE_LOAD" ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      \#*|'') continue ;;
+      DO_BREW=*|DO_BREW_UPGRADE=*|DO_BREW_CLEANUP=*|DO_TPM=*|DO_FZF_BINDS=*|DO_ZOXIDE=*|BREW_MIRROR=*|BREW_PROXY=*)
+        eval "$line"
+        ;;
+    esac
+  done < "$PROFILE_LOAD"
+fi
+
+## Interactive mode (optional - TTY only, safe defaults otherwise)
+if [ "$DO_INTERACTIVE" = "1" ] && [ -t 0 ] && [ -z "${CI:-}" ]; then
+  if command -v gum >/dev/null 2>&1; then
+    gum style --bold "Interactive setup"
+    if gum confirm "Enable Homebrew actions?"; then DO_BREW=1; else DO_BREW=0; fi
+    if [ "$DO_BREW" = "1" ]; then
+      if gum confirm "brew upgrade existing packages?"; then DO_BREW_UPGRADE=1; else DO_BREW_UPGRADE=0; fi
+      if gum confirm "brew cleanup & autoremove after install?"; then DO_BREW_CLEANUP=1; else DO_BREW_CLEANUP=0; fi
+      sel=$(printf "none\nustc\ntsinghua" | gum choose --cursor ">" --selected "none")
+      [ "$sel" = "none" ] || BREW_MIRROR="$sel"
+      proxy=$(gum input --placeholder "http://127.0.0.1:7890" --prompt "Proxy (optional): ")
+      [ -n "$proxy" ] && BREW_PROXY="$proxy"
+    fi
+    if gum confirm "Install/Update tmux TPM plugins?"; then DO_TPM=1; else DO_TPM=0; fi
+    if gum confirm "Install fzf key bindings & completion?"; then DO_FZF_BINDS=1; else DO_FZF_BINDS=0; fi
+    if gum confirm "Setup zoxide (install via brew if missing)?"; then DO_ZOXIDE=1; else DO_ZOXIDE=0; fi
+  else
+    if [ "$GUM_INSTALL" = "1" ] && command -v brew >/dev/null 2>&1; then
+      printf "[info] 'gum' not found. Installing via brew...\n"
+      brew install gum || true
+    fi
+    if command -v gum >/dev/null 2>&1; then
+      gum style --bold "Interactive setup"
+      if gum confirm "Enable Homebrew actions?"; then DO_BREW=1; else DO_BREW=0; fi
+      if [ "$DO_BREW" = "1" ]; then
+        if gum confirm "brew upgrade existing packages?"; then DO_BREW_UPGRADE=1; else DO_BREW_UPGRADE=0; fi
+        if gum confirm "brew cleanup & autoremove after install?"; then DO_BREW_CLEANUP=1; else DO_BREW_CLEANUP=0; fi
+        sel=$(printf "none\nustc\ntsinghua" | gum choose --cursor ">" --selected "none")
+        [ "$sel" = "none" ] || BREW_MIRROR="$sel"
+        proxy=$(gum input --placeholder "http://127.0.0.1:7890" --prompt "Proxy (optional): ")
+        [ -n "$proxy" ] && BREW_PROXY="$proxy"
+      fi
+      if gum confirm "Install/Update tmux TPM plugins?"; then DO_TPM=1; else DO_TPM=0; fi
+      if gum confirm "Install fzf key bindings & completion?"; then DO_FZF_BINDS=1; else DO_FZF_BINDS=0; fi
+      if gum confirm "Setup zoxide (install via brew if missing)?"; then DO_ZOXIDE=1; else DO_ZOXIDE=0; fi
+    else
+      echo "[info] 'gum' not found. Using basic interactive prompts."
+      read -r -p "Enable Homebrew actions? [Y/n]: " a; a=${a:-Y}; case "$a" in [Yy]*) : ;; *) DO_BREW=0 ;; esac
+      if [ "$DO_BREW" = "1" ]; then
+        read -r -p "brew upgrade existing packages? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_BREW_UPGRADE=1 ;; *) DO_BREW_UPGRADE=0 ;; esac
+        read -r -p "brew cleanup & autoremove after install? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_BREW_CLEANUP=1 ;; *) DO_BREW_CLEANUP=0 ;; esac
+        read -r -p "Mirror (none/ustc/tsinghua) [none]: " m; m=${m:-none}; [ "$m" = "none" ] || BREW_MIRROR="$m"
+        read -r -p "Proxy (e.g. http://127.0.0.1:7890) [empty]: " p; [ -n "$p" ] && BREW_PROXY="$p"
+      fi
+      read -r -p "Install/Update tmux TPM plugins? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_TPM=1 ;; *) DO_TPM=0 ;; esac
+      read -r -p "Install fzf key bindings & completion? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_FZF_BINDS=1 ;; *) DO_FZF_BINDS=0 ;; esac
+      read -r -p "Setup zoxide (install via brew if missing)? [y/N]: " a; a=${a:-N}; case "$a" in [Yy]*) DO_ZOXIDE=1 ;; *) DO_ZOXIDE=0 ;; esac
+    fi
+  fi
+
+  # Print reusable command summary
+  printf "[info] Summary of selections (reusable command):\n"
+  summary_env=""
+  [ -n "$BREW_MIRROR" ] && summary_env="BREW_MIRROR=$BREW_MIRROR $summary_env"
+  [ -n "$BREW_PROXY" ] && summary_env="BREW_PROXY=$BREW_PROXY $summary_env"
+  summary_cmd="./install"
+  if [ "$DO_BREW" = "1" ]; then summary_cmd="$summary_cmd --brew"; else summary_cmd="$summary_cmd --only-links"; fi
+  [ "$DO_BREW_UPGRADE" = "1" ] && summary_cmd="$summary_cmd --brew-upgrade"
+  [ "$DO_BREW_CLEANUP" = "1" ] && summary_cmd="$summary_cmd --brew-cleanup"
+  [ "$DO_TPM" = "1" ] && summary_cmd="$summary_cmd --tpm"
+  [ "$DO_FZF_BINDS" = "1" ] && summary_cmd="$summary_cmd --fzf-bindings"
+  [ "$DO_ZOXIDE" = "1" ] && summary_cmd="$summary_cmd --zoxide-setup"
+  printf "  %s%s\n" "$summary_env" "$summary_cmd"
+fi
+
+## Pre-check for privileged links (arthas)
+if [ ! -w "/usr/local" ]; then
+  printf "[hint] /usr/local is not writable. Links targeting /usr/local may require sudo.\n"
+fi
+
+if [ "$DRY_RUN" = "1" ]; then
+  printf "[dry-run] Would run Dotbot with config %s and args: %s\n" "$CONFIG" "${FORWARD_ARGS+${FORWARD_ARGS[*]}}"
+else
+  "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+fi
+
+# Brew update & bundle, and report newly installed items
+if [ "$DO_BREW" = "1" ] && command -v brew >/dev/null 2>&1; then
+printf "[info] Homebrew detected. Updating and bundling...\n"
+
+BREWFILES=("brew/Brewfile.common")
+if [ "$OS_NAME" = "darwin" ]; then
+  BREWFILES+=("brew/Brewfile.macos")
+else
+  BREWFILES+=("brew/Brewfile.linux")
+fi
+
+# Optional mirrors/proxy
+if [ -n "$BREW_MIRROR" ]; then
+  case "$BREW_MIRROR" in
+    ustc)
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+      ;;
+    tsinghua)
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+      ;;
+    *)
+      printf "[warn] Unknown BREW_MIRROR=%s\n" "$BREW_MIRROR"
+      ;;
+  esac
+else
+  # Auto-detect: try to ping common mirrors quickly (best-effort)
+  if command -v curl >/dev/null 2>&1; then
+    if curl -s --max-time 2 https://mirrors.ustc.edu.cn >/dev/null; then
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+    elif curl -s --max-time 2 https://mirrors.tuna.tsinghua.edu.cn >/dev/null; then
+      export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+    fi
+  fi
+fi
+if [ -n "$BREW_PROXY" ]; then
+  export ALL_PROXY="$BREW_PROXY"
+  export HTTPS_PROXY="$BREW_PROXY"
+  export HTTP_PROXY="$BREW_PROXY"
+fi
+
+# Capture pre-state
+before_formula=$(brew list --formula 2>/dev/null | sort || true)
+before_cask=$(brew list --cask 2>/dev/null | sort || true)
+
+if [ "$DRY_RUN" = "1" ]; then
+  printf "[dry-run] Would run: brew update\n"
+else
+  brew update || true
+fi
+if [ "$DO_BREW_UPGRADE" = "1" ]; then
+  if [ "$DRY_RUN" = "1" ]; then
+    printf "[dry-run] Would run: brew upgrade\n"
+  else
+    printf "[info] brew upgrade\n"
+    brew upgrade || true
+  fi
+fi
+for bf in "${BREWFILES[@]}"; do
+  if [ -f "$bf" ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: brew bundle --file %s --no-lock\n" "$bf"
+    else
+      printf "[info] brew bundle --file %s\n" "$bf"
+      brew bundle --file "$bf" --no-lock || true
+    fi
+  fi
+done
+
+# Capture post-state
+after_formula=$(brew list --formula 2>/dev/null | sort || true)
+after_cask=$(brew list --cask 2>/dev/null | sort || true)
+
+# Compute newly installed
+new_formula=$(comm -13 <(printf "%s\n" "$before_formula") <(printf "%s\n" "$after_formula") | sed '/^$/d')
+new_cask=$(comm -13 <(printf "%s\n" "$before_cask") <(printf "%s\n" "$after_cask") | sed '/^$/d')
+
+printf "[info] Newly installed via brew:\n"
+if [ -n "$new_formula" ]; then
+  echo "  Formulae:"
+  printf '%s\n' "$new_formula" | sed 's/^/    - /'
+else
+  echo "  Formulae: none"
+fi
+if [ -n "$new_cask" ]; then
+  echo "  Casks:"
+  printf '%s\n' "$new_cask" | sed 's/^/    - /'
+else
+  echo "  Casks: none"
+fi
+
+if [ "$DO_BREW_CLEANUP" = "1" ]; then
+  if [ "$DRY_RUN" = "1" ]; then
+    printf "[dry-run] Would run: brew cleanup -s && brew autoremove\n"
+  else
+    printf "[info] brew cleanup & autoremove\n"
+    brew cleanup -s || true
+    brew autoremove || true
+  fi
+fi
+else
+printf "[hint] Skip brew bundle (Homebrew missing or disabled).\n"
+fi
+
+# Optional: bootstrap tmux TPM
+if [ "$DO_TPM" = "1" ]; then
+  if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: git -C ~/.tmux/plugins/tpm pull --ff-only\n"
+    else
+      printf "[info] TPM exists. Updating...\n"
+      git -C "$HOME/.tmux/plugins/tpm" pull --ff-only || true
+    fi
+  else
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: git clone --depth 1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm\n"
+    else
+      printf "[info] Installing TPM...\n"
+      git clone --depth 1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" || true
+    fi
+  fi
+  # Install plugins non-interactively
+  if command -v tmux >/dev/null 2>&1; then
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: tmux start-server && tpm install/update\n"
+    else
+      tmux start-server
+      TMUX='' "$HOME/.tmux/plugins/tpm/bin/install_plugins" || true
+      TMUX='' "$HOME/.tmux/plugins/tpm/bin/update_plugins" all || true
+    fi
+  fi
+fi
+
+# Optional: fzf key bindings and completion
+if [ "$DO_FZF_BINDS" = "1" ]; then
+  if [ -f /usr/local/opt/fzf/install ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: /usr/local/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh\n"
+    else
+      /usr/local/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    fi
+  elif [ -f /opt/homebrew/opt/fzf/install ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh\n"
+    else
+      /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    fi
+  elif command -v fzf >/dev/null 2>&1 && [ -f "$HOME/.fzf/install" ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      printf "[dry-run] Would run: ~/.fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh\n"
+    else
+      "$HOME/.fzf/install" --key-bindings --completion --no-update-rc --no-bash --no-fish --no-zsh || true
+    fi
+  fi
+fi
+
+# Optional: zoxide setup (install via brew if missing)
+if [ "$DO_ZOXIDE" = "1" ]; then
+  if ! command -v zoxide >/dev/null 2>&1; then
+    if command -v brew >/dev/null 2>&1; then
+      if [ "$DRY_RUN" = "1" ]; then
+        printf "[dry-run] Would run: brew install zoxide\n"
+      else
+        printf "[info] Installing zoxide via Homebrew...\n"
+        brew install zoxide || true
+      fi
+    else
+      printf "[hint] brew not found. Install zoxide manually: https://github.com/ajeetdsouza/zoxide\n"
+    fi
+  else
+    printf "[info] zoxide already installed.\n"
+  fi
+  printf "[info] zoxide is initialized automatically in zshrc when detected.\n"
+fi
+
+# Save profile if requested
+if [ -n "$PROFILE_SAVE" ]; then
+  {
+    echo "# install profile generated on $(date)"
+    echo "DO_BREW=$DO_BREW"
+    echo "DO_BREW_UPGRADE=$DO_BREW_UPGRADE"
+    echo "DO_BREW_CLEANUP=$DO_BREW_CLEANUP"
+    echo "DO_TPM=$DO_TPM"
+    echo "DO_FZF_BINDS=$DO_FZF_BINDS"
+    echo "DO_ZOXIDE=$DO_ZOXIDE"
+    [ -n "$BREW_MIRROR" ] && echo "BREW_MIRROR=$BREW_MIRROR"
+    [ -n "$BREW_PROXY" ] && echo "BREW_PROXY=$BREW_PROXY"
+  } > "$PROFILE_SAVE"
+  printf "[info] Profile saved to %s\n" "$PROFILE_SAVE"
+fi
