@@ -8,13 +8,15 @@
 - link:
     ~/.tmux.conf: tmux/tmux.conf
     ~/.vimrc: vim/vimrc_whole.backup
-    ~/.zshrc: zshrc
-    ~/.bash_aliases: bash_aliases
-    ~/.gdbinit: .gdbinit
+    ~/.zshrc: config/zshrc
+    ~/.bashrc: config/bashrc
+    ~/.bash_aliases: config/bash_aliases
+    ~/.gdbinit: config/gdbinit
     ~/.gitconfig: git/gitconfig
     ~/.pip/pip.conf: .pip/pip.conf
     ~/.config/nvim/init.vim: nvim/init.vim
-    ~/.ripgreprc: .ripgreprc
+    ~/.ripgreprc: config/ripgreprc
+    ~/.fzf: config/fzf
     # arthas properties (link only when directory exists; see shell task below)
     # /usr/local/arthas-packaging-4.0.5-bin/arthas.properties: arthas/arthas.properties
 

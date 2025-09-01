@@ -4,6 +4,9 @@
 # 直接运行 ./install 即可，无需记忆任何参数
 # ============================================================================
 
+# 获取脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # 如果用户提供了参数（向后兼容），使用完整功能脚本
 if [ $# -gt 0 ]; then
     # 检查是否是求助信息
@@ -24,21 +27,24 @@ if [ $# -gt 0 ]; then
             ;;
         *)
             # 传递给完整功能脚本
-            if [ -f ./install-unified.sh ]; then
-                exec ./install-unified.sh "$@"
-            else
+            if [ -f "$SCRIPT_DIR/scripts/install-unified.sh" ]; then
+                exec "$SCRIPT_DIR/scripts/install-unified.sh" "$@"
+            elif [ -f "$SCRIPT_DIR/scripts/install.original.sh" ]; then
                 # 降级到原始脚本
-                exec ./install.original.sh "$@"
+                exec "$SCRIPT_DIR/scripts/install.original.sh" "$@"
+            else
+                echo "错误: 找不到安装脚本"
+                exit 1
             fi
             ;;
     esac
 fi
 
 # 无参数时，启动智能向导
-if [ -f ./install-new.sh ]; then
-    exec ./install-new.sh
+if [ -f "$SCRIPT_DIR/scripts/install-new.sh" ]; then
+    exec "$SCRIPT_DIR/scripts/install-new.sh"
 else
     echo "错误: 找不到安装向导脚本"
-    echo "请确保 install-new.sh 存在"
+    echo "请确保 scripts/install-new.sh 存在"
     exit 1
 fi
