@@ -22,6 +22,7 @@ if [ $# -gt 0 ]; then
             echo "  ./install --quick         快速安装"
             echo "  ./install --minimal       最小安装"
             echo "  ./install --health-check  运行健康检查"
+            echo "  ./install --rollback      回滚到上一个快照"
             echo ""
             echo "推荐: 直接运行 ./install 使用交互式向导"
             exit 0
@@ -32,6 +33,23 @@ if [ $# -gt 0 ]; then
                 exec "$SCRIPT_DIR/scripts/health-check.sh"
             else
                 echo "错误: 健康检查脚本未找到"
+                exit 1
+            fi
+            ;;
+        --rollback)
+            # 回滚到上一个快照
+            if [ -f "$SCRIPT_DIR/scripts/config-manager.sh" ]; then
+                # 获取最新的快照
+                latest_snapshot=$("$SCRIPT_DIR/scripts/config-manager.sh" list-snapshots | grep "•" | head -1 | awk '{print $2}')
+                if [ -n "$latest_snapshot" ]; then
+                    echo "回滚到快照: $latest_snapshot"
+                    exec "$SCRIPT_DIR/scripts/config-manager.sh" restore "$HOME/.dotfiles/backups/${latest_snapshot}.tar.gz"
+                else
+                    echo "错误: 没有可用的快照"
+                    exit 1
+                fi
+            else
+                echo "错误: 配置管理器未找到"
                 exit 1
             fi
             ;;
