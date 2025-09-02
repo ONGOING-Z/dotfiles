@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # Ubuntu 测试环境
+  ubuntu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dotfiles-test:ubuntu
+    container_name: dotfiles-ubuntu
+    volumes:
+      - ./:/workspace/dotfiles:ro
+    environment:
+      - TERM=xterm-256color
+    stdin_open: true
+    tty: true
+
+  # Alpine 测试环境（轻量级）
+  alpine:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
+    image: dotfiles-test:alpine
+    container_name: dotfiles-alpine
+    volumes:
+      - ./:/workspace/dotfiles:ro
+    environment:
+      - TERM=xterm-256color
+    stdin_open: true
+    tty: true
+
+  # 多平台测试运行器
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dotfiles-test:runner
+    container_name: dotfiles-test-runner
+    volumes:
+      - ./:/workspace/dotfiles:ro
+      - ./test-results:/test-results
+    command: |
+      bash -c "
+        cd /home/testuser/dotfiles
+        echo '=== Running Tests in Docker ==='
+        ./tests/run_tests.sh
+        ./tests/integration/test_install.sh
+        echo '=== Tests Complete ==='
+      "
+
+# 网络配置
+networks:
+  default:
+    name: dotfiles-test-network
