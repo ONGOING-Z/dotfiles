@@ -418,6 +418,16 @@ fi
 export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_AUTO_UPDATE_SECS=604800
 
+# 加载性能优化
+if [ -f ~/dotfiles/shell/performance.sh ]; then
+    source ~/dotfiles/shell/performance.sh
+fi
+
+# 加载延迟加载配置
+if [ -f ~/dotfiles/shell/lazy-load.sh ]; then
+    source ~/dotfiles/shell/lazy-load.sh
+fi
+
 # 加载 dotfiles 别名和函数
 if [ -f ~/dotfiles/shell/aliases.sh ]; then
     source ~/dotfiles/shell/aliases.sh

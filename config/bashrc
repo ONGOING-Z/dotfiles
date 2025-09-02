@@ -126,6 +126,16 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# 加载性能优化
+if [ -f ~/dotfiles/shell/performance.sh ]; then
+    source ~/dotfiles/shell/performance.sh
+fi
+
+# 加载延迟加载配置
+if [ -f ~/dotfiles/shell/lazy-load.sh ]; then
+    source ~/dotfiles/shell/lazy-load.sh
+fi
+
 # 加载 dotfiles 别名和函数
 if [ -f ~/dotfiles/shell/aliases.sh ]; then
     source ~/dotfiles/shell/aliases.sh
