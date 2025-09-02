@@ -437,6 +437,11 @@ if [ -f ~/dotfiles/shell/functions.sh ]; then
     source ~/dotfiles/shell/functions.sh
 fi
 
+# 加载插件系统
+if [ -f ~/dotfiles/scripts/plugin-manager.sh ]; then
+    source ~/dotfiles/scripts/plugin-manager.sh load
+fi
+
 # 加载本地配置（如果存在）
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
