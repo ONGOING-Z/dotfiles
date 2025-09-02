@@ -629,12 +629,12 @@ expert_install() {
     case "$expert_choice" in
         *"配置向导"*)
             # 调用详细的配置向导
-            ./install-unified.sh --interactive
+            "$BASEDIR/install-unified.sh" --interactive
             ;;
         *"导入配置"*)
             print_info "请输入配置文件路径："
             read -r config_path
-            ./install-unified.sh --profile-load="$config_path"
+            "$BASEDIR/install-unified.sh" --profile-load="$config_path"
             ;;
         *"生成配置模板"*)
             print_info "生成配置模板..."
