@@ -5,6 +5,26 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+
+# [3.1.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.0.0...v3.1.0) (2025-09-02)
+
+
+### Features
+
+* 完成剩余优化项实施 ([a2d2ef5](https://github.com/ONGOING-Z/dotfiles/commit/a2d2ef5214641840a60baff16d117d14a1f17a43))
+* 添加 Docker 测试和安全功能 ([ba6335f](https://github.com/ONGOING-Z/dotfiles/commit/ba6335f0c43f43316510a04bdd9c02d02cb4a0cc))
+* 添加一键安装脚本 ([f46dfe2](https://github.com/ONGOING-Z/dotfiles/commit/f46dfe21ae677633ca0b6bf64b572fdee78efca6))
+* 添加丰富的 Shell 别名和函数库 ([50c287d](https://github.com/ONGOING-Z/dotfiles/commit/50c287d5e55683392488612096099f38f8521033))
+* 添加主题系统 ([8597000](https://github.com/ONGOING-Z/dotfiles/commit/8597000c5cb82c636ebc253c6905039a1982a226))
+* 添加健康检查功能 ([21a2aca](https://github.com/ONGOING-Z/dotfiles/commit/21a2aca8d8bfb71da6394f324a1ea9389089fcb8))
+* 添加智能环境检测和回滚功能 ([7753d9d](https://github.com/ONGOING-Z/dotfiles/commit/7753d9d08d3913300026af6f811dd7e2744381a9))
+* 添加配置持久化管理器 ([f241eb9](https://github.com/ONGOING-Z/dotfiles/commit/f241eb996844ff8528dd51a7f7b86c0c4cd5ad0b))
+
+
+### Performance Improvements
+
+* 实现 Shell 性能优化 ([725e43b](https://github.com/ONGOING-Z/dotfiles/commit/725e43b295131d0ba9383b9e2c7b80cd59ae1641))
+
 ## [3.0.0] - 2024-01-20
 
 ### ✨ 新功能
