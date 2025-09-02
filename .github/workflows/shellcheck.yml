@@ -1,0 +1,56 @@
+name: ShellCheck
+
+on:
+  push:
+    branches: [ macos, main, develop ]
+  pull_request:
+    branches: [ macos, main ]
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      
+      - name: Run ShellCheck on all shell scripts
+        run: |
+          echo "Running ShellCheck..."
+          find . -type f -name "*.sh" -not -path "./.git/*" -not -path "./.venv/*" | while read -r script; do
+            echo "Checking: $script"
+            shellcheck -x "$script" || exit 1
+          done
+      
+      - name: Check shell scripts in root
+        run: |
+          echo "Checking executable scripts without .sh extension..."
+          for file in install; do
+            if [ -f "$file" ] && [ -x "$file" ]; then
+              if head -n 1 "$file" | grep -q '^#!/.*sh'; then
+                echo "Checking: $file"
+                shellcheck -x "$file" || exit 1
+              fi
+            fi
+          done
+      
+      - name: Generate ShellCheck report
+        if: failure()
+        run: |
+          mkdir -p reports
+          find . -type f -name "*.sh" -not -path "./.git/*" -not -path "./.venv/*" | while read -r script; do
+            shellcheck -f json "$script" >> reports/shellcheck-report.json || true
+          done
+      
+      - name: Upload ShellCheck report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shellcheck-report
+          path: reports/shellcheck-report.json

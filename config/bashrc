@@ -125,3 +125,32 @@ alias vim='gvim -v'
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# 加载性能优化
+if [ -f ~/dotfiles/shell/performance.sh ]; then
+    source ~/dotfiles/shell/performance.sh
+fi
+
+# 加载延迟加载配置
+if [ -f ~/dotfiles/shell/lazy-load.sh ]; then
+    source ~/dotfiles/shell/lazy-load.sh
+fi
+
+# 加载 dotfiles 别名和函数
+if [ -f ~/dotfiles/shell/aliases.sh ]; then
+    source ~/dotfiles/shell/aliases.sh
+fi
+
+if [ -f ~/dotfiles/shell/functions.sh ]; then
+    source ~/dotfiles/shell/functions.sh
+fi
+
+# 加载插件系统
+if [ -f ~/dotfiles/scripts/plugin-manager.sh ]; then
+    source ~/dotfiles/scripts/plugin-manager.sh load
+fi
+
+# 加载本地配置（如果存在）
+if [ -f ~/.bashrc.local ]; then
+    source ~/.bashrc.local
+fi

@@ -1,0 +1,33 @@
+# Alpine Linux 测试容器（轻量级）
+FROM alpine:latest
+
+# 安装基础包
+RUN apk add --no-cache \
+    git \
+    curl \
+    wget \
+    bash \
+    zsh \
+    make \
+    python3 \
+    py3-pip \
+    sudo \
+    shadow
+
+# 创建测试用户
+RUN adduser -D -s /bin/bash testuser && \
+    echo 'testuser:password' | chpasswd && \
+    echo 'testuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# 切换用户
+USER testuser
+WORKDIR /home/testuser
+
+# 复制 dotfiles
+COPY --chown=testuser:testuser . /home/testuser/dotfiles/
+
+# 设置权限
+RUN find /home/testuser/dotfiles -name "*.sh" -type f -exec chmod +x {} \; && \
+    chmod +x /home/testuser/dotfiles/install
+
+CMD ["/bin/bash"]

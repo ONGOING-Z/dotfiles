@@ -1,0 +1,81 @@
+# Semantic Release 配置
+# https://semantic-release.gitbook.io/
+
+branches:
+  - name: macos
+    prerelease: false
+  - name: main
+    prerelease: false
+  - name: develop
+    prerelease: beta
+
+plugins:
+  # 分析提交信息
+  - "@semantic-release/commit-analyzer"
+  
+  # 生成发布说明
+  - "@semantic-release/release-notes-generator"
+  
+  # 生成 CHANGELOG
+  - - "@semantic-release/changelog"
+    - changelogFile: CHANGELOG.md
+      changelogTitle: "# 📋 更新日志\n\n所有重要更改都将记录在此文件中。\n\n格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，\n版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。\n"
+  
+  # 更新版本文件
+  - - "@semantic-release/exec"
+    - prepareCmd: 'echo "${nextRelease.version}" > VERSION'
+  
+  # Git 操作
+  - - "@semantic-release/git"
+    - assets:
+        - CHANGELOG.md
+        - VERSION
+      message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+  
+  # GitHub 发布
+  - "@semantic-release/github"
+
+# 提交类型配置
+types:
+  - type: feat
+    section: "✨ 新功能"
+  - type: fix
+    section: "🐛 错误修复"
+  - type: perf
+    section: "⚡ 性能优化"
+  - type: docs
+    section: "📝 文档更新"
+  - type: style
+    section: "💄 代码格式"
+    hidden: true
+  - type: refactor
+    section: "♻️ 代码重构"
+  - type: test
+    section: "✅ 测试"
+  - type: build
+    section: "📦 构建系统"
+  - type: ci
+    section: "👷 持续集成"
+  - type: chore
+    section: "🔧 其他更改"
+    hidden: true
+
+# 发布规则
+releaseRules:
+  - type: feat
+    release: minor
+  - type: fix
+    release: patch
+  - type: perf
+    release: patch
+  - type: docs
+    release: false
+  - breaking: true
+    release: major
+
+# 解析选项
+parserOpts:
+  noteKeywords:
+    - BREAKING CHANGE
+    - BREAKING CHANGES
+    - BREAKING

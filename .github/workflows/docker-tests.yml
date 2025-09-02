@@ -1,0 +1,78 @@
+name: Docker Tests
+
+on:
+  push:
+    branches: [ macos, main, develop ]
+  pull_request:
+    branches: [ macos, main ]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro: [ubuntu, alpine]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker image
+        run: |
+          if [ "${{ matrix.distro }}" = "alpine" ]; then
+            docker build -f Dockerfile.alpine -t dotfiles-test:${{ matrix.distro }} .
+          else
+            docker build -t dotfiles-test:${{ matrix.distro }} .
+          fi
+      
+      - name: Run tests in Docker
+        run: |
+          docker run --rm \
+            -v $PWD:/workspace/dotfiles:ro \
+            dotfiles-test:${{ matrix.distro }} \
+            bash -c "
+              cd /home/testuser/dotfiles
+              echo '=== Testing on ${{ matrix.distro }} ==='
+              ./install --minimal --non-interactive
+              ./install --health-check
+            "
+      
+      - name: Test installation modes
+        run: |
+          # 测试不同安装模式
+          for mode in minimal quick; do
+            echo "Testing $mode installation..."
+            docker run --rm \
+              -v $PWD:/workspace/dotfiles:ro \
+              dotfiles-test:${{ matrix.distro }} \
+              bash -c "
+                cd /home/testuser/dotfiles
+                echo 'y' | ./install --$mode
+              "
+          done
+
+  docker-compose-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+      
+      - name: Run Docker Compose tests
+        run: |
+          docker-compose run --rm test-runner
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-test-results
+          path: test-results/

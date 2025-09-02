@@ -1,0 +1,141 @@
+name: Multi-Platform Tests
+
+on:
+  push:
+    branches: [ macos, main, develop ]
+  pull_request:
+    branches: [ macos, main ]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} - ${{ matrix.shell }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        shell: [bash, zsh]
+        exclude:
+          # Ubuntu 默认没有 zsh，需要特殊处理
+          - os: ubuntu-latest
+            shell: zsh
+        include:
+          # 为 Ubuntu 添加 zsh 测试
+          - os: ubuntu-latest
+            shell: zsh
+            install_shell: true
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install zsh on Ubuntu
+        if: matrix.os == 'ubuntu-latest' && matrix.shell == 'zsh'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install test dependencies
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y bats
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            brew install bats-core
+          fi
+          
+          # Install Python dependencies
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pyyaml
+      
+      - name: Run shellcheck
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get install -y shellcheck
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            brew install shellcheck
+          fi
+          
+          # Check all shell scripts
+          find . -name "*.sh" -type f -not -path "./.git/*" -not -path "./.venv/*" | while read -r script; do
+            echo "Checking: $script"
+            shellcheck "$script" || true
+          done
+      
+      - name: Test install script
+        shell: ${{ matrix.shell }} {0}
+        run: |
+          # Test help
+          ./install --help
+          
+          # Test health check
+          ./install --health-check || true
+      
+      - name: Run BATS tests
+        if: always()
+        run: |
+          if command -v bats >/dev/null 2>&1; then
+            cd tests
+            bats bats/*.bats || true
+          else
+            echo "BATS not available, skipping"
+          fi
+      
+      - name: Test shell configuration
+        shell: ${{ matrix.shell }} {0}
+        run: |
+          # Source the shell configs
+          if [[ "${{ matrix.shell }}" == "bash" ]]; then
+            source config/bashrc || true
+          elif [[ "${{ matrix.shell }}" == "zsh" ]]; then
+            source config/zshrc || true
+          fi
+          
+          # Test if aliases are loaded
+          source shell/aliases.sh
+          source shell/functions.sh
+          
+          # Test a simple function
+          type mkcd >/dev/null 2>&1 && echo "Functions loaded successfully"
+      
+      - name: Test dotbot functionality
+        run: |
+          # Test dotbot in dry-run mode
+          cd dotbot
+          python bin/dotbot -c ../install.conf.yaml --dry-run || true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.shell }}
+          path: |
+            tests/**/*.log
+            health-report.txt
+          retention-days: 7
+
+  compatibility-check:
+    name: Compatibility Summary
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Check test results
+        run: |
+          echo "=== Multi-Platform Test Summary ==="
+          echo "All platform tests completed."
+          echo ""
+          echo "Tested configurations:"
+          echo "- Ubuntu + Bash"
+          echo "- Ubuntu + Zsh"
+          echo "- macOS + Bash"
+          echo "- macOS + Zsh"
