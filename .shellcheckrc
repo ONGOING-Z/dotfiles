@@ -1,0 +1,26 @@
+# ShellCheck 配置文件
+# https://www.shellcheck.net/wiki/Ignore
+
+# 启用所有检查
+enable=all
+
+# 排除的检查
+# SC1090: 无法跟踪 source 的文件
+# SC1091: 未找到 source 的文件
+# SC2155: 在 local 中声明和赋值分开
+disable=SC1090,SC1091
+
+# 指定 shell
+shell=bash
+
+# 外部源
+external-sources=true
+
+# 严格模式
+# 检查所有问题，包括样式问题
+severity=style
+
+# 特定检查的严格程度
+# SC2034: 未使用的变量 - 作为错误
+# SC2086: 双引号防止通配符和词分割 - 作为错误
+# SC2129: 考虑使用 { cmd1; cmd2; } >> file - 作为建议
