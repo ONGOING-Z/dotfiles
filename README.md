@@ -1,8 +1,14 @@
-# dotfiles
+# 🏠 Dotfiles - Modern Development Environment
 
 [![Tests with Coverage](https://github.com/ONGOING-Z/dotfiles/actions/workflows/tests-with-coverage.yml/badge.svg)](https://github.com/ONGOING-Z/dotfiles/actions/workflows/tests-with-coverage.yml)
 [![codecov](https://codecov.io/gh/ONGOING-Z/dotfiles/branch/macos/graph/badge.svg)](https://codecov.io/gh/ONGOING-Z/dotfiles)
 [![Pre-commit](https://github.com/ONGOING-Z/dotfiles/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/ONGOING-Z/dotfiles/actions/workflows/pre-commit.yml)
+[![Multi-Platform Tests](https://github.com/ONGOING-Z/dotfiles/actions/workflows/multi-platform-tests.yml/badge.svg)](https://github.com/ONGOING-Z/dotfiles/actions/workflows/multi-platform-tests.yml)
+[![Release](https://img.shields.io/github/v/release/ONGOING-Z/dotfiles)](https://github.com/ONGOING-Z/dotfiles/releases)
+
+> 🚀 一键配置你的开发环境，智能、高效、可定制！
+
+[English](README.md) | [中文](docs/README_CN.md)
 
 > 规范速览（详细见 `.cursor/rules.md`）
 
@@ -15,19 +21,49 @@
 - Dotbot：特权路径链接有条件执行（如 `arthas.properties`）
 - CI/PR：自动 PR（中文标题+摘要）、pre-commit、pytest（`std_my_dir`）
 
-### 可选增强
+## ✨ 主要特性
 
-- **交互式安装**（推荐新用户）：
+- 🎯 **智能安装向导** - 无需记忆命令，交互式引导
+- 🎨 **主题系统** - 多种配色方案，一键切换
+- 📦 **配置持久化** - 保存偏好，快照备份
+- 🧪 **完整测试** - BATS 测试框架，多平台 CI
+- 🏥 **健康检查** - 一键诊断配置问题
+- 🚀 **高性能** - 优化的 Shell 配置
+- 🔧 **丰富工具** - 别名、函数、实用脚本
+
+## 🚀 快速开始
 
 ```bash
-./install-interactive.sh   # 图形化界面，逐步配置
+# 克隆仓库
+git clone https://github.com/ONGOING-Z/dotfiles.git
+cd dotfiles
+
+# 运行智能安装器（推荐）
+./install
+
+# 或者使用传统方式
+./install --quick    # 快速安装
+./install --minimal  # 最小安装
+./install --help     # 查看帮助
 ```
 
-- **卸载工具**：
+## 🛠️ 新功能亮点
 
+### 🏥 健康检查
 ```bash
-./uninstall.sh            # 安全移除配置
-./uninstall.sh --restore  # 仅恢复备份
+./install --health-check
+```
+
+### 🎨 主题切换
+```bash
+./scripts/theme-switcher.sh list       # 列出主题
+./scripts/theme-switcher.sh set nord   # 切换主题
+```
+
+### 💾 配置管理
+```bash
+./scripts/config-manager.sh snapshot   # 创建快照
+./scripts/config-manager.sh history    # 查看历史
 ```
 
 - 一键安装 tmux 插件（TPM）：
