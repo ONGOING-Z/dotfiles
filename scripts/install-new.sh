@@ -448,7 +448,10 @@ custom_install() {
 
         # 将多行输出转换为数组
         if [ -n "$choices" ]; then
-            IFS=$'\n' read -rd '' -a selected_features <<< "$choices"
+            # 使用更可靠的方法解析多行输出
+            while IFS= read -r line; do
+                selected_features+=("$line")
+            done <<< "$choices"
         fi
     else
         echo "选择要安装的组件（输入数字，空格分隔）："
