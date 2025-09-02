@@ -18,12 +18,22 @@ if [ $# -gt 0 ]; then
             echo "  ./install              启动智能安装向导（推荐）"
             echo ""
             echo "带参数运行（高级用户）:"
-            echo "  ./install --help       显示所有可用参数"
-            echo "  ./install --quick      快速安装"
-            echo "  ./install --minimal    最小安装"
+            echo "  ./install --help          显示所有可用参数"
+            echo "  ./install --quick         快速安装"
+            echo "  ./install --minimal       最小安装"
+            echo "  ./install --health-check  运行健康检查"
             echo ""
             echo "推荐: 直接运行 ./install 使用交互式向导"
             exit 0
+            ;;
+        --health-check)
+            # 运行健康检查
+            if [ -f "$SCRIPT_DIR/scripts/health-check.sh" ]; then
+                exec "$SCRIPT_DIR/scripts/health-check.sh"
+            else
+                echo "错误: 健康检查脚本未找到"
+                exit 1
+            fi
             ;;
         *)
             # 传递给完整功能脚本
