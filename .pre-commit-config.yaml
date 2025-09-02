@@ -1,51 +1,81 @@
----
+# Pre-commit hooks 配置
+# https://pre-commit.com/
+
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+  # Shell 脚本检查
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: mixed-line-ending
-      - id: check-added-large-files
-      - id: check-merge-conflict
+      - id: shellcheck
+        args: [--severity=warning]
+        exclude: '^vim/|^dotbot/'
 
-  - repo: https://github.com/adrienverge/yamllint
-    rev: v1.35.1
+  # Shell 脚本格式化
+  - repo: https://github.com/mvdan/sh
+    rev: v3.7.0
     hooks:
-      - id: yamllint
+      - id: shfmt
+        args: [-i, '4', -bn, -ci]
+        exclude: '^vim/|^dotbot/'
 
+  # Python 代码检查
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 23.12.1
     hooks:
       - id: black
         language_version: python3
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.0
-    hooks:
-      - id: codespell
-        args: ["-L", "te,hist,ot,ser,Rime,rime,enhancd"]
 
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
     hooks:
-      - id: mdformat
-        additional_dependencies:
-          - mdformat-gfm
+      - id: flake8
+        args: [--max-line-length=88, --extend-ignore=E203]
 
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+  # YAML 文件检查
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
     hooks:
-      - id: shellcheck
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: '^vim/|\.diff$'
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+        exclude: '^vim/|^dotbot/'
+      - id: check-shebang-scripts-are-executable
+        exclude: '^vim/|^dotbot/'
 
-  - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.7.0-4
+  # Markdown 文件检查
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
     hooks:
-      - id: shfmt
-        args: ["-i", "2", "-ci", "-sr"]
+      - id: markdownlint
+        args: [--fix]
+        exclude: '^vim/|^dotbot/'
 
+  # 提交信息规范
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  # 安全检查
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:
       - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
-        exclude: package-lock.json
+        args: [--baseline, .secrets.baseline]
+        exclude: '^vim/|^dotbot/'
+
+# 配置
+default_language_version:
+  python: python3
+
+# 设置
+fail_fast: false
+minimum_pre_commit_version: '2.20.0'
