@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.1.3](https://github.com/ONGOING-Z/dotfiles/compare/v3.1.2...v3.1.3) (2025-09-03)
+
+
+### Bug Fixes
+
+* 改进自定义安装模式的组件选择解析 ([c944dc7](https://github.com/ONGOING-Z/dotfiles/commit/c944dc76d91ed3d8d11eb024acc068a9ccb4c217))
+
 ## [3.1.2](https://github.com/ONGOING-Z/dotfiles/compare/v3.1.1...v3.1.2) (2025-09-03)
 
 
