@@ -81,10 +81,15 @@ jobs:
       
       - name: Run BATS tests
         if: always()
+        shell: bash  # Use bash for BATS
         run: |
           if command -v bats >/dev/null 2>&1; then
-            cd tests
-            bats bats/*.bats || true
+            if [ -d tests/bats ] && ls tests/bats/*.bats >/dev/null 2>&1; then
+              cd tests
+              bats bats/*.bats || true
+            else
+              echo "No BATS test files found"
+            fi
           else
             echo "BATS not available, skipping"
           fi

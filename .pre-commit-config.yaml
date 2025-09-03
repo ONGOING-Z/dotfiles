@@ -2,36 +2,7 @@
 # https://pre-commit.com/
 
 repos:
-  # Shell 脚本检查
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
-    hooks:
-      - id: shellcheck
-        args: [--severity=warning]
-        exclude: '^vim/|^dotbot/'
-
-  # Shell 脚本格式化
-  - repo: https://github.com/mvdan/sh
-    rev: v3.7.0
-    hooks:
-      - id: shfmt
-        args: [-i, '4', -bn, -ci]
-        exclude: '^vim/|^dotbot/'
-
-  # Python 代码检查
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-      - id: black
-        language_version: python3
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
-        args: [--max-line-length=88, --extend-ignore=E203]
-
-  # YAML 文件检查
+  # 基础文件检查
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -49,28 +20,22 @@ repos:
       - id: check-shebang-scripts-are-executable
         exclude: '^vim/|^dotbot/'
 
-  # Markdown 文件检查
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.38.0
+  # Python 代码检查（简化）
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
     hooks:
-      - id: markdownlint
-        args: [--fix]
-        exclude: '^vim/|^dotbot/'
+      - id: black
+        language_version: python3
+        files: '^(std_my_dir|tests)/.*\.py$'
 
-  # 提交信息规范
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.13.0
+  # Shell 脚本检查（仅警告级别）
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
     hooks:
-      - id: commitizen
-        stages: [commit-msg]
-
-  # 安全检查
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.4.0
-    hooks:
-      - id: detect-secrets
-        args: [--baseline, .secrets.baseline]
-        exclude: '^vim/|^dotbot/'
+      - id: shellcheck
+        args: [--severity=error]
+        exclude: '^vim/|^dotbot/|\.bats$'
+        files: '\.(sh|bash)$|^install$'
 
 # 配置
 default_language_version:

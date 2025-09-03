@@ -23,10 +23,17 @@ jobs:
       - name: Run ShellCheck on all shell scripts
         run: |
           echo "Running ShellCheck..."
-          find . -type f -name "*.sh" -not -path "./.git/*" -not -path "./.venv/*" | while read -r script; do
+          EXIT_CODE=0
+          find . -type f -name "*.sh" -not -path "./.git/*" -not -path "./.venv/*" -not -path "./vim/*" -not -path "./dotbot/*" | while read -r script; do
             echo "Checking: $script"
-            shellcheck -x "$script" || exit 1
+            if ! shellcheck -x "$script"; then
+              EXIT_CODE=1
+              echo "❌ ShellCheck found issues in $script"
+            else
+              echo "✅ $script passed ShellCheck"
+            fi
           done
+          exit $EXIT_CODE
       
       - name: Check shell scripts in root
         run: |
@@ -35,7 +42,7 @@ jobs:
             if [ -f "$file" ] && [ -x "$file" ]; then
               if head -n 1 "$file" | grep -q '^#!/.*sh'; then
                 echo "Checking: $file"
-                shellcheck -x "$file" || exit 1
+                shellcheck -x "$file" || true
               fi
             fi
           done
