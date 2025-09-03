@@ -6,6 +6,15 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.1.2](https://github.com/ONGOING-Z/dotfiles/compare/v3.1.1...v3.1.2) (2025-09-03)
+
+
+### Bug Fixes
+
+* 优化 CI 配置，处理私有子模块问题 ([33068e0](https://github.com/ONGOING-Z/dotfiles/commit/33068e0e7dac9d7ffd6a80083aa06faf634f322b))
+* 修复专家模式中的脚本路径问题 ([8c3e107](https://github.com/ONGOING-Z/dotfiles/commit/8c3e107f38d39223cb9489a0d12539199559f2aa))
+* 修复所有 GitHub Actions CI 问题 ([71753a4](https://github.com/ONGOING-Z/dotfiles/commit/71753a44dfe9486a9eb1f4cac8c5ca3103f37cbc))
+
 ## [3.1.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.1.0...v3.1.1) (2025-09-02)
 
 
