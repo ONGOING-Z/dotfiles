@@ -468,7 +468,7 @@ custom_install() {
                 echo "$choices"
                 echo "[DEBUG] Choices length: ${#choices}"
             fi
-            
+
             # 使用更可靠的方法解析多行输出
             # 方法1: 使用 while read
             while IFS= read -r line; do
@@ -479,13 +479,13 @@ custom_install() {
                     fi
                 fi
             done <<< "$choices"
-            
+
             # 方法2: 如果方法1失败，尝试使用 mapfile/readarray
             if [ ${#selected_features[@]} -eq 0 ] && [ -n "$choices" ]; then
                 if [ "${DEBUG:-0}" = "1" ]; then
                     echo "[DEBUG] Trying alternative parsing method..."
                 fi
-                
+
                 # Bash 4+ 有 mapfile/readarray
                 if [ -n "$BASH_VERSION" ] && [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
                     mapfile -t selected_features <<< "$choices"
@@ -495,7 +495,7 @@ custom_install() {
                     selected_features=($choices)
                     IFS=$' \t\n'
                 fi
-                
+
                 # 清理空元素
                 local temp_features=()
                 for feature in "${selected_features[@]}"; do
@@ -505,7 +505,7 @@ custom_install() {
                 done
                 selected_features=("${temp_features[@]}")
             fi
-            
+
             if [ "${DEBUG:-0}" = "1" ]; then
                 echo "[DEBUG] Total features selected: ${#selected_features[@]}"
             fi

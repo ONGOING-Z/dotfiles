@@ -27,7 +27,7 @@ if choices=$(gum choose --no-limit "${options[@]}"); then
     echo "---"
     echo "Length of choices: ${#choices}"
     echo ""
-    
+
     # 解析成数组
     selected=()
     while IFS= read -r line; do
@@ -36,7 +36,7 @@ if choices=$(gum choose --no-limit "${options[@]}"); then
             echo "Added to array: '$line'"
         fi
     done <<< "$choices"
-    
+
     echo ""
     echo "Total items in array: ${#selected[@]}"
     echo "Array contents:"
