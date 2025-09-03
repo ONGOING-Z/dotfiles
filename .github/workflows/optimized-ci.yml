@@ -1,0 +1,143 @@
+name: Optimized CI
+
+on:
+  push:
+    branches: [ main, macos, develop ]
+  pull_request:
+    branches: [ main, macos ]
+
+# 取消正在进行的相同工作流
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # 快速检查，决定是否运行完整测试
+  quick-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should-test: ${{ steps.check.outputs.should-test }}
+      
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          
+      - name: Check if tests needed
+        id: check
+        run: |
+          # 检查是否有代码变更
+          if git diff --name-only HEAD^ HEAD | grep -qE '\.(sh|py|yml|yaml)$'; then
+            echo "should-test=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-test=false" >> $GITHUB_OUTPUT
+          fi
+
+  # 并行运行的轻量级测试
+  fast-tests:
+    needs: quick-check
+    if: needs.quick-check.outputs.should-test == 'true'
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        test: [syntax, smoke, unit]
+        
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.npm
+            ~/.local
+          key: ${{ runner.os }}-${{ matrix.test }}-${{ hashFiles('**/requirements*.txt') }}
+          
+      - name: Run ${{ matrix.test }} tests
+        run: |
+          case "${{ matrix.test }}" in
+            syntax)
+              # 快速语法检查
+              find . -name "*.sh" -type f -exec bash -n {} \;
+              find . -name "*.py" -type f -exec python3 -m py_compile {} \;
+              ;;
+            smoke)
+              # 烟雾测试
+              ./tests/smoke_test.sh
+              ;;
+            unit)
+              # Python 单元测试
+              pip install pytest pytest-cov
+              pytest -q --tb=short
+              ;;
+          esac
+
+  # ShellCheck - 只检查变更的文件
+  shellcheck-changed:
+    needs: quick-check
+    if: needs.quick-check.outputs.should-test == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **/*.sh
+            install
+            
+      - name: Run ShellCheck on changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+          
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [ -f "$file" ]; then
+              echo "Checking $file"
+              shellcheck -x "$file" || true
+            fi
+          done
+
+  # 整合的集成测试
+  integration-tests:
+    needs: fast-tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup test environment
+        run: |
+          # 创建轻量级测试环境
+          sudo apt-get update -qq
+          sudo apt-get install -y git curl bash zsh tmux
+          
+      - name: Run integration tests
+        timeout-minutes: 5
+        run: |
+          # 运行集成测试
+          ./tests/test_install.sh
+
+  # 最终状态检查
+  ci-status:
+    needs: [fast-tests, shellcheck-changed, integration-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check CI Status
+        run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ]; then
+            echo "❌ CI 失败"
+            exit 1
+          else
+            echo "✅ CI 通过"
+          fi
