@@ -1,0 +1,24 @@
+# ShellCheck ignore patterns
+
+# Vim 相关文件
+vim/**
+**/vim/**
+
+# Dotbot 子模块
+dotbot/**
+
+# 第三方脚本
+**/vendor/**
+**/third_party/**
+
+# 生成的文件
+**/build/**
+**/dist/**
+
+# 临时和备份文件
+*.backup
+*.tmp
+*.old
+
+# 特定的问题脚本（如果有需要临时忽略的）
+# scripts/problematic-script.sh
