@@ -428,30 +428,87 @@ custom_install() {
         print_info "选择要安装的组件（空格选择，回车确认）："
         echo ""
 
-        local choices=$(gum choose --no-limit \
+        # 使用数组存储选项，便于调试
+        local options=(
+            "📁 配置文件符号链接"
+            "📦 Homebrew 包管理"
+            "🐚 Zsh 和 Oh-My-Zsh"
+            "🔌 Zsh 插件"
+            "🖥️ tmux 配置"
+            "🔍 fzf 模糊查找"
+            "📂 zoxide 目录跳转"
+            "📝 Vim/Neovim 配置"
+            "🔀 Git 配置"
+            "🐍 Python 开发环境"
+            "📗 Node.js 开发环境"
+            "🦀 Rust 开发环境"
+        )
+
+        # 运行 gum choose 并捕获输出
+        local choices
+        if choices=$(gum choose --no-limit \
             --cursor "> " \
             --cursor.foreground="212" \
             --selected.foreground="82" \
             --height 12 \
-            "📁 配置文件符号链接" \
-            "📦 Homebrew 包管理" \
-            "🐚 Zsh 和 Oh-My-Zsh" \
-            "🔌 Zsh 插件" \
-            "🖥️ tmux 配置" \
-            "🔍 fzf 模糊查找" \
-            "📂 zoxide 目录跳转" \
-            "📝 Vim/Neovim 配置" \
-            "🔀 Git 配置" \
-            "🐍 Python 开发环境" \
-            "📗 Node.js 开发环境" \
-            "🦀 Rust 开发环境")
+            "${options[@]}"); then
+            # gum choose 成功执行
+            :
+        else
+            # 用户取消了选择
+            echo -e "${YELLOW}⚠${NC} 用户取消了选择"
+            return 1
+        fi
 
         # 将多行输出转换为数组
         if [ -n "$choices" ]; then
+            # 调试输出
+            if [ "${DEBUG:-0}" = "1" ]; then
+                echo "[DEBUG] Raw choices output:"
+                echo "$choices"
+                echo "[DEBUG] Choices length: ${#choices}"
+            fi
+            
             # 使用更可靠的方法解析多行输出
+            # 方法1: 使用 while read
             while IFS= read -r line; do
-                selected_features+=("$line")
+                if [ -n "$line" ]; then  # 确保行不为空
+                    selected_features+=("$line")
+                    if [ "${DEBUG:-0}" = "1" ]; then
+                        echo "[DEBUG] Added feature: $line"
+                    fi
+                fi
             done <<< "$choices"
+            
+            # 方法2: 如果方法1失败，尝试使用 mapfile/readarray
+            if [ ${#selected_features[@]} -eq 0 ] && [ -n "$choices" ]; then
+                if [ "${DEBUG:-0}" = "1" ]; then
+                    echo "[DEBUG] Trying alternative parsing method..."
+                fi
+                
+                # Bash 4+ 有 mapfile/readarray
+                if [ -n "$BASH_VERSION" ] && [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
+                    mapfile -t selected_features <<< "$choices"
+                else
+                    # 旧版本 bash 的备用方案
+                    IFS=$'\n'
+                    selected_features=($choices)
+                    IFS=$' \t\n'
+                fi
+                
+                # 清理空元素
+                local temp_features=()
+                for feature in "${selected_features[@]}"; do
+                    if [ -n "$feature" ]; then
+                        temp_features+=("$feature")
+                    fi
+                done
+                selected_features=("${temp_features[@]}")
+            fi
+            
+            if [ "${DEBUG:-0}" = "1" ]; then
+                echo "[DEBUG] Total features selected: ${#selected_features[@]}"
+            fi
         fi
     else
         echo "选择要安装的组件（输入数字，空格分隔）："
