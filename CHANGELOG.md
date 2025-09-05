@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.2.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.2.0...v3.2.1) (2025-09-05)
+
+
+### Performance Improvements
+
+* 优化 rgp 搜索性能 ([d923e32](https://github.com/ONGOING-Z/dotfiles/commit/d923e32a27f2b68e3076797e5a316737f42d7a69))
+
 # [3.2.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.1.3...v3.2.0) (2025-09-03)
 
 
