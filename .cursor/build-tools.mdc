@@ -1,0 +1,14 @@
+# 构建工具规范
+
+## Makefile 约定
+
+- `make install`：运行安装脚本（默认启用 brew）
+- `make lint`：使用 pre-commit 全量检查
+- `make fmt`：使用 pre-commit 格式化
+- `make pre-commit`：安装并启用 pre-commit
+
+## 构建原则
+
+- 保持 Makefile 简洁
+- 复杂逻辑放在独立脚本中
+- 提供清晰的帮助信息

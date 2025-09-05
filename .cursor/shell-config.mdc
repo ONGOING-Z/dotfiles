@@ -1,0 +1,30 @@
+# Shell 配置规范
+
+## Zsh 配置
+
+- 仅选择一个插件管理器：`ZSH_MANAGER=ohmyzsh|zplug|auto`（默认 auto）
+- 非交互 shell 跳过重型初始化
+  - 使用：`case $- in *i*) ... esac`
+- macOS 使用 Homebrew zsh 时：
+  - 需在 `/etc/shells` 中登记
+  - 执行 `chsh -s` 设置默认 shell
+- 目录跳转使用 zoxide
+  - 如检测到则自动启用
+  - 提供别名：z/zi/za/cd
+
+## Tmux 配置
+
+### 颜色设置
+- `default-terminal tmux-256color`
+- `terminal-overrides ',xterm-256color:RGB'`
+
+### Shell 集成
+- `default-shell` 指向 zsh
+- `default-command` 使用 `zsh -l` 确保 login shell
+
+### 剪贴板
+- macOS：使用 `pbcopy`
+- Linux：优先 `xclip`，否则 `xsel`
+
+### 注意事项
+- 修改配置后需要 `tmux kill-server` 或重启会话生效
