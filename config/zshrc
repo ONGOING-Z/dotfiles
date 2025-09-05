@@ -387,23 +387,72 @@ alias rgc='rg --smart-case --hidden'
 alias rgi='rg --ignore-case --hidden'
 alias rgt='rg --type-add web:*.{js,ts,jsx,tsx,vue} --type web --hidden'
 
-# IDE-like ripgrep popup (live reload)
+# IDE-like ripgrep popup (optimized version)
 rgp() {
   local RG_PREFIX="rg --line-number --no-heading --hidden --smart-case --color=always"
+  local INITIAL_QUERY="${1:-}"
   local sel file line
+
+  # 性能优化：添加延迟避免过于频繁的搜索
+  local RELOAD_COMMAND="change:reload:sleep 0.2; $RG_PREFIX -- {q} || true"
+
+  # 如果提供了初始查询，先执行一次搜索
+  if [ -n "$INITIAL_QUERY" ]; then
+    local INITIAL_RESULTS="$($RG_PREFIX -- "$INITIAL_QUERY" 2>/dev/null)"
+    if [ -z "$INITIAL_RESULTS" ]; then
+      echo "未找到匹配项: $INITIAL_QUERY"
+      return 1
+    fi
+  fi
+
   if [ -n "$TMUX" ] && command -v fzf-tmux >/dev/null 2>&1; then
-    sel="$(FZF_DEFAULT_COMMAND='' fzf-tmux -p 80%,80% --ansi --disabled --query '' \
-            --bind "change:reload:$RG_PREFIX -- {q} || true" \
+    sel="$(FZF_DEFAULT_COMMAND='' fzf-tmux -p 80%,80% --ansi --disabled --query "$INITIAL_QUERY" \
+            --bind "$RELOAD_COMMAND" \
             --delimiter : --nth=3.. \
-            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1}' \
+            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1} 2>/dev/null || head -n 500 {1} | sed -n "$((({2}-10)<1?1:({2}-10))),$(({2}+10))p"' \
             --preview-window=right,60%:wrap)" || return
   else
-    sel="$(FZF_DEFAULT_COMMAND='' fzf --ansi --disabled --query '' \
-            --bind "change:reload:$RG_PREFIX -- {q} || true" \
+    sel="$(FZF_DEFAULT_COMMAND='' fzf --ansi --disabled --query "$INITIAL_QUERY" \
+            --bind "$RELOAD_COMMAND" \
             --delimiter : --nth=3.. \
-            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1}' \
+            --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1} 2>/dev/null || head -n 500 {1} | sed -n "$((({2}-10)<1?1:({2}-10))),$(({2}+10))p"' \
             --preview-window=right,60%:wrap)" || return
   fi
+  file="$(printf "%s" "$sel" | cut -d: -f1)"
+  line="$(printf "%s" "$sel" | cut -d: -f2)"
+  [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"
+}
+
+# 快速版 rgp - 先搜索后选择（适合大项目）
+rgpf() {
+  local query="${1:-}"
+  if [ -z "$query" ]; then
+    echo "用法: rgpf <搜索词>"
+    echo "提示: 使用 rgp 进行交互式搜索"
+    return 1
+  fi
+
+  # 先执行搜索
+  local results
+  results=$(rg --line-number --no-heading --hidden --smart-case --color=always "$query" 2>/dev/null)
+
+  if [ -z "$results" ]; then
+    echo "未找到匹配项: $query"
+    return 1
+  fi
+
+  # 使用 fzf 选择结果
+  local sel file line
+  if [ -n "$TMUX" ] && command -v fzf-tmux >/dev/null 2>&1; then
+    sel=$(echo "$results" | fzf-tmux -p 80%,80% --ansi --delimiter : --nth=3.. \
+          --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1} 2>/dev/null || cat {1}' \
+          --preview-window=right,60%:wrap) || return
+  else
+    sel=$(echo "$results" | fzf --ansi --delimiter : --nth=3.. \
+          --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1} 2>/dev/null || cat {1}' \
+          --preview-window=right,60%:wrap) || return
+  fi
+
   file="$(printf "%s" "$sel" | cut -d: -f1)"
   line="$(printf "%s" "$sel" | cut -d: -f2)"
   [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"
