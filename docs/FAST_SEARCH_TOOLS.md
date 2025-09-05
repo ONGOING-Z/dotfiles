@@ -62,7 +62,7 @@ npm install -g @ast-grep/cli
 cargo install ast-grep
 
 # 搜索特定的代码模式（比正则更快更准）
-ast-grep --pattern 'console.log($ARGS)' 
+ast-grep --pattern 'console.log($ARGS)'
 
 # 优势：理解代码结构，避免误匹配
 ```
@@ -156,7 +156,7 @@ alias sa='ast-grep --pattern'  # AST 搜索
 search() {
     local pattern="$1"
     shift
-    
+
     # 如果有索引，用 csearch
     if [ -f ~/.csearchindex ]; then
         csearch "$pattern" "$@"
