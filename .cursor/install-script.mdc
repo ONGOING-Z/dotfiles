@@ -1,0 +1,37 @@
+# 安装脚本规范
+
+## 基本原则
+
+- 默认仅建立符号链接
+- 不创建实际文件
+
+## Homebrew 控制
+
+可通过参数/环境变量控制：
+
+### 命令行参数
+- `--brew`：启用 Homebrew 安装
+- `--brew-upgrade`：升级包
+- `--brew-cleanup`：清理缓存
+
+### 环境变量
+- `INSTALL_WITH_BREW`
+- `INSTALL_BREW_UPGRADE`
+- `INSTALL_BREW_CLEANUP`
+
+## 网络配置
+
+- 镜像：`BREW_MIRROR=ustc|tsinghua`
+- 代理：`BREW_PROXY=http://127.0.0.1:7890`
+
+## CI 环境
+
+- CI 中不强制执行 brew
+- 必要时以 `--only-links` 运行
+
+## Dotbot 链接
+
+- 仅建立符号链接
+- 需要的目录通过 `create` 创建
+- 特权路径需具备权限
+- `arthas.properties` 采用条件链接（目录存在时才链接）

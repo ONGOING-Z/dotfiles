@@ -1,0 +1,38 @@
+# 代码质量规范
+
+## Pre-commit 检查
+
+在提交前运行 `pre-commit run --all-files`，确保通过以下检查：
+
+- 基础 hooks
+  - trailing-whitespace
+  - end-of-file-fixer
+  - check-yaml
+  - check-added-large-files
+- 语言特定
+  - yamllint（行宽 140，文档头可选）
+  - shellcheck（避免未加引号的变量分词/通配）
+  - black（Python 格式化）
+  - mdformat（Markdown 格式化）
+  - codespell（拼写检查）
+
+## YAML 规范
+
+- 行宽：140 字符
+- 缩进：2 空格
+- 禁止使用文档头 `---`
+- 键名如 `on` 需加引号
+- 超长行使用多行/折叠块表达
+
+## 编辑器设置
+
+遵循 `.editorconfig`：
+- 换行符：LF
+- 编码：UTF-8
+- 缩进：2 空格（Makefile 使用 tab）
+
+## 测试要求
+
+- `std_my_dir` 提供 pytest 用例，CI 自动运行
+- 新增脚本建议附带最小测试用例
+- 测试覆盖率目标：85%+
