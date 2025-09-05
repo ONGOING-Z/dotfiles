@@ -392,10 +392,10 @@ rgp() {
   local RG_PREFIX="rg --line-number --no-heading --hidden --smart-case --color=always"
   local INITIAL_QUERY="${1:-}"
   local sel file line
-  
+
   # 性能优化：添加延迟避免过于频繁的搜索
   local RELOAD_COMMAND="change:reload:sleep 0.2; $RG_PREFIX -- {q} || true"
-  
+
   # 如果提供了初始查询，先执行一次搜索
   if [ -n "$INITIAL_QUERY" ]; then
     local INITIAL_RESULTS="$($RG_PREFIX -- "$INITIAL_QUERY" 2>/dev/null)"
@@ -404,7 +404,7 @@ rgp() {
       return 1
     fi
   fi
-  
+
   if [ -n "$TMUX" ] && command -v fzf-tmux >/dev/null 2>&1; then
     sel="$(FZF_DEFAULT_COMMAND='' fzf-tmux -p 80%,80% --ansi --disabled --query "$INITIAL_QUERY" \
             --bind "$RELOAD_COMMAND" \
@@ -431,16 +431,16 @@ rgpf() {
     echo "提示: 使用 rgp 进行交互式搜索"
     return 1
   fi
-  
+
   # 先执行搜索
   local results
   results=$(rg --line-number --no-heading --hidden --smart-case --color=always "$query" 2>/dev/null)
-  
+
   if [ -z "$results" ]; then
     echo "未找到匹配项: $query"
     return 1
   fi
-  
+
   # 使用 fzf 选择结果
   local sel file line
   if [ -n "$TMUX" ] && command -v fzf-tmux >/dev/null 2>&1; then
@@ -452,7 +452,7 @@ rgpf() {
           --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1} 2>/dev/null || cat {1}' \
           --preview-window=right,60%:wrap) || return
   fi
-  
+
   file="$(printf "%s" "$sel" | cut -d: -f1)"
   line="$(printf "%s" "$sel" | cut -d: -f2)"
   [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"

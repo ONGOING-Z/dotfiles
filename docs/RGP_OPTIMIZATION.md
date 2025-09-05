@@ -73,12 +73,12 @@ EOF
 rgpc() {
   local cache_file="/tmp/rgp_cache_$(pwd | md5sum | cut -d' ' -f1)"
   local query="${1:-}"
-  
+
   if [ -n "$query" ]; then
     # 新搜索，保存到缓存
     rg --line-number --no-heading --hidden --smart-case --color=always "$query" > "$cache_file"
   fi
-  
+
   # 从缓存选择
   [ -f "$cache_file" ] && cat "$cache_file" | fzf --ansi --delimiter : --nth=3.. \
     --preview 'bat --color=always --highlight-line {2} {1}' | {
