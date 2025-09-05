@@ -427,7 +427,7 @@ rgp() {
               --preview-window=right,60%:wrap)" || return
     fi
   fi
-  
+
   file="$(printf "%s" "$sel" | cut -d: -f1)"
   line="$(printf "%s" "$sel" | cut -d: -f2)"
   [ -n "$file" ] && ${EDITOR:-vim} +"$line" "$file"
