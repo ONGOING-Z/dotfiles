@@ -65,3 +65,4 @@ alias tree='tree -aC' # a: all files, C: color
 alias redis_start="docker exec -it my-redis redis-cli"
 
 alias weather='curl wttr.in'
+alias zclean='zoxide query -l | while read dir; do if [[ ! -d "$dir" ]]; then zoxide remove -f "$dir"; fi; done'
