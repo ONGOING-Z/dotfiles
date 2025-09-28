@@ -1,0 +1,238 @@
+# 网络诊断和管理备忘单
+
+% network, networking, troubleshooting
+
+# 查看网络接口
+ip addr show
+
+# 查看网络接口（简洁）
+ip a
+
+# 查看特定网络接口
+ip addr show <interface>
+
+# 启用网络接口
+sudo ip link set <interface> up
+
+# 禁用网络接口
+sudo ip link set <interface> down
+
+# 查看路由表
+ip route show
+
+# 添加路由
+sudo ip route add <network>/<prefix> via <gateway>
+
+# 删除路由
+sudo ip route del <network>/<prefix>
+
+# 查看 ARP 表
+ip neigh show
+
+# 清除 ARP 缓存
+sudo ip neigh flush all
+
+# 测试网络连通性
+ping -c <count> <host>
+
+# 持续 ping
+ping <host>
+
+# 测试 IPv6 连通性
+ping6 <ipv6_host>
+
+# 追踪网络路由
+traceroute <host>
+
+# IPv6 路由追踪
+traceroute6 <ipv6_host>
+
+# MTU 路径发现
+tracepath <host>
+
+# 查看网络连接
+netstat -tuln
+
+# 查看所有网络连接
+netstat -a
+
+# 查看监听端口
+netstat -l
+
+# 使用 ss 查看连接（推荐）
+ss -tuln
+
+# 查看所有 TCP 连接
+ss -t -a
+
+# 查看所有 UDP 连接
+ss -u -a
+
+# 查看进程网络使用情况
+ss -p
+
+# 测试端口连通性
+telnet <host> <port>
+
+# 使用 nc 测试端口
+nc -zv <host> <port>
+
+# 扫描端口范围
+nmap -p <start_port>-<end_port> <host>
+
+# 快速端口扫描
+nmap -F <host>
+
+# 服务版本检测
+nmap -sV <host>
+
+# OS 检测
+nmap -O <host>
+
+# 查看 DNS 解析
+nslookup <domain>
+
+# 使用 dig 查询 DNS
+dig <domain>
+
+# 查询特定 DNS 记录类型
+dig <domain> <record_type>
+
+# 反向 DNS 查询
+dig -x <ip_address>
+
+# 查看本地 DNS 缓存
+systemd-resolve --status
+
+# 刷新 DNS 缓存
+sudo systemd-resolve --flush-caches
+
+# 测试 DNS 解析速度
+dig @<dns_server> <domain>
+
+# 查看网络统计
+netstat -s
+
+# 查看网络接口统计
+cat /proc/net/dev
+
+# 实时监控网络流量
+iftop
+
+# 按进程监控网络
+nethogs
+
+# 查看带宽使用
+vnstat
+
+# 测试网络速度
+speedtest-cli
+
+# 下载测试
+wget --progress=dot:mega <large_file_url>
+
+# 上传测试
+curl -T <file> <upload_url>
+
+# 查看 TCP 连接状态
+ss -o state established
+
+# 查看网络拥塞控制
+ss -i
+
+# 抓包分析
+sudo tcpdump -i <interface>
+
+# 抓取特定端口的包
+sudo tcpdump -i <interface> port <port>
+
+# 抓取特定主机的包
+sudo tcpdump -i <interface> host <host>
+
+# 保存抓包到文件
+sudo tcpdump -i <interface> -w <output_file>.pcap
+
+# 读取抓包文件
+tcpdump -r <input_file>.pcap
+
+# 查看 WiFi 信息
+iwconfig
+
+# 扫描 WiFi 网络
+sudo iwlist <interface> scan
+
+# 连接 WiFi
+sudo wpa_supplicant -B -i <interface> -c <config_file>
+
+# 查看 WiFi 连接状态
+iw dev <interface> link
+
+# 设置静态 IP
+sudo ip addr add <ip>/<prefix> dev <interface>
+
+# 设置网关
+sudo ip route add default via <gateway>
+
+# 配置 DNS
+echo "nameserver <dns_server>" | sudo tee /etc/resolv.conf
+
+# 重启网络服务
+sudo systemctl restart networking
+
+# 重启 NetworkManager
+sudo systemctl restart NetworkManager
+
+# 查看防火墙状态
+sudo ufw status
+
+# 启用防火墙
+sudo ufw enable
+
+# 禁用防火墙
+sudo ufw disable
+
+# 添加防火墙规则
+sudo ufw allow <port>
+
+# 删除防火墙规则
+sudo ufw delete allow <port>
+
+# 查看 iptables 规则
+sudo iptables -L
+
+# 查看网络命名空间
+ip netns list
+
+# 创建网络命名空间
+sudo ip netns add <namespace>
+
+# 在命名空间中执行命令
+sudo ip netns exec <namespace> <command>
+
+# 查看网桥
+brctl show
+
+# 创建网桥
+sudo brctl addbr <bridge_name>
+
+# 添加接口到网桥
+sudo brctl addif <bridge_name> <interface>
+
+# VLAN 配置
+sudo ip link add link <interface> name <vlan_interface> type vlan id <vlan_id>
+
+# 查看网络延迟统计
+mtr <host>
+
+# 持续网络质量测试
+mtr --report-cycles <count> <host>
+
+$ interface: ip link show | grep -E "^[0-9]+" | awk '{print $2}' | sed 's/:$//' | grep -v lo
+$ host: echo -e "8.8.8.8\ngoogle.com\nbaidu.com\n1.1.1.1"
+$ port: echo -e "22\n80\n443\n3000\n5000\n8080\n8000\n9000"
+$ count: echo -e "1\n3\n5\n10"
+$ dns_server: echo -e "8.8.8.8\n1.1.1.1\n114.114.114.114\n223.5.5.5"
+$ record_type: echo -e "A\nAAAA\nMX\nNS\nCNAME\nTXT"
+$ network: echo -e "192.168.1.0/24\n10.0.0.0/8\n172.16.0.0/12"
+$ prefix: echo -e "24\n16\n8"
+$ vlan_id: echo -e "10\n20\n30\n100"
