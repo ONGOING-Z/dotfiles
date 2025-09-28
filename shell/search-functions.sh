@@ -134,20 +134,41 @@ rgpl() {
     }
 }
 
-# 缓存搜索结果
+# 缓存搜索结果（按项目与查询隔离）
 rgpc() {
-    local cache_dir="$HOME/.cache/rgp"
-    local cache_file="$cache_dir/last_search"
-    mkdir -p "$cache_dir"
-
     local query="${1:-}"
 
+    # 项目ID：基于工作目录绝对路径
+    local project_id
+    project_id=$(pwd | md5sum 2>/dev/null | cut -d' ' -f1)
+    [ -z "$project_id" ] && project_id="default"
+
+    # 查询ID：基于查询字符串（为空时使用 last）
+    local query_id
     if [ -n "$query" ]; then
-        # 新搜索，保存到缓存
-        rg --line-number --no-heading --hidden --smart-case --color=always "$query" > "$cache_file"
+        query_id=$(printf "%s" "$query" | md5sum 2>/dev/null | cut -d' ' -f1)
+    else
+        query_id="last"
     fi
 
-    # 从缓存读取并选择
+    local cache_dir="$HOME/.cache/rgp/$project_id"
+    mkdir -p "$cache_dir"
+
+    local cache_file="$cache_dir/$query_id"
+    local latest_symlink="$cache_dir/_latest"
+
+    if [ -n "$query" ]; then
+        # 新搜索，保存到特定查询缓存
+        rg --line-number --no-heading --hidden --smart-case --color=always "$query" > "$cache_file" || true
+        # 更新项目内最近一次查询指针
+        ln -sfn "$cache_file" "$latest_symlink"
+    else
+        # 无查询：回退到项目最近一次查询
+        if [ -L "$latest_symlink" ]; then
+            cache_file="$(readlink -f "$latest_symlink" 2>/dev/null || echo "$cache_file")"
+        fi
+    fi
+
     if [ -f "$cache_file" ]; then
         cat "$cache_file" | fzf --ansi --delimiter : --nth=3.. \
             --preview 'bat --color=always --paging=never --style=numbers,grid --highlight-line {2} {1} 2>/dev/null || cat {1}' \
@@ -160,7 +181,7 @@ rgpc() {
             fi
         }
     else
-        echo "没有缓存的搜索结果"
+        echo "没有缓存的搜索结果（项目：$project_id）"
     fi
 }
 
