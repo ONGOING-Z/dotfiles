@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.4.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.3.0...v3.4.0) (2025-09-28)
+
+
+### Features
+
+* Add modern CLI tools setup ([e524108](https://github.com/ONGOING-Z/dotfiles/commit/e524108db49228a5e40b70e52c70d747f36c2e70))
+
 # [3.3.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.2.1...v3.3.0) (2025-09-28)
 
 
