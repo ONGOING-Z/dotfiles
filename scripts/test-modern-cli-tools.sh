@@ -41,7 +41,7 @@ test_command() {
     local cmd="$1"
     local description="$2"
     ((TESTS_TOTAL++))
-
+    
     if command -v "$cmd" &> /dev/null; then
         log_success "$description: $cmd 已安装"
         return 0
@@ -55,7 +55,7 @@ test_file() {
     local file="$1"
     local description="$2"
     ((TESTS_TOTAL++))
-
+    
     if [[ -f "$file" ]]; then
         log_success "$description: $file 存在"
         return 0
@@ -69,7 +69,7 @@ test_directory() {
     local dir="$1"
     local description="$2"
     ((TESTS_TOTAL++))
-
+    
     if [[ -d "$dir" ]]; then
         log_success "$description: $dir 存在"
         return 0
@@ -84,7 +84,7 @@ test_shell_config() {
     local search_pattern="$2"
     local description="$3"
     ((TESTS_TOTAL++))
-
+    
     if [[ -f "$shell_file" ]] && grep -q "$search_pattern" "$shell_file"; then
         log_success "$description: 配置已添加到 $shell_file"
         return 0
@@ -99,14 +99,14 @@ main() {
     echo "🧪 现代 CLI 工具测试"
     echo "==================="
     echo
-
+    
     # 测试工具安装
     log_info "1. 测试工具安装..."
     test_command "starship" "Starship 提示符"
     test_command "mcfly" "McFly 智能历史"
     test_command "navi" "Navi 备忘单"
     echo
-
+    
     # 测试配置文件
     log_info "2. 测试配置文件..."
     test_file "$HOME/.config/starship.toml" "Starship 配置文件"
@@ -114,13 +114,13 @@ main() {
     test_file "$HOME/.navi.sh" "Navi 配置文件"
     test_file "$HOME/.config/navi/config.yaml" "Navi YAML 配置"
     echo
-
+    
     # 测试目录结构
     log_info "3. 测试目录结构..."
     test_directory "$HOME/.local/share/navi/cheats" "Navi 备忘单目录"
     test_directory "$HOME/.config/navi" "Navi 配置目录"
     echo
-
+    
     # 测试备忘单文件
     log_info "4. 测试备忘单文件..."
     test_file "$HOME/.local/share/navi/cheats/git.cheat" "Git 备忘单"
@@ -128,7 +128,7 @@ main() {
     test_file "$HOME/.local/share/navi/cheats/linux.cheat" "Linux 备忘单"
     test_file "$HOME/.local/share/navi/cheats/network.cheat" "网络备忘单"
     echo
-
+    
     # 测试 shell 配置
     log_info "5. 测试 shell 配置..."
     if [[ -f "$HOME/.bashrc" ]]; then
@@ -136,17 +136,17 @@ main() {
         test_shell_config "$HOME/.bashrc" "source.*\.mcfly\.sh" "McFly Bash 集成"
         test_shell_config "$HOME/.bashrc" "source.*\.navi\.sh" "Navi Bash 集成"
     fi
-
+    
     if [[ -f "$HOME/.zshrc" ]]; then
         test_shell_config "$HOME/.zshrc" "starship init" "Starship Zsh 集成"
         test_shell_config "$HOME/.zshrc" "source.*\.mcfly\.sh" "McFly Zsh 集成"
         test_shell_config "$HOME/.zshrc" "source.*\.navi\.sh" "Navi Zsh 集成"
     fi
     echo
-
+    
     # 功能测试
     log_info "6. 功能测试..."
-
+    
     # 测试 Starship
     if command -v starship &> /dev/null; then
         ((TESTS_TOTAL++))
@@ -156,7 +156,7 @@ main() {
             log_error "Starship 版本检查失败"
         fi
     fi
-
+    
     # 测试 McFly
     if command -v mcfly &> /dev/null; then
         ((TESTS_TOTAL++))
@@ -166,7 +166,7 @@ main() {
             log_error "McFly 版本检查失败"
         fi
     fi
-
+    
     # 测试 Navi
     if command -v navi &> /dev/null; then
         ((TESTS_TOTAL++))
@@ -177,10 +177,10 @@ main() {
         fi
     fi
     echo
-
+    
     # 高级测试
     log_info "7. 高级功能测试..."
-
+    
     # 测试 Starship 配置语法
     if command -v starship &> /dev/null && [[ -f "$HOME/.config/starship.toml" ]]; then
         ((TESTS_TOTAL++))
@@ -190,7 +190,7 @@ main() {
             log_error "Starship 配置语法错误"
         fi
     fi
-
+    
     # 测试 Navi 备忘单加载
     if command -v navi &> /dev/null; then
         ((TESTS_TOTAL++))
@@ -202,18 +202,18 @@ main() {
         fi
     fi
     echo
-
+    
     # 显示测试结果
     echo "📊 测试结果汇总"
     echo "==============="
     echo "总测试数: $TESTS_TOTAL"
     echo -e "通过: ${GREEN}$TESTS_PASSED${NC}"
     echo -e "失败: ${RED}$TESTS_FAILED${NC}"
-
+    
     local success_rate=$((TESTS_PASSED * 100 / TESTS_TOTAL))
     echo "成功率: $success_rate%"
     echo
-
+    
     if [[ $TESTS_FAILED -eq 0 ]]; then
         echo -e "${GREEN}🎉 所有测试通过！现代 CLI 工具已正确安装和配置。${NC}"
         echo
