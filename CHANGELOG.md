@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.3.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.2.1...v3.3.0) (2025-09-28)
+
+
+### Features
+
+* Add optimized CI workflow and performance docs ([0052bbd](https://github.com/ONGOING-Z/dotfiles/commit/0052bbd86484ad1b2ca9faa9707b4e08aec33c51))
+
 ## [3.2.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.2.0...v3.2.1) (2025-09-05)
 
 
