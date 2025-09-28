@@ -4,10 +4,10 @@ install:
 	@./install --brew
 
 lint:
-	@pre-commit run --all-files || true
+	@pre-commit run --all-files
 
 fmt:
-	@pre-commit run --all-files || true
+	@pre-commit run --all-files
 
 pre-commit:
 	@pip install pre-commit && pre-commit install

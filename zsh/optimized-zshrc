@@ -104,7 +104,8 @@ setopt SHARE_HISTORY          # 共享历史
 setopt APPEND_HISTORY         # 追加历史
 setopt INC_APPEND_HISTORY     # 立即追加
 setopt AUTO_CD                # 自动 cd
-setopt CORRECT                # 命令纠正
+# 统一与性能优化设置：禁用命令自动更正
+unsetopt CORRECT
 
 # 历史配置
 HISTFILE="$HOME/.zsh_history"
