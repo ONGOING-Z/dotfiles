@@ -6,6 +6,14 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.4.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.4.0...v3.4.1) (2025-09-28)
+
+
+### Reverts
+
+* Revert "chore(pre-commit): auto-apply formatting and fixes" ([27d0a26](https://github.com/ONGOING-Z/dotfiles/commit/27d0a264e9eda5b608c65375cfcd255bb5d95ee5))
+* Revert "feat: Add modern CLI tools setup" ([8ea1b5b](https://github.com/ONGOING-Z/dotfiles/commit/8ea1b5b17293d08453b6a81dc8e1683725507e44))
+
 # [3.4.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.3.0...v3.4.0) (2025-09-28)
 
 
