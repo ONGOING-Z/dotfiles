@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 typewriter() {
     local text="$1"
     local delay="${2:-0.05}"
-    
+
     for ((i=0; i<${#text}; i++)); do
         echo -n "${text:$i:1}"
         sleep "$delay"
@@ -53,12 +53,12 @@ demo_starship() {
     echo -e "${BLUE}🚀 Starship 演示${NC}"
     echo "=================="
     echo
-    
+
     if command -v starship &> /dev/null; then
         echo -e "${GREEN}✅ Starship 已安装${NC}"
         echo "版本: $(starship --version)"
         echo
-        
+
         echo -e "${YELLOW}📋 主要特性:${NC}"
         echo "  • 快速响应的跨 shell 提示符"
         echo "  • 自动检测项目类型和状态"
@@ -66,27 +66,27 @@ demo_starship() {
         echo "  • 编程语言版本显示"
         echo "  • 系统状态监控"
         echo
-        
+
         echo -e "${CYAN}🎨 配置文件位置:${NC}"
         echo "  ~/.config/starship.toml"
         echo
-        
+
         if [[ -f "$HOME/.config/starship.toml" ]]; then
             echo -e "${GREEN}✅ 配置文件已存在${NC}"
         else
             echo -e "${RED}❌ 配置文件未找到${NC}"
         fi
-        
+
         echo
         echo -e "${YELLOW}💡 使用提示:${NC}"
         echo "  重启 shell 后，您将看到新的提示符样式"
         echo "  提示符会根据当前目录和 Git 状态自动调整"
-        
+
     else
         echo -e "${RED}❌ Starship 未安装${NC}"
         echo "请运行安装脚本: ./scripts/install-modern-cli-tools.sh"
     fi
-    
+
     wait_for_user
 }
 
@@ -96,49 +96,49 @@ demo_mcfly() {
     echo -e "${BLUE}🧠 McFly 演示${NC}"
     echo "==============="
     echo
-    
+
     if command -v mcfly &> /dev/null; then
         echo -e "${GREEN}✅ McFly 已安装${NC}"
         echo "版本: $(mcfly --version)"
         echo
-        
+
         echo -e "${YELLOW}📋 主要特性:${NC}"
         echo "  • 智能历史搜索算法"
         echo "  • 学习您的使用模式"
         echo "  • 模糊匹配支持"
         echo "  • 快速响应"
         echo
-        
+
         echo -e "${CYAN}⌨️  快捷键:${NC}"
         echo "  Ctrl+R  - 智能历史搜索"
         echo "  Ctrl+N  - 下一个建议"
         echo "  Ctrl+P  - 上一个建议"
         echo
-        
+
         echo -e "${CYAN}🔧 常用命令:${NC}"
         echo "  mf <搜索词>  - 搜索历史"
         echo "  mfa          - 历史分析"
         echo "  mfc          - 清理重复"
         echo "  mfcfg        - 查看配置"
         echo
-        
+
         if [[ -f "$HOME/.mcfly.sh" ]]; then
             echo -e "${GREEN}✅ 配置文件已存在: ~/.mcfly.sh${NC}"
         else
             echo -e "${RED}❌ 配置文件未找到${NC}"
         fi
-        
+
         echo
         echo -e "${YELLOW}💡 使用提示:${NC}"
         echo "  使用 Ctrl+R 开始智能搜索"
         echo "  McFly 会学习您的命令使用模式"
         echo "  支持模糊匹配，输入部分关键词即可"
-        
+
     else
         echo -e "${RED}❌ McFly 未安装${NC}"
         echo "请运行安装脚本: ./scripts/install-modern-cli-tools.sh"
     fi
-    
+
     wait_for_user
 }
 
@@ -148,26 +148,26 @@ demo_navi() {
     echo -e "${BLUE}📚 Navi 演示${NC}"
     echo "=============="
     echo
-    
+
     if command -v navi &> /dev/null; then
         echo -e "${GREEN}✅ Navi 已安装${NC}"
         echo "版本: $(navi --version)"
         echo
-        
+
         echo -e "${YELLOW}📋 主要特性:${NC}"
         echo "  • 交互式命令备忘单"
         echo "  • 标签分类系统"
         echo "  • 参数自动补全"
         echo "  • 自定义备忘单支持"
         echo
-        
+
         echo -e "${CYAN}⌨️  快捷键:${NC}"
         echo "  Ctrl+G    - 打开 Navi"
         echo "  Enter     - 执行命令"
         echo "  Ctrl+Y    - 复制命令"
         echo "  Esc       - 退出"
         echo
-        
+
         echo -e "${CYAN}🔧 常用命令:${NC}"
         echo "  n / navi         - 打开交互搜索"
         echo "  ns <关键词>      - 搜索特定内容"
@@ -176,7 +176,7 @@ demo_navi() {
         echo "  na <名称>        - 添加新备忘单"
         echo "  nl               - 列出所有备忘单"
         echo
-        
+
         echo -e "${CYAN}📚 内置备忘单:${NC}"
         local cheat_count=0
         if [[ -d "$HOME/.local/share/navi/cheats" ]]; then
@@ -185,27 +185,27 @@ demo_navi() {
                 echo "  • $cheat_name"
                 ((cheat_count++))
             done < <(find "$HOME/.local/share/navi/cheats" -name "*.cheat" -print0 2>/dev/null | head -z -8)
-            
+
             if [[ $cheat_count -gt 0 ]]; then
                 echo -e "${GREEN}  总计: $cheat_count 个备忘单${NC}"
             fi
         fi
-        
+
         if [[ $cheat_count -eq 0 ]]; then
             echo -e "${RED}  ❌ 未找到备忘单${NC}"
         fi
-        
+
         echo
         echo -e "${YELLOW}💡 使用提示:${NC}"
         echo "  使用 Ctrl+G 快速打开备忘单搜索"
         echo "  可以创建自定义备忘单存储常用命令"
         echo "  支持参数化命令，提供选择菜单"
-        
+
     else
         echo -e "${RED}❌ Navi 未安装${NC}"
         echo "请运行安装脚本: ./scripts/install-modern-cli-tools.sh"
     fi
-    
+
     wait_for_user
 }
 
@@ -215,27 +215,27 @@ demo_integration() {
     echo -e "${BLUE}🔗 集成使用演示${NC}"
     echo "=================="
     echo
-    
+
     echo -e "${YELLOW}🚀 完整工作流程:${NC}"
     echo
-    
+
     echo -e "${CYAN}1. 美化的提示符 (Starship)${NC}"
     echo "   • 显示当前目录、Git 状态、语言版本等"
     echo "   • 根据项目类型自动调整显示内容"
     echo
-    
+
     echo -e "${CYAN}2. 智能历史搜索 (McFly)${NC}"
     echo "   • 按 Ctrl+R 搜索历史命令"
     echo "   • 智能排序，常用命令优先显示"
     echo "   • 支持模糊匹配和上下文感知"
     echo
-    
+
     echo -e "${CYAN}3. 命令备忘单 (Navi)${NC}"
     echo "   • 按 Ctrl+G 打开备忘单搜索"
     echo "   • 查找复杂命令和参数组合"
     echo "   • 支持参数化和自动补全"
     echo
-    
+
     echo -e "${YELLOW}💡 推荐使用场景:${NC}"
     echo
     echo "• 日常开发: Starship 显示项目状态，McFly 快速找到历史命令"
@@ -243,13 +243,13 @@ demo_integration() {
     echo "• 学习新工具: Navi 备忘单学习语法，McFly 记录练习命令"
     echo "• 团队协作: 共享 Navi 备忘单，统一命令规范"
     echo
-    
+
     echo -e "${GREEN}🎯 最佳实践:${NC}"
     echo "• 定期更新备忘单，添加新学到的命令"
     echo "• 使用标签系统组织备忘单"
     echo "• 自定义 Starship 配置适应个人需求"
     echo "• 利用 McFly 的学习能力，让搜索越来越精准"
-    
+
     wait_for_user
 }
 
@@ -259,9 +259,9 @@ show_installation_status() {
     echo -e "${BLUE}📊 安装状态检查${NC}"
     echo "=================="
     echo
-    
+
     local all_installed=true
-    
+
     # 检查工具安装
     echo -e "${YELLOW}工具安装状态:${NC}"
     if command -v starship &> /dev/null; then
@@ -270,31 +270,31 @@ show_installation_status() {
         echo -e "  ${RED}❌ Starship 未安装${NC}"
         all_installed=false
     fi
-    
+
     if command -v mcfly &> /dev/null; then
         echo -e "  ${GREEN}✅ McFly${NC} - $(mcfly --version)"
     else
         echo -e "  ${RED}❌ McFly 未安装${NC}"
         all_installed=false
     fi
-    
+
     if command -v navi &> /dev/null; then
         echo -e "  ${GREEN}✅ Navi${NC} - $(navi --version)"
     else
         echo -e "  ${RED}❌ Navi 未安装${NC}"
         all_installed=false
     fi
-    
+
     echo
-    
+
     # 检查配置文件
     echo -e "${YELLOW}配置文件状态:${NC}"
     [[ -f "$HOME/.config/starship.toml" ]] && echo -e "  ${GREEN}✅ Starship 配置${NC}" || echo -e "  ${RED}❌ Starship 配置${NC}"
     [[ -f "$HOME/.mcfly.sh" ]] && echo -e "  ${GREEN}✅ McFly 配置${NC}" || echo -e "  ${RED}❌ McFly 配置${NC}"
     [[ -f "$HOME/.navi.sh" ]] && echo -e "  ${GREEN}✅ Navi 配置${NC}" || echo -e "  ${RED}❌ Navi 配置${NC}"
-    
+
     echo
-    
+
     if $all_installed; then
         echo -e "${GREEN}🎉 所有工具已正确安装！${NC}"
         echo
@@ -308,7 +308,7 @@ show_installation_status() {
         echo -e "${CYAN}解决方案:${NC}"
         echo "运行安装脚本: ./scripts/install-modern-cli-tools.sh"
     fi
-    
+
     wait_for_user
 }
 
@@ -331,16 +331,16 @@ show_menu() {
         echo "╚══════════════════════════════════════════════════════════════════════╝"
         echo -e "${NC}"
         echo -n "请选择选项 (1-6): "
-        
+
         read -r choice
-        
+
         case $choice in
             1) demo_starship ;;
             2) demo_mcfly ;;
             3) demo_navi ;;
             4) demo_integration ;;
             5) show_installation_status ;;
-            6) 
+            6)
                 echo -e "\n${GREEN}感谢使用现代 CLI 工具演示！${NC}"
                 echo -e "${CYAN}享受您的现代化命令行体验！ ✨${NC}\n"
                 exit 0
@@ -360,10 +360,10 @@ main() {
         echo "此演示需要在交互式终端中运行"
         exit 1
     fi
-    
+
     # 显示欢迎界面
     show_title
-    
+
     # 显示主菜单
     show_menu
 }

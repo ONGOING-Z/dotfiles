@@ -35,17 +35,17 @@ bind -x '"\C-r": mcfly_search'
 mcfly_analyze() {
     echo "📊 McFly 历史分析"
     echo "=================="
-    
+
     if command -v mcfly &> /dev/null; then
         # 显示最常用的命令
         echo "🔝 最常用的命令："
         mcfly search --limit 10 | head -10
-        
+
         echo
         echo "📈 历史统计："
         echo "总命令数: $(wc -l < "$MCFLY_HISTFILE")"
         echo "唯一命令数: $(sort "$MCFLY_HISTFILE" | uniq | wc -l)"
-        
+
         # 显示最近使用的目录
         echo
         echo "📁 最近访问的目录："
@@ -58,23 +58,23 @@ mcfly_analyze() {
 # 清理重复历史记录
 mcfly_clean_history() {
     echo "🧹 清理重复的历史记录..."
-    
+
     # 备份当前历史
     cp "$MCFLY_HISTFILE" "${MCFLY_HISTFILE}.backup.$(date +%Y%m%d_%H%M%S)"
-    
+
     # 去重并保持顺序
     awk '!seen[$0]++' "$MCFLY_HISTFILE" > "${MCFLY_HISTFILE}.tmp"
     mv "${MCFLY_HISTFILE}.tmp" "$MCFLY_HISTFILE"
-    
+
     echo "✅ 历史记录清理完成"
 }
 
 # 导出 McFly 历史
 mcfly_export() {
     local output_file="${1:-mcfly_history_export_$(date +%Y%m%d_%H%M%S).txt}"
-    
+
     echo "📤 导出 McFly 历史到: $output_file"
-    
+
     if command -v mcfly &> /dev/null; then
         mcfly search --limit 1000 > "$output_file"
         echo "✅ 导出完成: $output_file"
@@ -86,29 +86,29 @@ mcfly_export() {
 # 导入外部历史文件到 McFly
 mcfly_import() {
     local import_file="$1"
-    
+
     if [[ -z "$import_file" ]]; then
         echo "❌ 请指定要导入的历史文件"
         echo "用法: mcfly_import <历史文件路径>"
         return 1
     fi
-    
+
     if [[ ! -f "$import_file" ]]; then
         echo "❌ 文件不存在: $import_file"
         return 1
     fi
-    
+
     echo "📥 导入历史文件: $import_file"
-    
+
     # 备份当前历史
     cp "$MCFLY_HISTFILE" "${MCFLY_HISTFILE}.backup.$(date +%Y%m%d_%H%M%S)"
-    
+
     # 合并历史文件
     cat "$import_file" >> "$MCFLY_HISTFILE"
-    
+
     # 去重
     mcfly_clean_history
-    
+
     echo "✅ 导入完成"
 }
 
