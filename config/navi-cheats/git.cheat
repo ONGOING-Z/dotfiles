@@ -1,0 +1,133 @@
+# Git 常用命令备忘单
+
+% git, version-control
+
+# 查看 Git 状态
+git status
+
+# 查看简洁状态
+git status -s
+
+# 添加文件到暂存区
+git add <file>
+
+# 添加所有文件到暂存区
+git add .
+
+# 提交更改
+git commit -m "<message>"
+
+# 快速提交（添加并提交）
+git commit -am "<message>"
+
+# 查看提交历史
+git log --oneline --graph --all
+
+# 查看最近 N 次提交
+git log -<number> --oneline
+
+# 查看文件差异
+git diff <file>
+
+# 查看暂存区差异
+git diff --staged
+
+# 创建新分支
+git checkout -b <branch_name>
+
+# 切换分支
+git checkout <branch_name>
+
+# 合并分支
+git merge <branch_name>
+
+# 删除分支
+git branch -d <branch_name>
+
+# 强制删除分支
+git branch -D <branch_name>
+
+# 查看所有分支
+git branch -a
+
+# 推送到远程仓库
+git push origin <branch_name>
+
+# 拉取远程更改
+git pull origin <branch_name>
+
+# 克隆仓库
+git clone <repository_url>
+
+# 添加远程仓库
+git remote add <remote_name> <repository_url>
+
+# 查看远程仓库
+git remote -v
+
+# 重置到指定提交
+git reset --hard <commit_hash>
+
+# 撤销最后一次提交（保留更改）
+git reset --soft HEAD~1
+
+# 撤销最后一次提交（丢弃更改）
+git reset --hard HEAD~1
+
+# 暂存当前更改
+git stash
+
+# 应用最近的暂存
+git stash pop
+
+# 查看暂存列表
+git stash list
+
+# 创建标签
+git tag -a <tag_name> -m "<tag_message>"
+
+# 推送标签
+git push origin <tag_name>
+
+# 查看配置
+git config --list
+
+# 设置用户名
+git config --global user.name "<username>"
+
+# 设置邮箱
+git config --global user.email "<email>"
+
+# 忽略文件权限变更
+git config core.fileMode false
+
+# 查看某个文件的历史
+git log --follow -p <file>
+
+# 查看谁修改了文件
+git blame <file>
+
+# 交互式添加文件
+git add -i
+
+# 查看两个提交之间的差异
+git diff <commit1> <commit2>
+
+# 重写提交历史（交互式）
+git rebase -i HEAD~<number>
+
+# 合并多个提交为一个
+git rebase -i HEAD~<number>
+
+# 查找包含特定文本的提交
+git log --grep="<search_text>"
+
+# 查找修改了特定文件的提交
+git log --follow -- <file>
+
+$ file: find . -type f -name "*" | head -20
+$ branch_name: git branch | grep -v "^*" | sed 's/^[ ]*//g'
+$ remote_name: git remote
+$ commit_hash: git log --oneline | head -10 | awk '{print $1}'
+$ tag_name: git tag
+$ number: echo -e "1\n2\n3\n4\n5\n10\n20"
