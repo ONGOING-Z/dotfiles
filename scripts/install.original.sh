@@ -76,6 +76,7 @@ PROFILE_SAVE=""
 PROFILE_LOAD=""
 GUM_INSTALL=${INSTALL_GUM:-0}
 DRY_RUN=${DRY_RUN:-0}
+DOTBOT_ONLY=0
 FORWARD_ARGS=()
 while (( "$#" )); do
   case "$1" in
@@ -85,6 +86,7 @@ Usage: ./install [options]
 
 Options:
   --only-links           Only create symlinks (skip Homebrew)
+  --dotbot-only          Only run dotbot (skip all custom steps)
   --brew                 Enable Homebrew bundle/install
   --brew-upgrade         Upgrade existing Homebrew packages
   --brew-cleanup         Cleanup and autoremove after bundle
@@ -103,6 +105,8 @@ USAGE
       exit 0 ;;
     --no-brew)
       DO_BREW=0; shift ;;
+    --dotbot-only)
+      DOTBOT_ONLY=1; shift ;;
     --only-links)
       DO_BREW=0; shift ;;
     --brew)
@@ -211,6 +215,18 @@ if [ "$DO_INTERACTIVE" = "1" ] && [ -t 0 ] && [ -z "${CI:-}" ]; then
   [ "$DO_FZF_BINDS" = "1" ] && summary_cmd="$summary_cmd --fzf-bindings"
   [ "$DO_ZOXIDE" = "1" ] && summary_cmd="$summary_cmd --zoxide-setup"
   printf "  %s%s\n" "$summary_env" "$summary_cmd"
+fi
+
+## dotbot-only mode: skip all custom steps, run dotbot directly
+if [ "$DOTBOT_ONLY" = "1" ]; then
+  printf "[info] Running dotbot only (skipping all custom steps)\n"
+  if [ "$DRY_RUN" = "1" ]; then
+    printf "[dry-run] Would run Dotbot with config %s and args: %s\n" "$CONFIG" "${FORWARD_ARGS+${FORWARD_ARGS[*]}}"
+  else
+    "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+  fi
+  printf "[info] Dotbot execution completed.\n"
+  exit 0
 fi
 
 ## Pre-check for privileged links (arthas)
