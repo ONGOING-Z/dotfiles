@@ -80,6 +80,8 @@ PROFILE_SAVE=""
 PROFILE_LOAD=""
 DRY_RUN=${DRY_RUN:-0}
 FORWARD_ARGS=()
+# 直接 Dotbot 模式
+DOTBOT_DIRECT=0
 
 # 备份
 BACKUP_DIR="${HOME}/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
@@ -297,6 +299,7 @@ Usage: ./install-unified.sh [options]
   --interactive          交互式配置向导（推荐）
   --quick                快速安装（使用默认配置）
   --minimal              最小安装（仅创建符号链接）
+  --dotbot-direct        直接运行 Dotbot（跳过所有自定义步骤）
 
 功能选项:
   --only-links           仅创建符号链接
@@ -348,6 +351,8 @@ while (( "$#" )); do
             DO_BREW=1; DO_TPM=1; DO_FZF_BINDS=1; shift ;;
         --minimal)
             DO_BREW=0; DO_TPM=0; DO_FZF_BINDS=0; shift ;;
+        --dotbot-direct|--dotbot|--dotbot-only)
+            DOTBOT_DIRECT=1; shift ;;
         --only-links)
             DO_BREW=0; shift ;;
         --brew)
@@ -772,6 +777,42 @@ run_dotbot() {
     fi
 }
 
+# =========================================================================
+# 直接执行 Dotbot（跳过所有自定义步骤）
+# =========================================================================
+run_dotbot_direct() {
+    cd "${BASEDIR}"
+
+    # 初始化 dotbot 子模块
+    if [ "$DRY_RUN" = "1" ]; then
+        print_info "[DRY-RUN] git submodule update --init --recursive"
+    else
+        git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive || true
+        git submodule update --init --recursive "${DOTBOT_DIR}" || true
+    fi
+
+    # 构建 dotbot 参数，默认附带 -d 与 -c
+    local args=("-d" "${BASEDIR}")
+    local has_config=0
+    for a in "${FORWARD_ARGS[@]:-}"; do
+        if [ "$a" = "-c" ] || [[ "$a" == -c=* ]] || [[ "$a" == --config=* ]]; then
+            has_config=1
+            break
+        fi
+    done
+    if [ "$has_config" = "0" ]; then
+        args+=("-c" "${CONFIG}")
+    fi
+
+    if [ "$DRY_RUN" = "1" ]; then
+        print_info "[DRY-RUN] 直接执行 Dotbot"
+        print_info "[DRY-RUN] ${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN} ${args[*]} ${FORWARD_ARGS[*]}"
+        exit 0
+    fi
+
+    exec "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" "${args[@]}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+}
+
 # ============================================================================
 # Homebrew 安装
 # ============================================================================
@@ -994,6 +1035,11 @@ configure_git_settings() {
 # ============================================================================
 
 main() {
+    # 直接 Dotbot 模式：跳过自定义步骤
+    if [ "$DOTBOT_DIRECT" = "1" ]; then
+        run_dotbot_direct
+    fi
+
     # 显示欢迎界面
     print_header
 
