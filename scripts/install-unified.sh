@@ -1001,7 +1001,7 @@ main() {
     # dotbot-only 模式：跳过所有自定义步骤，直接运行 dotbot
     if [ "$DOTBOT_ONLY" = "1" ]; then
         print_info "直接执行 dotbot（跳过所有自定义步骤）"
-        
+
         # 获取项目根目录（BASEDIR 可能是 scripts 目录）
         local ROOT_DIR
         if [ -f "${BASEDIR}/${CONFIG}" ]; then
@@ -1012,15 +1012,15 @@ main() {
             print_error "找不到配置文件 ${CONFIG}"
             exit 1
         fi
-        
+
         cd "${ROOT_DIR}"
-        
+
         # 初始化 dotbot submodule
         if [ -d "${DOTBOT_DIR}" ]; then
             git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>/dev/null || true
             git submodule update --init --recursive "${DOTBOT_DIR}" 2>/dev/null || true
         fi
-        
+
         # 直接运行 dotbot
         if [ -f "${ROOT_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" ]; then
             "${ROOT_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${ROOT_DIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
@@ -1032,7 +1032,7 @@ main() {
             exit 1
         fi
     fi
-    
+
     # 显示欢迎界面
     print_header
 

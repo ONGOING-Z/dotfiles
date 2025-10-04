@@ -33,15 +33,15 @@ if [ $# -gt 0 ]; then
             DOTBOT_DIR="dotbot"
             DOTBOT_BIN="bin/dotbot"
             CONFIG="install.conf.yaml"
-            
+
             cd "$SCRIPT_DIR"
-            
+
             # 初始化 dotbot submodule
             if [ -d "$DOTBOT_DIR" ]; then
                 git -C "$DOTBOT_DIR" submodule sync --quiet --recursive 2>/dev/null || true
                 git submodule update --init --recursive "$DOTBOT_DIR" 2>/dev/null || true
             fi
-            
+
             # 过滤出 dotbot 支持的参数
             shift  # 移除 --dotbot-only
             DOTBOT_ARGS=()
@@ -57,7 +57,7 @@ if [ $# -gt 0 ]; then
                         ;;
                 esac
             done
-            
+
             # 直接运行 dotbot
             echo "==> 直接执行 dotbot（跳过所有自定义步骤）"
             if [ -f "$SCRIPT_DIR/$DOTBOT_DIR/$DOTBOT_BIN" ]; then
