@@ -79,6 +79,7 @@ GUM_INSTALL=${INSTALL_GUM:-0}
 PROFILE_SAVE=""
 PROFILE_LOAD=""
 DRY_RUN=${DRY_RUN:-0}
+DOTBOT_ONLY=0
 FORWARD_ARGS=()
 
 # 备份
@@ -297,6 +298,7 @@ Usage: ./install-unified.sh [options]
   --interactive          交互式配置向导（推荐）
   --quick                快速安装（使用默认配置）
   --minimal              最小安装（仅创建符号链接）
+  --dotbot-only          仅执行 dotbot（跳过所有自定义步骤）
 
 功能选项:
   --only-links           仅创建符号链接
@@ -348,6 +350,8 @@ while (( "$#" )); do
             DO_BREW=1; DO_TPM=1; DO_FZF_BINDS=1; shift ;;
         --minimal)
             DO_BREW=0; DO_TPM=0; DO_FZF_BINDS=0; shift ;;
+        --dotbot-only)
+            DOTBOT_ONLY=1; shift ;;
         --only-links)
             DO_BREW=0; shift ;;
         --brew)
@@ -994,6 +998,41 @@ configure_git_settings() {
 # ============================================================================
 
 main() {
+    # dotbot-only 模式：跳过所有自定义步骤，直接运行 dotbot
+    if [ "$DOTBOT_ONLY" = "1" ]; then
+        print_info "直接执行 dotbot（跳过所有自定义步骤）"
+
+        # 获取项目根目录（BASEDIR 可能是 scripts 目录）
+        local ROOT_DIR
+        if [ -f "${BASEDIR}/${CONFIG}" ]; then
+            ROOT_DIR="${BASEDIR}"
+        elif [ -f "${BASEDIR}/../${CONFIG}" ]; then
+            ROOT_DIR="${BASEDIR}/.."
+        else
+            print_error "找不到配置文件 ${CONFIG}"
+            exit 1
+        fi
+
+        cd "${ROOT_DIR}"
+
+        # 初始化 dotbot submodule
+        if [ -d "${DOTBOT_DIR}" ]; then
+            git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>/dev/null || true
+            git submodule update --init --recursive "${DOTBOT_DIR}" 2>/dev/null || true
+        fi
+
+        # 直接运行 dotbot
+        if [ -f "${ROOT_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" ]; then
+            "${ROOT_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${ROOT_DIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+            print_success "Dotbot 执行完成！"
+            exit 0
+        else
+            print_error "dotbot 未找到，请先初始化子模块"
+            print_info "运行: git submodule update --init --recursive"
+            exit 1
+        fi
+    fi
+
     # 显示欢迎界面
     print_header
 

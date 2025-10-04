@@ -21,11 +21,56 @@ if [ $# -gt 0 ]; then
             echo "  ./install --help          显示所有可用参数"
             echo "  ./install --quick         快速安装"
             echo "  ./install --minimal       最小安装"
+            echo "  ./install --dotbot-only   仅执行 dotbot（跳过自定义步骤）"
             echo "  ./install --health-check  运行健康检查"
             echo "  ./install --rollback      回滚到上一个快照"
             echo ""
             echo "推荐: 直接运行 ./install 使用交互式向导"
             exit 0
+            ;;
+        --dotbot-only)
+            # 直接执行 dotbot，跳过所有自定义步骤
+            DOTBOT_DIR="dotbot"
+            DOTBOT_BIN="bin/dotbot"
+            CONFIG="install.conf.yaml"
+
+            cd "$SCRIPT_DIR"
+
+            # 初始化 dotbot submodule
+            if [ -d "$DOTBOT_DIR" ]; then
+                git -C "$DOTBOT_DIR" submodule sync --quiet --recursive 2>/dev/null || true
+                git submodule update --init --recursive "$DOTBOT_DIR" 2>/dev/null || true
+            fi
+
+            # 过滤出 dotbot 支持的参数
+            shift  # 移除 --dotbot-only
+            DOTBOT_ARGS=()
+            while [ $# -gt 0 ]; do
+                case "$1" in
+                    --dry-run)
+                        echo "注意: dotbot 不支持 --dry-run 参数，已忽略"
+                        shift
+                        ;;
+                    *)
+                        DOTBOT_ARGS+=("$1")
+                        shift
+                        ;;
+                esac
+            done
+
+            # 直接运行 dotbot
+            echo "==> 直接执行 dotbot（跳过所有自定义步骤）"
+            if [ -f "$SCRIPT_DIR/$DOTBOT_DIR/$DOTBOT_BIN" ]; then
+                if [ ${#DOTBOT_ARGS[@]} -gt 0 ]; then
+                    exec "$SCRIPT_DIR/$DOTBOT_DIR/$DOTBOT_BIN" -d "$SCRIPT_DIR" -c "$CONFIG" "${DOTBOT_ARGS[@]}"
+                else
+                    exec "$SCRIPT_DIR/$DOTBOT_DIR/$DOTBOT_BIN" -d "$SCRIPT_DIR" -c "$CONFIG"
+                fi
+            else
+                echo "错误: dotbot 未找到，请先初始化子模块"
+                echo "运行: git submodule update --init --recursive"
+                exit 1
+            fi
             ;;
         --health-check)
             # 运行健康检查
