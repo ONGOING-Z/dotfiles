@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.5.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.4.1...v3.5.0) (2025-10-04)
+
+
+### Features
+
+* Add --dotbot-only flag to install script ([95ff7be](https://github.com/ONGOING-Z/dotfiles/commit/95ff7bed8b92650fe395385f59583c9e95ded357))
+
 ## [3.4.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.4.0...v3.4.1) (2025-09-28)
 
 
