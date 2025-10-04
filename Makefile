@@ -1,4 +1,4 @@
-.PHONY: install lint fmt pre-commit test
+.PHONY: install lint fmt pre-commit test doctoc
 
 install:
 	@./install --brew
@@ -14,6 +14,17 @@ pre-commit:
 
 test:
 	@pytest -q
+
+doctoc:
+	@echo "Generating table of contents for all markdown files..."
+	@command -v doctoc >/dev/null 2>&1 || { echo "doctoc not installed. Installing..."; npm install -g doctoc; }
+	@find . -name "*.md" \
+		-not -path "*/node_modules/*" \
+		-not -path "*/.git/*" \
+		-not -path "*/vendor/*" \
+		-not -path "*/vim/plugged/*" \
+		-exec doctoc --github --notitle {} \;
+	@echo "✓ Table of contents generated successfully!"
 
 .PHONY: changelog
 changelog:

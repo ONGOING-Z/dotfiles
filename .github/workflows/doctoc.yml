@@ -1,0 +1,78 @@
+name: Auto Generate TOC for Markdown Files
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '**.md'
+  pull_request:
+    paths:
+      - '**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-toc:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install doctoc
+        run: npm install -g doctoc
+      
+      - name: Generate TOC for all markdown files
+        run: |
+          # 为根目录和主要目录中的 markdown 文件生成目录
+          find . -name "*.md" \
+            -not -path "*/node_modules/*" \
+            -not -path "*/.git/*" \
+            -not -path "*/vendor/*" \
+            -not -path "*/vim/plugged/*" \
+            -exec doctoc --github --notitle {} \;
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "发现目录变化"
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "没有目录变化"
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "docs: auto-generate table of contents with doctoc [skip ci]"
+          git push
+      
+      - name: Create PR comment on changes
+        if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ 注意：检测到 markdown 文件缺少目录或目录需要更新。请在本地运行 `doctoc` 命令来生成目录，或者合并后会自动生成。\n\n```bash\nnpm install -g doctoc\ndoctoc --github --notitle <your-markdown-file>.md\n```'
+            })
