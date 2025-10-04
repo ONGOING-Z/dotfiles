@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.6.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.5.0...v3.6.0) (2025-10-04)
+
+
+### Features
+
+* Add doctoc for automatic markdown TOC generation ([bd366e7](https://github.com/ONGOING-Z/dotfiles/commit/bd366e7f60421228c8ec0bb153f1c3e374992c3d))
+
 # [3.5.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.4.1...v3.5.0) (2025-10-04)
 
 
