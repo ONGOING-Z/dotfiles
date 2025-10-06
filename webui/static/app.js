@@ -18,6 +18,7 @@ createApp({
             themes: [],
             snapshots: [],
             history: [],
+            diff: null,
             selectedFile: null,
             fileContent: '',
             editMode: false,
@@ -129,6 +130,37 @@ createApp({
             }
         },
 
+        async openDiffView() {
+            this.currentView = 'diff';
+            await this.loadDiff();
+        },
+
+        async loadDiff() {
+            try {
+                const response = await axios.get('/api/diff', { params: { detail_hash: 0 } });
+                this.diff = response.data;
+                this.showNotification('差异已更新', 'success');
+            } catch (error) {
+                console.error('加载差异失败:', error);
+                this.showNotification('加载差异失败', 'error');
+            }
+        },
+
+        async syncAll(allowOverwrite) {
+            try {
+                const response = await axios.post('/api/sync', { allow_overwrite: !!allowOverwrite });
+                const ok = response.data && response.data.actions && response.data.actions.filter(a => a.status === 'ok').length || 0;
+                const err = response.data && response.data.actions && response.data.actions.filter(a => a.status === 'error').length || 0;
+                this.showNotification(`同步完成：成功 ${ok}，失败 ${err}`, err ? 'error' : 'success');
+                await this.loadDiff();
+                await this.loadFiles();
+                await this.loadStats();
+            } catch (error) {
+                console.error('同步失败:', error);
+                this.showNotification('同步失败', 'error');
+            }
+        },
+
         async refreshDependencies() {
             const data = await this.loadDependencies();
             this.renderDependencyGraph(data);
@@ -205,6 +237,14 @@ createApp({
             }
 
             this.dependencyGraph = new vis.Network(container, graphData, options);
+
+            // 初始视图优化：先适配再放大，保证默认清晰
+            try {
+                this.dependencyGraph.fit({ animation: false, padding: 120 });
+                this.dependencyGraph.moveTo({ scale: 1.4 });
+            } catch (e) {
+                // 忽略初始化阶段可能的尺寸计算异常
+            }
         },
 
         async selectFile(file) {

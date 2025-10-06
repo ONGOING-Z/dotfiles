@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dotfiles Web UI - 配置管理可视化</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/vis-network.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/dist/vis-network.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/vendor/vue.global.prod.js"></script>
+    <script src="/static/vendor/vis-network.min.js"></script>
+    <script src="/static/vendor/axios.min.js"></script>
+    <link rel="stylesheet" href="/static/css/all.min.css">
 </head>
 <body>
     <div id="app">
@@ -38,6 +37,9 @@
                     </a>
                     <a href="#config" @click="currentView = 'config'" :class="{active: currentView === 'config'}">
                         <i class="fas fa-cog"></i> 配置管理
+                    </a>
+                    <a href="#diff" @click="openDiffView" :class="{active: currentView === 'diff'}">
+                        <i class="fas fa-not-equal"></i> 差异对比
                     </a>
                     <a href="#dependencies" @click="currentView = 'dependencies'" :class="{active: currentView === 'dependencies'}">
                         <i class="fas fa-project-diagram"></i> 依赖关系
@@ -183,6 +185,53 @@
                     <div id="dependency-graph" class="dependency-graph"></div>
                 </div>
 
+                <!-- 差异对比 -->
+                <div v-if="currentView === 'diff'" class="view-content">
+                    <h2>🔍 差异对比与同步</h2>
+
+                    <div class="config-actions">
+                        <button @click="loadDiff" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> 刷新差异
+                        </button>
+                        <button @click="syncAll(false)" class="btn btn-primary">
+                            <i class="fas fa-link"></i> 一键同步（不覆盖文件）
+                        </button>
+                        <button @click="syncAll(true)" class="btn btn-primary">
+                            <i class="fas fa-exclamation-triangle"></i> 一键同步（允许覆盖，自动备份）
+                        </button>
+                    </div>
+
+                    <div class="component-stats" v-if="diff">
+                        <h3>统计</h3>
+                        <div class="component-list">
+                            <div class="component-item"><div class="component-name">总映射</div><div class="component-details"><span>{{ diff.total }}</span></div></div>
+                            <div class="component-item"><div class="component-name">缺源文件</div><div class="component-details"><span>{{ diff.missing_source.length }}</span></div></div>
+                            <div class="component-item"><div class="component-name">缺目标</div><div class="component-details"><span>{{ diff.missing_target.length }}</span></div></div>
+                            <div class="component-item"><div class="component-name">非符号链接</div><div class="component-details"><span>{{ diff.not_symlink.length }}</span></div></div>
+                            <div class="component-item"><div class="component-name">错误链接</div><div class="component-details"><span>{{ diff.wrong_link.length }}</span></div></div>
+                            <div class="component-item"><div class="component-name">内容不同</div><div class="component-details"><span>{{ diff.content_diff.length }}</span></div></div>
+                        </div>
+                    </div>
+
+                    <div class="file-list" v-if="diff">
+                        <div class="file-item" v-for="item in diff.missing_source" :key="'ms_'+item.target">
+                            <div class="file-info"><div class="file-name">缺源文件</div><div class="file-meta"><span>{{ item.source }}</span><span>→ {{ item.target }}</span></div></div>
+                        </div>
+                        <div class="file-item" v-for="item in diff.missing_target" :key="'mt_'+item.target">
+                            <div class="file-info"><div class="file-name">缺目标</div><div class="file-meta"><span>{{ item.source }}</span><span>→ {{ item.target }}</span></div></div>
+                        </div>
+                        <div class="file-item" v-for="item in diff.not_symlink" :key="'ns_'+item.target">
+                            <div class="file-info"><div class="file-name">非符号链接</div><div class="file-meta"><span>{{ item.source }}</span><span>→ {{ item.target }}</span></div></div>
+                        </div>
+                        <div class="file-item" v-for="item in diff.wrong_link" :key="'wl_'+item.target">
+                            <div class="file-info"><div class="file-name">错误链接</div><div class="file-meta"><span>{{ item.source }}</span><span>→ {{ item.target }}</span><span>当前: {{ item.current }}</span></div></div>
+                        </div>
+                        <div class="file-item" v-for="item in diff.content_diff" :key="'cd_'+item.target">
+                            <div class="file-info"><div class="file-name">内容不同</div><div class="file-meta"><span>{{ item.source }}</span><span>→ {{ item.target }}</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 文件浏览 -->
                 <div v-if="currentView === 'files'" class="view-content">
                     <h2>📁 配置文件浏览</h2>
@@ -295,6 +344,6 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="/static/app.js"></script>
 </body>
 </html>
