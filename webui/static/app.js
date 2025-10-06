@@ -20,6 +20,8 @@ createApp({
             history: [],
             diff: null,
             taskLog: '',
+            gitStatus: null,
+            commitMessage: '',
             selectedFile: null,
             fileContent: '',
             editMode: false,
@@ -369,6 +371,72 @@ createApp({
             } catch (error) {
                 console.error('任务执行失败:', error);
                 this.showNotification('任务执行失败', 'error');
+            }
+        },
+
+        async loadGitStatus() {
+            try {
+                const response = await axios.get('/api/git/status');
+                this.gitStatus = response.data;
+            } catch (error) {
+                console.error('加载Git状态失败:', error);
+                this.showNotification('加载Git状态失败', 'error');
+            }
+        },
+
+        async stageFile(file) {
+            try {
+                await axios.post('/api/git/commit', { message: 'Stage file', files: [file] });
+                this.showNotification('文件已暂存', 'success');
+                await this.loadGitStatus();
+            } catch (error) {
+                console.error('暂存文件失败:', error);
+                this.showNotification('暂存文件失败', 'error');
+            }
+        },
+
+        async unstageFile(file) {
+            try {
+                await axios.post('/api/git/reset', { files: [file] });
+                this.showNotification('文件已取消暂存', 'success');
+                await this.loadGitStatus();
+            } catch (error) {
+                console.error('取消暂存失败:', error);
+                this.showNotification('取消暂存失败', 'error');
+            }
+        },
+
+        async resetFile(file) {
+            try {
+                await axios.post('/api/git/reset', { files: [file] });
+                this.showNotification('文件已回滚', 'success');
+                await this.loadGitStatus();
+            } catch (error) {
+                console.error('回滚文件失败:', error);
+                this.showNotification('回滚文件失败', 'error');
+            }
+        },
+
+        async commitChanges() {
+            if (!this.commitMessage.trim()) {
+                this.showNotification('请输入提交信息', 'error');
+                return;
+            }
+            try {
+                const response = await axios.post('/api/git/commit', { 
+                    message: this.commitMessage, 
+                    files: this.gitStatus.staged 
+                });
+                if (response.data.success) {
+                    this.showNotification('提交成功', 'success');
+                    this.commitMessage = '';
+                    await this.loadGitStatus();
+                } else {
+                    this.showNotification('提交失败', 'error');
+                }
+            } catch (error) {
+                console.error('提交失败:', error);
+                this.showNotification('提交失败', 'error');
             }
         }
     },

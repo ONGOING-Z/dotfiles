@@ -50,6 +50,9 @@
                     <a href="#tasks" @click="currentView = 'tasks'" :class="{active: currentView === 'tasks'}">
                         <i class="fas fa-list-check"></i> 任务面板
                     </a>
+                    <a href="#git" @click="currentView = 'git'" :class="{active: currentView === 'git'}">
+                        <i class="fab fa-git-alt"></i> Git 管理
+                    </a>
                     <a href="#preview" @click="currentView = 'preview'" :class="{active: currentView === 'preview'}">
                         <i class="fas fa-eye"></i> 实时预览
                     </a>
@@ -366,6 +369,90 @@
                     <div class="preview-container" v-if="taskLog">
                         <div class="preview-header"><h3>任务日志</h3></div>
                         <pre class="code-preview"><code>{{ taskLog }}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Git 管理 -->
+                <div v-if="currentView === 'git'" class="view-content">
+                    <h2>🔧 Git 管理</h2>
+
+                    <div class="config-actions">
+                        <button @click="loadGitStatus" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> 刷新状态
+                        </button>
+                    </div>
+
+                    <div class="component-stats" v-if="gitStatus">
+                        <h3>当前状态</h3>
+                        <div class="component-list">
+                            <div class="component-item">
+                                <div class="component-name">分支</div>
+                                <div class="component-details"><span>{{ gitStatus.branch }}</span></div>
+                            </div>
+                            <div class="component-item">
+                                <div class="component-name">未跟踪文件</div>
+                                <div class="component-details"><span>{{ gitStatus.untracked.length }}</span></div>
+                            </div>
+                            <div class="component-item">
+                                <div class="component-name">已修改文件</div>
+                                <div class="component-details"><span>{{ gitStatus.modified.length }}</span></div>
+                            </div>
+                            <div class="component-item">
+                                <div class="component-name">暂存区文件</div>
+                                <div class="component-details"><span>{{ gitStatus.staged.length }}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="gitStatus && gitStatus.has_changes">
+                        <h3>变更文件</h3>
+                        <div class="file-list">
+                            <div v-for="file in gitStatus.untracked" :key="'untracked_'+file" class="file-item">
+                                <div class="file-icon"><i class="fas fa-question-circle"></i></div>
+                                <div class="file-info">
+                                    <div class="file-name">{{ file }}</div>
+                                    <div class="file-meta"><span>未跟踪</span></div>
+                                </div>
+                                <div class="file-actions">
+                                    <button @click="stageFile(file)" class="btn btn-secondary btn-sm">暂存</button>
+                                </div>
+                            </div>
+                            <div v-for="file in gitStatus.modified" :key="'modified_'+file" class="file-item">
+                                <div class="file-icon"><i class="fas fa-edit"></i></div>
+                                <div class="file-info">
+                                    <div class="file-name">{{ file }}</div>
+                                    <div class="file-meta"><span>已修改</span></div>
+                                </div>
+                                <div class="file-actions">
+                                    <button @click="stageFile(file)" class="btn btn-secondary btn-sm">暂存</button>
+                                    <button @click="resetFile(file)" class="btn btn-danger btn-sm">回滚</button>
+                                </div>
+                            </div>
+                            <div v-for="file in gitStatus.staged" :key="'staged_'+file" class="file-item">
+                                <div class="file-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="file-info">
+                                    <div class="file-name">{{ file }}</div>
+                                    <div class="file-meta"><span>已暂存</span></div>
+                                </div>
+                                <div class="file-actions">
+                                    <button @click="unstageFile(file)" class="btn btn-warning btn-sm">取消暂存</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-actions" v-if="gitStatus.staged.length > 0">
+                            <div class="form-group">
+                                <input v-model="commitMessage" type="text" placeholder="提交信息" class="input">
+                                <button @click="commitChanges" class="btn btn-primary">
+                                    <i class="fas fa-check"></i> 提交变更
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else-if="gitStatus && !gitStatus.has_changes" class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>工作区干净，没有未提交的变更</p>
                     </div>
                 </div>
             </main>

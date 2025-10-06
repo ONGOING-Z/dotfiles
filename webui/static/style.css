@@ -159,6 +159,26 @@ body {
     color: white;
 }
 
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    color: white;
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
 /* 统计卡片 */
 .stats-grid {
     display: grid;
