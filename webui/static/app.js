@@ -24,6 +24,16 @@ createApp({
             commitMessage: '',
             graphFilter: '',
             originalGraphData: null,
+            readOnlyMode: false,
+            confirmDialog: {
+                show: false,
+                title: '',
+                message: '',
+                details: '',
+                confirmText: '确认',
+                danger: false,
+                action: null
+            },
             selectedFile: null,
             fileContent: '',
             editMode: false,
@@ -156,10 +166,32 @@ createApp({
         },
 
         async syncAll(allowOverwrite) {
+            if (this.readOnlyMode) {
+                this.showNotification('只读模式下无法执行同步操作', 'error');
+                return;
+            }
+            
             if (!this.hasDiff) {
                 this.showNotification('没有差异需要同步', 'info');
                 return;
             }
+
+            // 显示确认对话框
+            this.showConfirmDialog({
+                title: allowOverwrite ? '确认同步（覆盖模式）' : '确认同步',
+                message: allowOverwrite ? 
+                    '此操作将覆盖现有文件并创建备份。是否继续？' : 
+                    '此操作将创建符号链接。是否继续？',
+                details: allowOverwrite ? 
+                    '⚠️ 警告：现有文件将被备份为 .backup 文件' : 
+                    '✅ 安全：仅创建缺失的符号链接',
+                confirmText: '确认同步',
+                danger: allowOverwrite,
+                action: () => this.performSync(allowOverwrite)
+            });
+        },
+
+        async performSync(allowOverwrite) {
             try {
                 const response = await axios.post('/api/sync', { allow_overwrite: !!allowOverwrite });
                 const ok = response.data && response.data.actions && response.data.actions.filter(a => a.status === 'ok').length || 0;
@@ -537,10 +569,27 @@ createApp({
         },
 
         async commitChanges() {
+            if (this.readOnlyMode) {
+                this.showNotification('只读模式下无法执行提交操作', 'error');
+                return;
+            }
+            
             if (!this.commitMessage.trim()) {
                 this.showNotification('请输入提交信息', 'error');
                 return;
             }
+
+            this.showConfirmDialog({
+                title: '确认提交',
+                message: `确定要提交 ${this.gitStatus.staged.length} 个文件吗？`,
+                details: `提交信息：${this.commitMessage}\n文件列表：\n${this.gitStatus.staged.join('\n')}`,
+                confirmText: '确认提交',
+                danger: false,
+                action: () => this.performCommit()
+            });
+        },
+
+        async performCommit() {
             try {
                 const response = await axios.post('/api/git/commit', { 
                     message: this.commitMessage, 
@@ -557,6 +606,38 @@ createApp({
                 console.error('提交失败:', error);
                 this.showNotification('提交失败', 'error');
             }
+        },
+
+        showConfirmDialog(options) {
+            this.confirmDialog = {
+                show: true,
+                title: options.title,
+                message: options.message,
+                details: options.details || '',
+                confirmText: options.confirmText || '确认',
+                danger: options.danger || false,
+                action: options.action
+            };
+        },
+
+        closeConfirmDialog() {
+            this.confirmDialog.show = false;
+            this.confirmDialog.action = null;
+        },
+
+        confirmAction() {
+            if (this.confirmDialog.action) {
+                this.confirmDialog.action();
+            }
+            this.closeConfirmDialog();
+        },
+
+        toggleReadOnly() {
+            this.readOnlyMode = !this.readOnlyMode;
+            this.showNotification(
+                this.readOnlyMode ? '已启用只读模式' : '已退出只读模式', 
+                'info'
+            );
         }
     },
 
@@ -571,10 +652,5 @@ createApp({
                 this.renderDependencyGraph(data);
             }
         });
-    },
-
-    methods: {
-        // 保留原有 methods 内容（此处是补充 runTask 方法），文件中已有 methods，不重复定义
-    }
     }
 }).mount('#app');
