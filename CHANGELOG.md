@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.7.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.6.0...v3.7.0) (2025-10-06)
+
+
+### Features
+
+* Add Web UI for configuration management ([fe5ac9b](https://github.com/ONGOING-Z/dotfiles/commit/fe5ac9bccdf996c58aae00cacc8ae7d66d6472e1))
+
 # [Unreleased]
 
 ### Features
