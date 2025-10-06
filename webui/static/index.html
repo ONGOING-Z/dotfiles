@@ -183,9 +183,24 @@
                         <button @click="refreshDependencies" class="btn btn-secondary">
                             <i class="fas fa-sync-alt"></i> 刷新图表
                         </button>
+                        <button @click="highlightBrokenLinks" class="btn btn-warning">
+                            <i class="fas fa-exclamation-triangle"></i> 高亮断链
+                        </button>
+                        <button @click="resetGraphView" class="btn btn-secondary">
+                            <i class="fas fa-eye"></i> 重置视图
+                        </button>
+                        <div class="graph-filters">
+                            <select v-model="graphFilter" @change="applyGraphFilter" class="input">
+                                <option value="">显示全部</option>
+                                <option value="broken">仅断链</option>
+                                <option value="source">仅源文件</option>
+                                <option value="target">仅目标文件</option>
+                            </select>
+                        </div>
                         <div class="legend">
                             <span class="legend-item"><span class="dot source"></span> 源文件</span>
                             <span class="legend-item"><span class="dot target"></span> 目标文件</span>
+                            <span class="legend-item"><span class="dot broken"></span> 断链</span>
                         </div>
                     </div>
                     <div id="dependency-graph" class="dependency-graph"></div>

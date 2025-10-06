@@ -22,6 +22,8 @@ createApp({
             taskLog: '',
             gitStatus: null,
             commitMessage: '',
+            graphFilter: '',
+            originalGraphData: null,
             selectedFile: null,
             fileContent: '',
             editMode: false,
@@ -182,6 +184,9 @@ createApp({
             const container = document.getElementById('dependency-graph');
             if (!container) return;
 
+            // 保存原始数据
+            this.originalGraphData = data;
+
             // 转换数据格式为 vis.js 需要的格式
             const nodes = new vis.DataSet(
                 data.nodes.map(node => ({
@@ -190,7 +195,8 @@ createApp({
                     color: node.type === 'source' ? '#6366f1' : '#10b981',
                     title: node.path,
                     shape: 'box',
-                    font: { color: '#f1f5f9' }
+                    font: { color: '#f1f5f9' },
+                    broken: false // 标记是否为断链
                 }))
             );
 
@@ -249,12 +255,125 @@ createApp({
 
             this.dependencyGraph = new vis.Network(container, graphData, options);
 
+            // 添加节点点击事件
+            this.dependencyGraph.on("click", (params) => {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    this.handleNodeClick(nodeId);
+                }
+            });
+
             // 初始视图优化：先适配再放大，保证默认清晰
             try {
                 this.dependencyGraph.fit({ animation: false, padding: 120 });
                 this.dependencyGraph.moveTo({ scale: 1.4 });
             } catch (e) {
                 // 忽略初始化阶段可能的尺寸计算异常
+            }
+        },
+
+        async highlightBrokenLinks() {
+            if (!this.diff) {
+                await this.loadDiff();
+            }
+            
+            if (!this.diff || !this.dependencyGraph) return;
+
+            const brokenNodes = new Set();
+            
+            // 收集断链节点
+            this.diff.missing_source.forEach(item => {
+                const sourceName = item.source.split('/').pop();
+                brokenNodes.add(sourceName);
+            });
+            
+            this.diff.missing_target.forEach(item => {
+                const targetName = item.target.split('/').pop();
+                brokenNodes.add(targetName);
+            });
+            
+            this.diff.wrong_link.forEach(item => {
+                const targetName = item.target.split('/').pop();
+                brokenNodes.add(targetName);
+            });
+
+            // 更新节点颜色
+            const nodes = this.dependencyGraph.body.data.nodes;
+            const updates = nodes.get().map(node => {
+                if (brokenNodes.has(node.id)) {
+                    return { id: node.id, color: '#ef4444', broken: true };
+                }
+                return { id: node.id, color: node.type === 'source' ? '#6366f1' : '#10b981', broken: false };
+            });
+            
+            nodes.update(updates);
+            this.showNotification('断链已高亮显示', 'success');
+        },
+
+        resetGraphView() {
+            if (!this.dependencyGraph || !this.originalGraphData) return;
+            
+            // 重置节点颜色
+            const nodes = this.dependencyGraph.body.data.nodes;
+            const updates = nodes.get().map(node => ({
+                id: node.id,
+                color: node.type === 'source' ? '#6366f1' : '#10b981',
+                broken: false
+            }));
+            
+            nodes.update(updates);
+            
+            // 重置视图
+            this.dependencyGraph.fit({ animation: true, padding: 120 });
+            this.dependencyGraph.moveTo({ scale: 1.4 });
+            this.showNotification('视图已重置', 'success');
+        },
+
+        applyGraphFilter() {
+            if (!this.dependencyGraph || !this.originalGraphData) return;
+            
+            const nodes = this.dependencyGraph.body.data.nodes;
+            const edges = this.dependencyGraph.body.data.edges;
+            
+            let filteredNodes = nodes.get();
+            let filteredEdges = edges.get();
+            
+            if (this.graphFilter === 'broken') {
+                // 仅显示断链
+                const brokenNodeIds = filteredNodes.filter(node => node.broken).map(node => node.id);
+                filteredNodes = filteredNodes.filter(node => node.broken);
+                filteredEdges = filteredEdges.filter(edge => 
+                    brokenNodeIds.includes(edge.from) || brokenNodeIds.includes(edge.to)
+                );
+            } else if (this.graphFilter === 'source') {
+                // 仅显示源文件
+                filteredNodes = filteredNodes.filter(node => node.type === 'source');
+                filteredEdges = filteredEdges.filter(edge => 
+                    filteredNodes.some(node => node.id === edge.from)
+                );
+            } else if (this.graphFilter === 'target') {
+                // 仅显示目标文件
+                filteredNodes = filteredNodes.filter(node => node.type === 'target');
+                filteredEdges = filteredEdges.filter(edge => 
+                    filteredNodes.some(node => node.id === edge.to)
+                );
+            }
+            
+            // 更新图表
+            nodes.clear();
+            edges.clear();
+            nodes.add(filteredNodes);
+            edges.add(filteredEdges);
+            
+            this.dependencyGraph.fit({ animation: true, padding: 120 });
+        },
+
+        handleNodeClick(nodeId) {
+            // 处理节点点击事件
+            const node = this.dependencyGraph.body.data.nodes.get(nodeId);
+            if (node) {
+                this.showNotification(`点击了节点: ${node.label}`, 'info');
+                // 可以在这里添加更多交互，比如打开文件预览
             }
         },
 
