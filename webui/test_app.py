@@ -29,13 +29,13 @@ def temp_config_dir(monkeypatch, tmp_path):
     """创建临时配置目录"""
     config_dir = tmp_path / ".dotfiles"
     config_dir.mkdir()
-    
+
     # 修改配置路径
     import app as app_module
     monkeypatch.setattr(app_module, 'CONFIG_DIR', config_dir)
     monkeypatch.setattr(app_module, 'CONFIG_FILE', config_dir / 'install-config.json')
     monkeypatch.setattr(app_module, 'HISTORY_FILE', config_dir / 'install-history.log')
-    
+
     return config_dir
 
 
@@ -59,7 +59,7 @@ def test_get_config(client, temp_config_dir):
 def test_save_config(client, temp_config_dir):
     """测试保存配置"""
     init_config_dir()
-    
+
     new_config = {
         'version': '1.0',
         'preferences': {
@@ -71,8 +71,8 @@ def test_save_config(client, temp_config_dir):
             'vim': False
         }
     }
-    
-    response = client.post('/api/config', 
+
+    response = client.post('/api/config',
                           data=json.dumps(new_config),
                           content_type='application/json')
     assert response.status_code == 200
@@ -119,7 +119,7 @@ def test_list_snapshots(client, temp_config_dir):
     """测试列出快照"""
     # 创建备份目录
     (temp_config_dir / 'backups').mkdir()
-    
+
     response = client.get('/api/snapshots')
     assert response.status_code == 200
     data = json.loads(response.data)
@@ -129,7 +129,7 @@ def test_list_snapshots(client, temp_config_dir):
 def test_get_history(client, temp_config_dir):
     """测试获取历史"""
     init_config_dir()
-    
+
     response = client.get('/api/history')
     assert response.status_code == 200
     data = json.loads(response.data)

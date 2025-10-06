@@ -654,13 +654,13 @@ body {
     .container {
         flex-direction: column;
     }
-    
+
     .sidebar {
         width: 100%;
         border-right: none;
         border-bottom: 1px solid var(--border-color);
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }

@@ -62,7 +62,7 @@
                 <!-- 仪表盘 -->
                 <div v-if="currentView === 'dashboard'" class="view-content">
                     <h2>📊 系统仪表盘</h2>
-                    
+
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-file"></i></div>
@@ -71,7 +71,7 @@
                                 <div class="stat-label">配置文件</div>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-database"></i></div>
                             <div class="stat-info">
@@ -79,7 +79,7 @@
                                 <div class="stat-label">总大小</div>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-clock"></i></div>
                             <div class="stat-info">
@@ -87,7 +87,7 @@
                                 <div class="stat-label">最后修改</div>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-camera"></i></div>
                             <div class="stat-info">
@@ -124,7 +124,7 @@
                 <!-- 配置管理 -->
                 <div v-if="currentView === 'config'" class="view-content">
                     <h2>⚙️ 配置管理</h2>
-                    
+
                     <div class="config-section">
                         <h3>基本偏好</h3>
                         <div class="form-group">
@@ -134,7 +134,7 @@
                                 <option value="bash">Bash</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>主题</label>
                             <select v-model="config.preferences.theme">
@@ -186,14 +186,14 @@
                 <!-- 文件浏览 -->
                 <div v-if="currentView === 'files'" class="view-content">
                     <h2>📁 配置文件浏览</h2>
-                    
+
                     <div class="file-filter">
                         <input v-model="fileFilter" type="text" placeholder="搜索文件..." class="search-input">
                     </div>
-                    
+
                     <div class="file-list">
-                        <div v-for="file in filteredFiles" :key="file.path" 
-                             class="file-item" 
+                        <div v-for="file in filteredFiles" :key="file.path"
+                             class="file-item"
                              @click="selectFile(file)">
                             <div class="file-icon">
                                 <i :class="getFileIcon(file.name)"></i>
@@ -213,7 +213,7 @@
                 <!-- 实时预览 -->
                 <div v-if="currentView === 'preview'" class="view-content">
                     <h2>👁️ 实时配置预览</h2>
-                    
+
                     <div v-if="selectedFile" class="preview-container">
                         <div class="preview-header">
                             <h3>{{ selectedFile.name }}</h3>
@@ -228,16 +228,16 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="preview-content">
-                            <textarea v-if="editMode" 
-                                      v-model="fileContent" 
+                            <textarea v-if="editMode"
+                                      v-model="fileContent"
                                       class="code-editor"
                                       spellcheck="false"></textarea>
                             <pre v-else class="code-preview"><code>{{ fileContent }}</code></pre>
                         </div>
                     </div>
-                    
+
                     <div v-else class="empty-state">
                         <i class="fas fa-file-code"></i>
                         <p>请从文件浏览中选择一个文件进行预览</p>
@@ -247,7 +247,7 @@
                 <!-- 快照管理 -->
                 <div v-if="currentView === 'snapshots'" class="view-content">
                     <h2>💾 快照管理</h2>
-                    
+
                     <div class="snapshot-actions">
                         <div class="form-group">
                             <input v-model="newSnapshotName" type="text" placeholder="快照名称" class="input">
@@ -256,7 +256,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="snapshot-list">
                         <div v-for="snapshot in snapshots" :key="snapshot.path" class="snapshot-item">
                             <div class="snapshot-icon">
@@ -276,7 +276,7 @@
                 <!-- 操作历史 -->
                 <div v-if="currentView === 'history'" class="view-content">
                     <h2>📜 操作历史</h2>
-                    
+
                     <div class="history-list">
                         <div v-for="(entry, index) in history" :key="index" class="history-item">
                             <div class="history-icon">
