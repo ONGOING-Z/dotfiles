@@ -28,10 +28,10 @@ INSTALL_CONF = BASE_DIR / 'install.conf.yaml'
 
 class ConfigChangeHandler(FileSystemEventHandler):
     """配置文件变更监听器"""
-
+    
     def __init__(self):
         self.callbacks = []
-
+    
     def on_modified(self, event):
         if not event.is_directory:
             for callback in self.callbacks:
@@ -46,7 +46,7 @@ observer = Observer()
 def init_config_dir():
     """初始化配置目录"""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-
+    
     if not CONFIG_FILE.exists():
         default_config = {
             "version": "1.0",
@@ -74,22 +74,22 @@ def parse_install_conf():
     try:
         with open(INSTALL_CONF) as f:
             conf = yaml.safe_load(f)
-
+        
         nodes = []
         edges = []
-
+        
         # 解析 link 配置
         links = {}
         for item in conf:
             if isinstance(item, dict) and 'link' in item:
                 links = item['link']
                 break
-
+        
         # 创建节点和边
         for target, source in links.items():
             target_name = os.path.basename(target)
             source_name = os.path.basename(str(source))
-
+            
             # 添加节点
             if target_name not in [n['id'] for n in nodes]:
                 nodes.append({
@@ -98,7 +98,7 @@ def parse_install_conf():
                     'type': 'target',
                     'path': target
                 })
-
+            
             if source_name not in [n['id'] for n in nodes]:
                 nodes.append({
                     'id': source_name,
@@ -106,16 +106,16 @@ def parse_install_conf():
                     'type': 'source',
                     'path': str(source)
                 })
-
+            
             # 添加边
             edges.append({
                 'from': source_name,
                 'to': target_name,
                 'label': 'links to'
             })
-
+        
         return {'nodes': nodes, 'edges': edges}
-
+    
     except Exception as e:
         return {'nodes': [], 'edges': [], 'error': str(e)}
 
@@ -130,7 +130,7 @@ def index():
 def get_config():
     """获取当前配置"""
     init_config_dir()
-
+    
     try:
         with open(CONFIG_FILE) as f:
             config = json.load(f)
@@ -143,18 +143,18 @@ def get_config():
 def save_config():
     """保存配置"""
     init_config_dir()
-
+    
     try:
         new_config = request.json
         new_config['last_install'] = datetime.now().isoformat()
-
+        
         with open(CONFIG_FILE, 'w') as f:
             json.dump(new_config, f, indent=2)
-
+        
         # 记录到历史
         with open(HISTORY_FILE, 'a') as f:
             f.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 更新配置 - Web UI\n")
-
+        
         return jsonify({'status': 'success', 'config': new_config})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -170,7 +170,7 @@ def get_dependencies():
 def list_files():
     """列出所有配置文件"""
     config_files = []
-
+    
     # 主要配置目录
     config_dirs = [
         BASE_DIR / 'config',
@@ -181,7 +181,7 @@ def list_files():
         BASE_DIR / 'themes',
         BASE_DIR / 'shell',
     ]
-
+    
     for dir_path in config_dirs:
         if dir_path.exists():
             for file_path in dir_path.rglob('*'):
@@ -194,7 +194,7 @@ def list_files():
                         'size': file_path.stat().st_size,
                         'modified': datetime.fromtimestamp(file_path.stat().st_mtime).isoformat()
                     })
-
+    
     return jsonify(config_files)
 
 
@@ -203,17 +203,17 @@ def get_file_content(filepath):
     """获取文件内容"""
     try:
         file_path = BASE_DIR / filepath
-
+        
         if not file_path.exists():
             return jsonify({'error': 'File not found'}), 404
-
+        
         # 检查文件大小，避免读取过大文件
         if file_path.stat().st_size > 1024 * 1024:  # 1MB
             return jsonify({'error': 'File too large'}), 400
-
+        
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read()
-
+        
         return jsonify({
             'path': filepath,
             'content': content,
@@ -229,21 +229,21 @@ def save_file_content(filepath):
     """保存文件内容"""
     try:
         file_path = BASE_DIR / filepath
-
+        
         if not file_path.exists():
             return jsonify({'error': 'File not found'}), 404
-
+        
         content = request.json.get('content', '')
-
+        
         # 创建备份
         backup_path = file_path.with_suffix(file_path.suffix + '.backup')
         if file_path.exists():
             import shutil
             shutil.copy2(file_path, backup_path)
-
+        
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
-
+        
         return jsonify({
             'status': 'success',
             'path': filepath,
@@ -257,20 +257,20 @@ def save_file_content(filepath):
 def get_history():
     """获取操作历史"""
     init_config_dir()
-
+    
     try:
         if not HISTORY_FILE.exists():
             return jsonify([])
-
+        
         with open(HISTORY_FILE) as f:
             lines = f.readlines()
-
+        
         history = []
         for line in lines:
             line = line.strip()
             if line and line.startswith('['):
                 history.append(line)
-
+        
         # 返回最近20条
         return jsonify(history[-20:])
     except Exception as e:
@@ -281,10 +281,10 @@ def get_history():
 def list_snapshots():
     """列出所有快照"""
     backup_dir = CONFIG_DIR / 'backups'
-
+    
     if not backup_dir.exists():
         return jsonify([])
-
+    
     snapshots = []
     for snapshot_file in backup_dir.glob('*.tar.gz'):
         stat = snapshot_file.stat()
@@ -294,10 +294,10 @@ def list_snapshots():
             'size': stat.st_size,
             'created': datetime.fromtimestamp(stat.st_ctime).isoformat()
         })
-
+    
     # 按创建时间倒序排列
     snapshots.sort(key=lambda x: x['created'], reverse=True)
-
+    
     return jsonify(snapshots)
 
 
@@ -306,14 +306,14 @@ def create_snapshot():
     """创建快照"""
     try:
         snapshot_name = request.json.get('name', 'snapshot')
-
+        
         # 调用 config-manager.sh 创建快照
         result = subprocess.run(
             [str(BASE_DIR / 'scripts' / 'config-manager.sh'), 'snapshot', snapshot_name],
             capture_output=True,
             text=True
         )
-
+        
         if result.returncode == 0:
             return jsonify({'status': 'success', 'message': result.stdout})
         else:
@@ -326,10 +326,10 @@ def create_snapshot():
 def list_themes():
     """列出可用主题"""
     themes_dir = BASE_DIR / 'themes'
-
+    
     if not themes_dir.exists():
         return jsonify([])
-
+    
     themes = []
     for theme_dir in themes_dir.iterdir():
         if theme_dir.is_dir() and not theme_dir.name.startswith('.'):
@@ -338,14 +338,14 @@ def list_themes():
                 'path': str(theme_dir.relative_to(BASE_DIR)),
                 'files': []
             }
-
+            
             # 列出主题文件
             for file in theme_dir.iterdir():
                 if file.is_file():
                     theme_info['files'].append(file.name)
-
+            
             themes.append(theme_info)
-
+    
     return jsonify(themes)
 
 
@@ -360,7 +360,7 @@ def health_check():
             text=True,
             timeout=10
         )
-
+        
         return jsonify({
             'status': 'healthy' if result.returncode == 0 else 'unhealthy',
             'output': result.stdout,
@@ -379,7 +379,7 @@ def get_stats():
         'last_modified': None,
         'components': {},
     }
-
+    
     # 统计配置文件
     config_dirs = [
         BASE_DIR / 'config',
@@ -388,42 +388,42 @@ def get_stats():
         BASE_DIR / 'vim',
         BASE_DIR / 'git',
     ]
-
+    
     for dir_path in config_dirs:
         if dir_path.exists():
             component_name = dir_path.name
             file_count = 0
             total_size = 0
-
+            
             for file_path in dir_path.rglob('*'):
                 if file_path.is_file():
                     file_count += 1
                     total_size += file_path.stat().st_size
-
+                    
                     # 更新最后修改时间
                     mtime = datetime.fromtimestamp(file_path.stat().st_mtime)
                     if stats['last_modified'] is None or mtime > datetime.fromisoformat(stats['last_modified']):
                         stats['last_modified'] = mtime.isoformat()
-
+            
             stats['components'][component_name] = {
                 'files': file_count,
                 'size': total_size
             }
             stats['total_files'] += file_count
             stats['total_size'] += total_size
-
+    
     return jsonify(stats)
 
 
 if __name__ == '__main__':
     init_config_dir()
-
+    
     # 启动文件监听（可选）
     # observer.schedule(config_watcher, str(CONFIG_DIR), recursive=True)
     # observer.start()
-
+    
     print("🚀 Dotfiles Web UI 启动中...")
     print(f"📁 配置目录: {CONFIG_DIR}")
     print(f"🌐 访问地址: http://localhost:5000")
-
+    
     app.run(host='0.0.0.0', port=5000, debug=True)
