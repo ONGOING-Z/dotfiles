@@ -19,7 +19,6 @@ createApp({
             snapshots: [],
             history: [],
             diff: null,
-            taskLog: '',
             selectedFile: null,
             fileContent: '',
             editMode: false,
@@ -39,10 +38,6 @@ createApp({
                 f.name.toLowerCase().includes(filter) ||
                 f.path.toLowerCase().includes(filter)
             );
-        },
-        hasDiff() {
-            if (!this.diff) return false;
-            return (this.diff.missing_source.length + this.diff.missing_target.length + this.diff.not_symlink.length + this.diff.wrong_link.length + this.diff.content_diff.length) > 0;
         }
     },
 
@@ -152,10 +147,6 @@ createApp({
         },
 
         async syncAll(allowOverwrite) {
-            if (!this.hasDiff) {
-                this.showNotification('没有差异需要同步', 'info');
-                return;
-            }
             try {
                 const response = await axios.post('/api/sync', { allow_overwrite: !!allowOverwrite });
                 const ok = response.data && response.data.actions && response.data.actions.filter(a => a.status === 'ok').length || 0;
@@ -359,17 +350,6 @@ createApp({
             setTimeout(() => {
                 this.notification = null;
             }, 3000);
-        },
-
-        async runTask(taskName) {
-            try {
-                const response = await axios.post('/api/tasks/run', { task: taskName });
-                this.taskLog = `返回码: ${response.data.returncode}\n\n标准输出:\n${response.data.stdout}\n\n标准错误:\n${response.data.stderr}`;
-                this.showNotification('任务执行完成', response.data.status === 'ok' ? 'success' : 'error');
-            } catch (error) {
-                console.error('任务执行失败:', error);
-                this.showNotification('任务执行失败', 'error');
-            }
         }
     },
 
@@ -384,10 +364,5 @@ createApp({
                 this.renderDependencyGraph(data);
             }
         });
-    },
-
-    methods: {
-        // 保留原有 methods 内容（此处是补充 runTask 方法），文件中已有 methods，不重复定义
-    }
     }
 }).mount('#app');

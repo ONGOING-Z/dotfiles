@@ -18,7 +18,6 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import hashlib
 import shutil
-from typing import List, Dict
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
@@ -596,39 +595,6 @@ def api_sync():
                 actions.append({'target': target, 'status': 'ok'})
 
         return jsonify({'actions': actions})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-# 任务面板：运行常用脚本
-TASK_WHITELIST: Dict[str, List[str]] = {
-    # key: 任务标识, value: 命令列表（第一个为脚本路径）
-    'health_check': [str(BASE_DIR / 'scripts' / 'health-check.sh')],
-    'quick_setup': [str(BASE_DIR / 'scripts' / 'quick-setup.sh')],
-    'install_unified': [str(BASE_DIR / 'scripts' / 'install-unified.sh')],
-    'uninstall': [str(BASE_DIR / 'scripts' / 'uninstall.sh')],
-}
-
-
-@app.route('/api/tasks/run', methods=['POST'])
-def run_task():
-    """运行白名单中的任务脚本，返回执行日志。body: { task: 'health_check' }"""
-    try:
-        body = request.json or {}
-        task = body.get('task')
-        if task not in TASK_WHITELIST:
-            return jsonify({'error': 'unknown_task'}), 400
-
-        cmd = TASK_WHITELIST[task]
-        result = subprocess.run(cmd, capture_output=True, text=True)
-
-        return jsonify({
-            'task': task,
-            'returncode': result.returncode,
-            'stdout': result.stdout,
-            'stderr': result.stderr,
-            'status': 'ok' if result.returncode == 0 else 'error'
-        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
