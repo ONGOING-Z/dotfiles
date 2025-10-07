@@ -5,8 +5,6 @@ Dotfiles Web UI - 配置管理可视化界面
 """
 
 import os
-import argparse
-import socket
 import json
 import yaml
 import subprocess
@@ -16,8 +14,6 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import hashlib
-import shutil
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
@@ -122,95 +118,6 @@ def parse_install_conf():
 
     except Exception as e:
         return {'nodes': [], 'edges': [], 'error': str(e)}
-
-
-def load_links_mapping():
-    """解析 install.conf.yaml，返回 link 映射字典: target(str) -> source(str)。"""
-    try:
-        with open(INSTALL_CONF) as f:
-            conf = yaml.safe_load(f)
-
-        links = {}
-        for item in conf:
-            if isinstance(item, dict) and 'link' in item:
-                raw_links = item['link']
-                if isinstance(raw_links, dict):
-                    for target, source in raw_links.items():
-                        # Dotbot 支持更复杂的结构，这里仅处理最常见的字符串映射
-                        if isinstance(source, (str, Path)):
-                            links[str(target)] = str(source)
-                        elif isinstance(source, dict) and 'path' in source:
-                            links[str(target)] = str(source['path'])
-                break
-        return links
-    except Exception:
-        return {}
-
-
-def file_sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(8192), b''):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def compute_diff(detail_hash: bool = False):
-    """计算仓库源文件与目标链接的差异。"""
-    links = load_links_mapping()
-    results = {
-        'total': len(links),
-        'missing_source': [],      # 源文件缺失
-        'missing_target': [],      # 目标不存在
-        'not_symlink': [],         # 目标存在但不是符号链接
-        'wrong_link': [],          # 符号链接但指向错误
-        'content_diff': [],        # 内容不同（当目标是普通文件或错误链接时）
-        'ok': []                   # 一切正常
-    }
-
-    for target, source in links.items():
-        target_path = Path(os.path.expanduser(target))
-        source_path = (BASE_DIR / source).resolve()
-
-        if not source_path.exists():
-            results['missing_source'].append({'target': target, 'source': str(source_path)})
-            continue
-
-        if not target_path.exists():
-            results['missing_target'].append({'target': target, 'source': str(source_path)})
-            continue
-
-        if not target_path.is_symlink():
-            entry = {'target': target, 'source': str(source_path)}
-            if detail_hash and target_path.is_file() and source_path.is_file():
-                try:
-                    entry['target_hash'] = file_sha256(target_path)
-                    entry['source_hash'] = file_sha256(source_path)
-                    if entry['target_hash'] != entry['source_hash']:
-                        results['content_diff'].append(entry)
-                        continue
-                except Exception:
-                    pass
-            results['not_symlink'].append(entry)
-            continue
-
-        # 符号链接，检查是否指向正确位置
-        try:
-            link_target = target_path.resolve()
-        except Exception:
-            link_target = None
-
-        if link_target is None or link_target != source_path:
-            results['wrong_link'].append({
-                'target': target,
-                'source': str(source_path),
-                'current': str(link_target) if link_target else None
-            })
-            continue
-
-        results['ok'].append({'target': target, 'source': str(source_path)})
-
-    return results
 
 
 @app.route('/')
@@ -508,96 +415,6 @@ def get_stats():
     return jsonify(stats)
 
 
-@app.route('/api/diff', methods=['GET'])
-def api_diff():
-    """获取源-目标差异。query: detail_hash=1 可返回文件哈希对比。"""
-    detail_hash = request.args.get('detail_hash') in ('1', 'true', 'True')
-    try:
-        diff = compute_diff(detail_hash=detail_hash)
-        return jsonify(diff)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-def ensure_parent_dir(path: Path):
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-
-def safe_backup(path: Path):
-    if path.exists() and not path.is_symlink():
-        backup = path.with_suffix(path.suffix + '.backup')
-        try:
-            shutil.copy2(path, backup)
-            return str(backup)
-        except Exception:
-            return None
-    return None
-
-
-@app.route('/api/sync', methods=['POST'])
-def api_sync():
-    """执行修复/同步：创建缺失目标、修正错误链接，必要时备份普通文件。支持可选字段 allow_overwrite。"""
-    body = request.json or {}
-    allow_overwrite = bool(body.get('allow_overwrite', False))
-    try:
-        links = load_links_mapping()
-        actions = []
-
-        for target, source in links.items():
-            target_path = Path(os.path.expanduser(target))
-            source_path = (BASE_DIR / source).resolve()
-
-            if not source_path.exists():
-                actions.append({'target': target, 'source': str(source_path), 'status': 'skip', 'reason': 'missing_source'})
-                continue
-
-            ensure_parent_dir(target_path)
-
-            # 目标不存在：直接创建符号链接
-            if not target_path.exists():
-                try:
-                    if target_path.is_symlink():
-                        target_path.unlink()
-                    target_path.symlink_to(source_path)
-                    actions.append({'target': target, 'action': 'link', 'status': 'ok'})
-                except Exception as e:
-                    actions.append({'target': target, 'action': 'link', 'status': 'error', 'error': str(e)})
-                continue
-
-            # 目标存在但不是符号链接
-            if not target_path.is_symlink():
-                if not allow_overwrite:
-                    actions.append({'target': target, 'status': 'skip', 'reason': 'exists_not_symlink'})
-                    continue
-                backup = safe_backup(target_path)
-                try:
-                    target_path.unlink()
-                    target_path.symlink_to(source_path)
-                    actions.append({'target': target, 'action': 'replace_with_link', 'status': 'ok', 'backup': backup})
-                except Exception as e:
-                    actions.append({'target': target, 'action': 'replace_with_link', 'status': 'error', 'error': str(e), 'backup': backup})
-                continue
-
-            # 是符号链接但指向错误
-            try:
-                link_target = target_path.resolve()
-            except Exception:
-                link_target = None
-
-            if link_target != source_path:
-                try:
-                    target_path.unlink()
-                    target_path.symlink_to(source_path)
-                    actions.append({'target': target, 'action': 'relink', 'status': 'ok', 'from': str(link_target) if link_target else None})
-                except Exception as e:
-                    actions.append({'target': target, 'action': 'relink', 'status': 'error', 'error': str(e)})
-            else:
-                actions.append({'target': target, 'status': 'ok'})
-
-        return jsonify({'actions': actions})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 if __name__ == '__main__':
     init_config_dir()
 
@@ -605,39 +422,8 @@ if __name__ == '__main__':
     # observer.schedule(config_watcher, str(CONFIG_DIR), recursive=True)
     # observer.start()
 
-    # 端口优先级：命令行 --port > 环境变量 FLASK_PORT > 默认 5000
-    env_port = os.getenv('FLASK_PORT')
-    default_port = int(env_port) if env_port and env_port.isdigit() else 5000
-
-    parser = argparse.ArgumentParser(description='Dotfiles Web UI')
-    parser.add_argument('--port', type=int, default=default_port, help='端口号，默认 5000 或环境变量 FLASK_PORT')
-    args = parser.parse_args()
-
-    def is_port_in_use(port: int, host: str = "127.0.0.1") -> bool:
-        """检查端口是否被占用（非占用式，仅尝试连接）。"""
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.settimeout(0.2)
-            return sock.connect_ex((host, port)) == 0
-
-    def find_available_port(start_port: int, max_tries: int = 20) -> int:
-        """从 start_port 起寻找可用端口，返回第一个可用端口。"""
-        for candidate in range(start_port, start_port + max_tries):
-            if not is_port_in_use(candidate):
-                return candidate
-        return start_port
-
-    # 在带自动重载的模式下，确保父子进程使用同一端口
-    env_selected = os.getenv('DFWUI_SELECTED_PORT')
-    if env_selected and env_selected.isdigit():
-        selected_port = int(env_selected)
-    else:
-        selected_port = find_available_port(args.port)
-        os.environ['DFWUI_SELECTED_PORT'] = str(selected_port)
-
     print("🚀 Dotfiles Web UI 启动中...")
     print(f"📁 配置目录: {CONFIG_DIR}")
-    if selected_port != args.port:
-        print(f"⚠️ 端口 {args.port} 已被占用，使用 {selected_port}")
-    print(f"🌐 访问地址: http://localhost:{selected_port}")
+    print(f"🌐 访问地址: http://localhost:5000")
 
-    app.run(host='0.0.0.0', port=selected_port, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
