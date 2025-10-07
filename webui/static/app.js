@@ -94,6 +94,31 @@ createApp({
             }
         },
 
+        async validateConfig() {
+            try {
+                const response = await axios.get('/api/validate');
+                const data = response.data;
+                if (data.valid) {
+                    this.showNotification('配置校验通过', 'success');
+                } else {
+                    const errors = (data.issues || []).filter(i => i.type === 'error').length;
+                    const warns = (data.issues || []).filter(i => i.type === 'warning').length;
+                    const infos = (data.issues || []).filter(i => i.type === 'info').length;
+                    this.showConfirmDialog({
+                        title: '配置校验结果',
+                        message: `错误: ${errors}，警告: ${warns}，提示: ${infos}`,
+                        details: (data.issues || []).map(i => `[${i.type}] ${i.message}`).join('\n'),
+                        confirmText: '关闭',
+                        danger: errors > 0,
+                        action: () => {}
+                    });
+                }
+            } catch (error) {
+                console.error('配置校验失败:', error);
+                this.showNotification('配置校验失败', 'error');
+            }
+        },
+
         async loadStats() {
             try {
                 const response = await axios.get('/api/stats');

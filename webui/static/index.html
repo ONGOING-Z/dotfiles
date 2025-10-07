@@ -173,6 +173,9 @@
                         <button @click="loadConfiguration" class="btn btn-secondary">
                             <i class="fas fa-redo"></i> 重新加载
                         </button>
+                        <button @click="validateConfig" class="btn btn-secondary">
+                            <i class="fas fa-spell-check"></i> 校验配置
+                        </button>
                     </div>
                 </div>
 
@@ -476,6 +479,34 @@
         <!-- 通知 -->
         <div v-if="notification" class="notification" :class="notification.type">
             {{ notification.message }}
+        </div>
+
+        <!-- 确认对话框 -->
+        <div v-if="confirmDialog.show" class="modal-overlay" @click="closeConfirmDialog">
+            <div class="modal-content" @click.stop>
+                <div class="modal-header">
+                    <h3>{{ confirmDialog.title }}</h3>
+                </div>
+                <div class="modal-body">
+                    <p>{{ confirmDialog.message }}</p>
+                    <div v-if="confirmDialog.details" class="modal-details">
+                        <pre>{{ confirmDialog.details }}</pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeConfirmDialog" class="btn btn-secondary">取消</button>
+                    <button @click="confirmAction" class="btn" :class="confirmDialog.danger ? 'btn-danger' : 'btn-primary'">
+                        {{ confirmDialog.confirmText }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 只读模式提示 -->
+        <div v-if="readOnlyMode" class="readonly-banner">
+            <i class="fas fa-lock"></i>
+            <span>只读模式：所有修改操作已被禁用</span>
+            <button @click="toggleReadOnly" class="btn btn-sm btn-secondary">退出只读模式</button>
         </div>
     </div>
 
