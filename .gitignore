@@ -17,5 +17,3 @@ venv/
 tags
 gtags*
 .vscode/
-
-*.txt
