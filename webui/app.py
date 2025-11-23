@@ -26,6 +26,32 @@ HISTORY_FILE = CONFIG_DIR / 'install-history.log'
 INSTALL_CONF = BASE_DIR / 'install.conf.yaml'
 
 
+def is_safe_path(filepath):
+    """检查文件路径是否安全"""
+    try:
+        # 解析绝对路径
+        target_path = (BASE_DIR / filepath).resolve()
+        base_path = BASE_DIR.resolve()
+
+        # 必须在项目目录下
+        if base_path not in target_path.parents and target_path != base_path:
+            return False
+
+        # 禁止访问 .git 目录和敏感文件
+        path_str = str(target_path)
+        if '/.git/' in path_str or '/.github/' in path_str:
+            return False
+
+        # 禁止访问敏感文件
+        sensitive_keywords = ['secret', 'token', 'password', 'credential', '.env', '.baseline']
+        if any(k in target_path.name.lower() for k in sensitive_keywords):
+            return False
+
+        return True
+    except Exception:
+        return False
+
+
 class ConfigChangeHandler(FileSystemEventHandler):
     """配置文件变更监听器"""
 
@@ -202,6 +228,9 @@ def list_files():
 def get_file_content(filepath):
     """获取文件内容"""
     try:
+        if not is_safe_path(filepath):
+            return jsonify({'error': 'Access denied: Unsafe path or sensitive file'}), 403
+
         file_path = BASE_DIR / filepath
 
         if not file_path.exists():
@@ -228,6 +257,9 @@ def get_file_content(filepath):
 def save_file_content(filepath):
     """保存文件内容"""
     try:
+        if not is_safe_path(filepath):
+            return jsonify({'error': 'Access denied: Unsafe path or sensitive file'}), 403
+
         file_path = BASE_DIR / filepath
 
         if not file_path.exists():
@@ -426,4 +458,5 @@ if __name__ == '__main__':
     print(f"📁 配置目录: {CONFIG_DIR}")
     print(f"🌐 访问地址: http://localhost:5000")
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)

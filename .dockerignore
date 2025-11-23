@@ -5,7 +5,6 @@
 
 # 测试和 CI
 .github/
-tests/
 .venv/
 __pycache__/
 *.pyc
