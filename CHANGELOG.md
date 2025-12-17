@@ -6,6 +6,14 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.8.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.7.0...v3.8.0) (2025-12-17)
+
+
+### Features
+
+* Enable mouse support and add GoTo definition shortcut ([5550cf4](https://github.com/ONGOING-Z/dotfiles/commit/5550cf4d4780be049f3edb1412e20cad3ec909f6))
+* Enable mouse support and add mouse-based definition navigation ([56d3fb0](https://github.com/ONGOING-Z/dotfiles/commit/56d3fb04ddc6dcc16aff56222912c4dc08a639d7))
+
 # [3.7.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.6.0...v3.7.0) (2025-10-06)
 
 
