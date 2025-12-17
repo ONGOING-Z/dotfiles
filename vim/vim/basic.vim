@@ -94,7 +94,7 @@ set shiftround
 set expandtab
 
 " Disable mouse support
-set mouse=
+set mouse=a
 
 " Encoding open and close
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
