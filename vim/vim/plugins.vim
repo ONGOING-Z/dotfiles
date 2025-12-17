@@ -53,7 +53,7 @@ Plug 'dhruvasagar/vim-table-mode' " 20.7.5
 Plug 'haya14busa/incsearch.vim'   " 20.7.7
 Plug 'junegunn/vim-easy-align'    " 20.7.10
 Plug 'easymotion/vim-easymotion'  " 20.7.10
-"Plug 'neoclide/coc.nvim', {'branch': 'release'} " 20.7.13
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " 20.7.13
 "Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 "Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'} " 20.7.30
 "Plug 'wakatime/vim-wakatime'      " 20.7.15 wakatime tracking
