@@ -6,6 +6,36 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.8.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.7.0...v3.8.0) (2025-12-17)
+
+
+### Features
+
+* Enable mouse support and add GoTo definition shortcut ([5550cf4](https://github.com/ONGOING-Z/dotfiles/commit/5550cf4d4780be049f3edb1412e20cad3ec909f6))
+* Enable mouse support and add mouse-based definition navigation ([56d3fb0](https://github.com/ONGOING-Z/dotfiles/commit/56d3fb04ddc6dcc16aff56222912c4dc08a639d7))
+
+# [3.7.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.6.0...v3.7.0) (2025-10-06)
+
+
+### Features
+
+* Add Web UI for configuration management ([fe5ac9b](https://github.com/ONGOING-Z/dotfiles/commit/fe5ac9bccdf996c58aae00cacc8ae7d66d6472e1))
+
+# [Unreleased]
+
+### Features
+
+* **webui**: 添加 Web UI 配置管理界面
+  - 📊 仪表盘：系统统计、健康检查
+  - ⚙️ 配置管理：图形化配置编辑
+  - 🔗 依赖关系可视化：类似 Heimdall 的交互式图表
+  - 📁 文件浏览：浏览和搜索配置文件
+  - 👁️ 实时预览：在线编辑配置文件
+  - 💾 快照管理：创建和恢复配置快照
+  - 📜 操作历史：追踪所有配置变更
+  - 🐳 Docker 支持：提供 Dockerfile 和 docker-compose.yml
+  - 📖 完整文档：包含 README、使用指南和 API 文档
+
 # [3.6.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.5.0...v3.6.0) (2025-10-04)
 
 
