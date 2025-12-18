@@ -6,6 +6,15 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.8.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.0...v3.8.1) (2025-12-18)
+
+
+### Reverts
+
+* Revert "chore(pre-commit): auto-apply formatting and fixes" ([0e7eff9](https://github.com/ONGOING-Z/dotfiles/commit/0e7eff99089f2dba93e93831a51dec3399891d0c))
+* Revert "chore(release): 3.7.0 [skip ci]" ([25b3243](https://github.com/ONGOING-Z/dotfiles/commit/25b3243098003b7f14cb47dd56b66b75c31fd273))
+* Revert "feat: Add Web UI for configuration management" ([50d952d](https://github.com/ONGOING-Z/dotfiles/commit/50d952d2cdfc56032b2f0cf9915ed9a16b2e254a))
+
 # [3.8.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.7.0...v3.8.0) (2025-12-17)
 
 
