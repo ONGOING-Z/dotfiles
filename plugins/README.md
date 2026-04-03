@@ -73,15 +73,15 @@ PLUGIN_DESCRIPTION="我的自定义插件"
 plugin_init() {
     # 添加别名
     alias mycommand='echo "Hello from my plugin!"'
-    
+
     # 导出函数
     my_plugin_function() {
         echo "This is a function from $PLUGIN_NAME"
     }
-    
+
     # 设置环境变量
     export MY_PLUGIN_VAR="some value"
-    
+
     # 注册钩子
     register_hook "shell_startup" "my_plugin_startup"
 }
@@ -121,19 +121,19 @@ Docker 和 Docker Compose 快捷命令
 1. **确定插件范围**
    - 单一职责
    - 避免与其他插件冲突
-   
+
 2. **遵循命名约定**
    - 使用小写字母和连字符
    - 前缀避免冲突
-   
+
 3. **提供文档**
    - README.md 说明用法
    - 内联注释解释复杂逻辑
-   
+
 4. **处理依赖**
    - 检查必需的工具
    - 提供安装说明
-   
+
 5. **实现钩子**
    - shell_startup - Shell 启动时
    - shell_exit - Shell 退出时

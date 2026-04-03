@@ -7,7 +7,7 @@
 ### 当前性能指标
 - **Shell 启动时间**: 平均 300-800ms（取决于配置复杂度）
 - **配置文件大小**: zshrc 507行，包含多个同步初始化
-- **瓶颈识别**: 
+- **瓶颈识别**:
   - 多个 `eval` 调用（zoxide、fzf 等）
   - 重复的命令存在性检查
   - 同步的插件加载
@@ -103,7 +103,7 @@ lazy_load_plugin() {
     local plugin_name="$1"
     local plugin_path="$2"
     local commands=("${@:3}")
-    
+
     for cmd in "${commands[@]}"; do
         eval "$cmd() {
             unfunction $cmd

@@ -47,11 +47,11 @@ show_banner() {
 # 检查系统要求
 check_requirements() {
     log "检查系统要求..."
-    
+
     # 检查 Git
     if ! command -v git >/dev/null 2>&1; then
         error "Git 未安装"
-        
+
         # 尝试自动安装
         if [[ "$OSTYPE" == "darwin"* ]] && command -v brew >/dev/null 2>&1; then
             log "使用 Homebrew 安装 Git..."
@@ -72,14 +72,14 @@ check_requirements() {
             exit 1
         fi
     fi
-    
+
     success "系统要求检查通过"
 }
 
 # 备份现有配置
 backup_existing_configs() {
     log "备份现有配置..."
-    
+
     local backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
     local files_to_backup=(
         .bashrc .bash_profile .bash_aliases
@@ -89,7 +89,7 @@ backup_existing_configs() {
         .gitconfig
         .config/nvim
     )
-    
+
     local need_backup=false
     for file in "${files_to_backup[@]}"; do
         if [ -e "$HOME/$file" ]; then
@@ -97,17 +97,17 @@ backup_existing_configs() {
             break
         fi
     done
-    
+
     if [ "$need_backup" = true ]; then
         mkdir -p "$backup_dir"
-        
+
         for file in "${files_to_backup[@]}"; do
             if [ -e "$HOME/$file" ]; then
                 log "备份 $file"
                 cp -r "$HOME/$file" "$backup_dir/" 2>/dev/null || true
             fi
         done
-        
+
         success "配置已备份到: $backup_dir"
     else
         log "没有需要备份的配置"
@@ -117,7 +117,7 @@ backup_existing_configs() {
 # 克隆仓库
 clone_repository() {
     log "克隆 Dotfiles 仓库..."
-    
+
     if [ -d "$DOTFILES_DIR" ]; then
         warning "目录 $DOTFILES_DIR 已存在"
         read -rp "是否删除并重新克隆? [y/N] " -n 1
@@ -131,7 +131,7 @@ clone_repository() {
             return
         fi
     fi
-    
+
     # 克隆仓库
     if git clone --recursive -b "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"; then
         success "仓库克隆成功"
@@ -139,18 +139,18 @@ clone_repository() {
         error "仓库克隆失败"
         exit 1
     fi
-    
+
     cd "$DOTFILES_DIR"
 }
 
 # 设置权限
 setup_permissions() {
     log "设置文件权限..."
-    
+
     # 设置脚本执行权限
     find . -name "*.sh" -type f -exec chmod +x {} \;
     chmod +x install
-    
+
     success "权限设置完成"
 }
 
@@ -163,17 +163,17 @@ select_install_mode() {
     echo "4) 💻 开发者安装 - 完整的开发环境"
     echo "5) 🔧 专家模式 - 完全控制安装过程"
     echo ""
-    
+
     read -rp "请选择 (1-5) [默认: 1]: " mode
     mode=${mode:-1}
-    
+
     case $mode in
         1) INSTALL_MODE="--quick" ;;
         2) INSTALL_MODE="--minimal" ;;
         3) INSTALL_MODE="" ;;  # 默认交互模式
         4) INSTALL_MODE="--developer" ;;
         5) INSTALL_MODE="--expert" ;;
-        *) 
+        *)
             warning "无效选择，使用快速安装"
             INSTALL_MODE="--quick"
             ;;
@@ -183,15 +183,15 @@ select_install_mode() {
 # 运行安装
 run_installation() {
     log "开始安装..."
-    
+
     if [ -n "$INSTALL_MODE" ]; then
         ./install $INSTALL_MODE
     else
         ./install
     fi
-    
+
     local exit_code=$?
-    
+
     if [ $exit_code -eq 0 ]; then
         success "安装完成!"
     else
@@ -203,13 +203,13 @@ run_installation() {
 # 后续设置
 post_install_setup() {
     log "执行安装后设置..."
-    
+
     # 运行健康检查
     if [ -f ./install ]; then
         log "运行健康检查..."
         ./install --health-check || true
     fi
-    
+
     # 提示用户
     echo ""
     echo -e "${GREEN}🎉 Dotfiles 安装完成！${NC}"
@@ -227,14 +227,14 @@ post_install_setup() {
 handle_error() {
     local exit_code=$?
     error "脚本执行失败 (退出码: $exit_code)"
-    
+
     echo ""
     echo "调试信息:"
     echo "- 工作目录: $(pwd)"
     echo "- 用户: $(whoami)"
     echo "- Shell: $SHELL"
     echo "- 系统: $(uname -a)"
-    
+
     exit $exit_code
 }
 
@@ -242,24 +242,24 @@ handle_error() {
 main() {
     # 设置错误处理
     trap handle_error ERR
-    
+
     # 显示欢迎信息
     show_banner
-    
+
     # 确认安装
     echo "此脚本将:"
     echo "  • 备份您的现有配置"
     echo "  • 克隆 Dotfiles 仓库到 $DOTFILES_DIR"
     echo "  • 运行交互式安装程序"
     echo ""
-    
+
     read -rp "是否继续? [Y/n] " -n 1
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ -n $REPLY ]]; then
         echo "安装已取消"
         exit 0
     fi
-    
+
     # 执行安装步骤
     check_requirements
     backup_existing_configs

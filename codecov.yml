@@ -10,7 +10,7 @@ coverage:
   precision: 2
   round: down
   range: "70...100"
-  
+
   status:
     project:
       default:
@@ -22,7 +22,7 @@ coverage:
         if_ci_failed: error
         informational: false
         only_pulls: false
-    
+
     patch:
       default:
         # PR 中新增/修改代码的覆盖率要求
@@ -71,7 +71,7 @@ flags:
     paths:
       - "std_my_dir/"
     carryforward: false
-  
+
   shell:
     paths:
       - "install"

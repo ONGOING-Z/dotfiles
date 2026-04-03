@@ -11,11 +11,11 @@ if git submodule update --init --recursive; then
 else
     echo "⚠️  Some submodules failed to checkout (may be private)"
     echo "Continuing without private submodules..."
-    
+
     # 列出所有子模块
     git config --file .gitmodules --get-regexp path | while read -r key path; do
         submodule_name=$(echo "$key" | sed 's/^submodule\.\(.*\)\.path$/\1/')
-        
+
         # 检查子模块是否已经初始化
         if [ ! -d "$path/.git" ]; then
             echo "  - Skipping private/unavailable submodule: $submodule_name"

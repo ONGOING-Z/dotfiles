@@ -220,7 +220,7 @@ Dotfiles 支持以下本地覆盖文件（不会被 Git 跟踪）：
 ```ini
 [user]
     email = me@company.com  # 工作邮箱
-    
+
 [core]
     sshCommand = ssh -i ~/.ssh/work_rsa  # 工作 SSH 密钥
 ```

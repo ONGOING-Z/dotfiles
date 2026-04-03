@@ -20,7 +20,7 @@ NC='\033[0m'
 init_config_dir() {
     mkdir -p "$CONFIG_DIR"
     mkdir -p "$BACKUP_DIR"
-    
+
     # 创建默认配置文件
     if [ ! -f "$CONFIG_FILE" ]; then
         cat > "$CONFIG_FILE" << 'EOF'
@@ -43,7 +43,7 @@ init_config_dir() {
 }
 EOF
     fi
-    
+
     # 创建历史文件
     if [ ! -f "$HISTORY_FILE" ]; then
         echo "# Dotfiles 安装历史" > "$HISTORY_FILE"
@@ -55,9 +55,9 @@ EOF
 save_config() {
     local config_type="$1"
     local config_data="$2"
-    
+
     init_config_dir
-    
+
     case "$config_type" in
         "preferences")
             # 使用 Python 更新 JSON
@@ -82,7 +82,7 @@ json.dump(data, open('$CONFIG_FILE', 'w'), indent=2)
             echo "$config_data" > "$CONFIG_FILE"
             ;;
     esac
-    
+
     # 记录到历史
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 保存配置 - $config_type" >> "$HISTORY_FILE"
 }
@@ -93,7 +93,7 @@ load_config() {
         echo "{}"
         return
     fi
-    
+
     cat "$CONFIG_FILE"
 }
 
@@ -101,12 +101,12 @@ load_config() {
 get_config_value() {
     local key="$1"
     local default="${2:-}"
-    
+
     if [ ! -f "$CONFIG_FILE" ]; then
         echo "$default"
         return
     fi
-    
+
     local value=$(python3 -c "
 import json
 try:
@@ -121,7 +121,7 @@ try:
 except:
     print('$default')
 ")
-    
+
     echo "$value"
 }
 
@@ -130,11 +130,11 @@ create_snapshot() {
     local snapshot_name="${1:-snapshot}"
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local snapshot_file="$BACKUP_DIR/${snapshot_name}_${timestamp}.tar.gz"
-    
+
     init_config_dir
-    
+
     echo -e "${BLUE}创建配置快照...${NC}"
-    
+
     # 收集需要备份的文件
     local files_to_backup=(
         "$HOME/.bashrc"
@@ -144,28 +144,28 @@ create_snapshot() {
         "$HOME/.gitconfig"
         "$CONFIG_FILE"
     )
-    
+
     # 创建临时目录
     local temp_dir=$(mktemp -d)
-    
+
     # 复制文件到临时目录
     for file in "${files_to_backup[@]}"; do
         if [ -f "$file" ]; then
             cp "$file" "$temp_dir/$(basename "$file")"
         fi
     done
-    
+
     # 创建压缩包
     tar -czf "$snapshot_file" -C "$temp_dir" .
-    
+
     # 清理临时目录
     rm -rf "$temp_dir"
-    
+
     echo -e "${GREEN}✓ 快照已创建: $snapshot_file${NC}"
-    
+
     # 记录到历史
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 创建快照 - $snapshot_file" >> "$HISTORY_FILE"
-    
+
     # 清理旧快照（保留最近5个）
     cleanup_old_snapshots
 }
@@ -173,47 +173,47 @@ create_snapshot() {
 # 恢复快照
 restore_snapshot() {
     local snapshot_file="$1"
-    
+
     if [ ! -f "$snapshot_file" ]; then
         echo -e "${RED}错误: 快照文件不存在: $snapshot_file${NC}"
         return 1
     fi
-    
+
     echo -e "${BLUE}恢复配置快照...${NC}"
-    
+
     # 创建临时目录
     local temp_dir=$(mktemp -d)
-    
+
     # 解压快照
     tar -xzf "$snapshot_file" -C "$temp_dir"
-    
+
     # 恢复文件
     for file in "$temp_dir"/*; do
         if [ -f "$file" ]; then
             local filename=$(basename "$file")
             local target="$HOME/.$filename"
-            
+
             # 特殊处理配置文件
             if [ "$filename" = "install-config.json" ]; then
                 target="$CONFIG_FILE"
             fi
-            
+
             # 备份现有文件
             if [ -f "$target" ]; then
                 cp "$target" "${target}.before-restore"
             fi
-            
+
             # 恢复文件
             cp "$file" "$target"
             echo -e "  ${GREEN}✓${NC} 恢复: $target"
         fi
     done
-    
+
     # 清理临时目录
     rm -rf "$temp_dir"
-    
+
     echo -e "${GREEN}✓ 快照恢复完成${NC}"
-    
+
     # 记录到历史
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 恢复快照 - $snapshot_file" >> "$HISTORY_FILE"
 }
@@ -222,18 +222,18 @@ restore_snapshot() {
 list_snapshots() {
     echo -e "${BLUE}可用快照:${NC}"
     echo ""
-    
+
     if [ ! -d "$BACKUP_DIR" ] || [ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
         echo "  没有可用的快照"
         return
     fi
-    
+
     ls -la "$BACKUP_DIR"/*.tar.gz 2>/dev/null | while read -r line; do
         local file=$(echo "$line" | awk '{print $NF}')
         local size=$(echo "$line" | awk '{print $5}')
         local date=$(echo "$line" | awk '{print $6, $7, $8}')
         local name=$(basename "$file" .tar.gz)
-        
+
         echo -e "  ${GREEN}•${NC} $name"
         echo "    大小: $size bytes, 日期: $date"
     done
@@ -242,14 +242,14 @@ list_snapshots() {
 # 清理旧快照
 cleanup_old_snapshots() {
     local max_snapshots=5
-    
+
     if [ ! -d "$BACKUP_DIR" ]; then
         return
     fi
-    
+
     # 获取快照数量
     local snapshot_count=$(ls -1 "$BACKUP_DIR"/*.tar.gz 2>/dev/null | wc -l)
-    
+
     if [ "$snapshot_count" -gt "$max_snapshots" ]; then
         # 删除最旧的快照
         local files_to_delete=$((snapshot_count - max_snapshots))
@@ -264,7 +264,7 @@ show_history() {
         echo "没有安装历史"
         return
     fi
-    
+
     echo -e "${BLUE}安装历史:${NC}"
     echo ""
     tail -n 20 "$HISTORY_FILE" | while read -r line; do
@@ -277,12 +277,12 @@ show_history() {
 # 导出配置
 export_config() {
     local export_file="${1:-dotfiles-config-export.json}"
-    
+
     if [ ! -f "$CONFIG_FILE" ]; then
         echo -e "${RED}错误: 没有配置可导出${NC}"
         return 1
     fi
-    
+
     cp "$CONFIG_FILE" "$export_file"
     echo -e "${GREEN}✓ 配置已导出到: $export_file${NC}"
 }
@@ -290,27 +290,27 @@ export_config() {
 # 导入配置
 import_config() {
     local import_file="$1"
-    
+
     if [ ! -f "$import_file" ]; then
         echo -e "${RED}错误: 导入文件不存在: $import_file${NC}"
         return 1
     fi
-    
+
     # 验证 JSON 格式
     if ! python3 -m json.tool "$import_file" >/dev/null 2>&1; then
         echo -e "${RED}错误: 无效的配置文件格式${NC}"
         return 1
     fi
-    
+
     # 备份当前配置
     if [ -f "$CONFIG_FILE" ]; then
         cp "$CONFIG_FILE" "$CONFIG_FILE.backup"
     fi
-    
+
     # 导入配置
     cp "$import_file" "$CONFIG_FILE"
     echo -e "${GREEN}✓ 配置已导入${NC}"
-    
+
     # 记录到历史
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 导入配置 - $import_file" >> "$HISTORY_FILE"
 }

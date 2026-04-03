@@ -17,12 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should-test: ${{ steps.check.outputs.should-test }}
-      
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-          
+
       - name: Check if tests needed
         id: check
         run: |
@@ -38,14 +38,14 @@ jobs:
     needs: quick-check
     if: needs.quick-check.outputs.should-test == 'true'
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         test: [syntax, smoke, unit]
-        
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup cache
         uses: actions/cache@v3
         with:
@@ -54,7 +54,7 @@ jobs:
             ~/.npm
             ~/.local
           key: ${{ runner.os }}-${{ matrix.test }}-${{ hashFiles('**/requirements*.txt') }}
-          
+
       - name: Run ${{ matrix.test }} tests
         run: |
           case "${{ matrix.test }}" in
@@ -79,12 +79,12 @@ jobs:
     needs: quick-check
     if: needs.quick-check.outputs.should-test == 'true'
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v46
@@ -92,13 +92,13 @@ jobs:
           files: |
             **/*.sh
             install
-            
+
       - name: Run ShellCheck on changed files
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y shellcheck
-          
+
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             if [ -f "$file" ]; then
               echo "Checking $file"
@@ -110,16 +110,16 @@ jobs:
   integration-tests:
     needs: fast-tests
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup test environment
         run: |
           # 创建轻量级测试环境
           sudo apt-get update -qq
           sudo apt-get install -y git curl bash zsh tmux
-          
+
       - name: Run integration tests
         timeout-minutes: 5
         run: |
@@ -131,7 +131,7 @@ jobs:
     needs: [fast-tests, shellcheck-changed, integration-tests]
     if: always()
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Check CI Status
         run: |

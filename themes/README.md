@@ -41,10 +41,10 @@ themes/
    # iTerm2 (macOS)
    # 打开 iTerm2 -> Preferences -> Profiles -> Colors -> Import
    # 选择 themes/<主题名>/iterm2.itermcolors
-   
+
    # Terminal.app (macOS)
    # 双击 themes/<主题名>/terminal.terminal
-   
+
    # Alacritty
    cp themes/<主题名>/alacritty.yml ~/.config/alacritty/theme.yml
    ```

@@ -43,11 +43,11 @@ check() {
     local description="$1"
     local check_command="$2"
     local severity="${3:-error}" # error, warning, info
-    
+
     ((TOTAL_CHECKS++))
-    
+
     echo -n -e "检查: $description ... "
-    
+
     if eval "$check_command" >/dev/null 2>&1; then
         echo -e "${GREEN}${CHECK} 通过${NC}"
         ((PASSED_CHECKS++))
@@ -76,7 +76,7 @@ check_with_details() {
     local check_command="$2"
     local details_command="$3"
     local severity="${4:-error}"
-    
+
     if ! check "$description" "$check_command" "$severity"; then
         if [ -n "$details_command" ]; then
             echo -e "  ${YELLOW}└─ 详情:${NC}"
@@ -112,7 +112,7 @@ for config in zshrc bashrc vimrc tmux.conf gitconfig; do
         tmux.conf) link_target="$HOME/.tmux.conf" ;;
         gitconfig) link_target="$HOME/.gitconfig" ;;
     esac
-    
+
     if [ -L "$link_target" ]; then
         check "符号链接 $link_target" "[ -L '$link_target' ]"
         # 检查链接是否指向正确位置
@@ -174,7 +174,7 @@ if command -v zsh >/dev/null 2>&1; then
     zsh -i -c exit 2>/dev/null
     end_time=$(date +%s%N)
     startup_time=$(( (end_time - start_time) / 1000000 ))
-    
+
     if [ "$startup_time" -lt 500 ]; then
         echo -e "${GREEN}${CHECK} 快速 (${startup_time}ms)${NC}"
     elif [ "$startup_time" -lt 1000 ]; then

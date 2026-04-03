@@ -10,19 +10,19 @@ export ORIGINAL_HOME=""
 setup_test_env() {
     # 保存原始 HOME
     ORIGINAL_HOME="$HOME"
-    
+
     # 创建临时测试目录
     TEST_TEMP_DIR="$(mktemp -d)"
     export HOME="$TEST_TEMP_DIR/home"
     mkdir -p "$HOME"
-    
+
     # 设置 dotfiles 根目录
     DOTFILES_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-    
+
     # 复制必要的文件到测试环境
     cp -r "$DOTFILES_ROOT/config" "$TEST_TEMP_DIR/config" 2>/dev/null || true
     cp -r "$DOTFILES_ROOT/scripts" "$TEST_TEMP_DIR/scripts" 2>/dev/null || true
-    
+
     # 导出路径
     export PATH="$DOTFILES_ROOT:$PATH"
 }
@@ -31,7 +31,7 @@ setup_test_env() {
 teardown_test_env() {
     # 恢复原始 HOME
     export HOME="$ORIGINAL_HOME"
-    
+
     # 清理临时目录
     if [ -n "$TEST_TEMP_DIR" ] && [ -d "$TEST_TEMP_DIR" ]; then
         rm -rf "$TEST_TEMP_DIR"
@@ -60,12 +60,12 @@ assert_dir_exists() {
 assert_link_exists() {
     local link="$1"
     local target="$2"
-    
+
     if [ ! -L "$link" ]; then
         echo "符号链接不存在: $link"
         return 1
     fi
-    
+
     if [ -n "$target" ]; then
         local actual_target="$(readlink "$link")"
         if [ "$actual_target" != "$target" ]; then

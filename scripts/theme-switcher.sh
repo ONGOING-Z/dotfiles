@@ -43,15 +43,15 @@ EOF
 list_themes() {
     echo -e "${BLUE}可用主题：${NC}"
     echo ""
-    
+
     for theme_dir in "$THEMES_DIR"/*; do
         if [ -d "$theme_dir" ]; then
             theme_name=$(basename "$theme_dir")
-            
+
             # 检查主题完整性
             if [ -f "$theme_dir/colors.sh" ]; then
                 echo -e "  ${GREEN}✓${NC} $theme_name"
-                
+
                 # 显示主题描述（如果有）
                 if [ -f "$theme_dir/README.md" ]; then
                     description=$(head -n 3 "$theme_dir/README.md" | tail -n 1 2>/dev/null || echo "")
@@ -85,35 +85,35 @@ show_current_theme() {
 apply_theme() {
     local theme_name="$1"
     local theme_dir="$THEMES_DIR/$theme_name"
-    
+
     if [ ! -d "$theme_dir" ]; then
         echo -e "${RED}错误：主题 '$theme_name' 不存在${NC}"
         return 1
     fi
-    
+
     echo -e "${BLUE}应用主题：$theme_name${NC}"
-    
+
     # 创建配置目录
     mkdir -p "$CONFIG_DIR"
-    
+
     # 应用终端颜色
     if [ -f "$theme_dir/colors.sh" ]; then
         echo -e "  ${GREEN}✓${NC} 加载颜色定义"
         # 创建符号链接
         ln -sf "$theme_dir/colors.sh" "$CONFIG_DIR/theme-colors.sh"
     fi
-    
+
     # 应用 Vim 主题
     if [ -f "$theme_dir/vim.vim" ]; then
         echo -e "  ${GREEN}✓${NC} 配置 Vim 主题"
         mkdir -p "$HOME/.vim/colors"
         cp "$theme_dir/vim.vim" "$HOME/.vim/colors/${theme_name}.vim"
-        
+
         # 更新 vimrc
         if [ -f "$HOME/.vimrc" ]; then
             # 备份原文件
             cp "$HOME/.vimrc" "$HOME/.vimrc.backup"
-            
+
             # 更新 colorscheme
             if grep -q "^colorscheme" "$HOME/.vimrc"; then
                 sed -i.tmp "s/^colorscheme .*/colorscheme $theme_name/" "$HOME/.vimrc"
@@ -123,12 +123,12 @@ apply_theme() {
             rm -f "$HOME/.vimrc.tmp"
         fi
     fi
-    
+
     # 应用 Tmux 主题
     if [ -f "$theme_dir/tmux.conf" ]; then
         echo -e "  ${GREEN}✓${NC} 配置 Tmux 主题"
         ln -sf "$theme_dir/tmux.conf" "$CONFIG_DIR/tmux-theme.conf"
-        
+
         # 在 tmux.conf 中引入主题
         if [ -f "$HOME/.tmux.conf" ]; then
             if ! grep -q "source.*tmux-theme.conf" "$HOME/.tmux.conf"; then
@@ -138,10 +138,10 @@ apply_theme() {
             fi
         fi
     fi
-    
+
     # 保存当前主题
     echo "$theme_name" > "$CURRENT_THEME_FILE"
-    
+
     echo ""
     echo -e "${GREEN}主题应用成功！${NC}"
     echo ""
@@ -155,19 +155,19 @@ apply_theme() {
 preview_theme() {
     local theme_name="$1"
     local theme_dir="$THEMES_DIR/$theme_name"
-    
+
     if [ ! -d "$theme_dir" ]; then
         echo -e "${RED}错误：主题 '$theme_name' 不存在${NC}"
         return 1
     fi
-    
+
     echo -e "${BLUE}预览主题：$theme_name${NC}"
     echo ""
-    
+
     # 加载颜色
     if [ -f "$theme_dir/colors.sh" ]; then
         source "$theme_dir/colors.sh"
-        
+
         # 显示颜色示例
         echo "基础颜色："
         echo -e "  ${COLOR_BLACK}■■■${NC} BLACK"

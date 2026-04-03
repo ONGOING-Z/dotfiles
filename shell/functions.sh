@@ -54,13 +54,13 @@ untrash() {
         echo "回收站为空"
         return 1
     fi
-    
+
     echo "回收站内容:"
     ls -la "$trash_dir"
     echo ""
     echo "输入要恢复的文件名（包含时间戳）:"
     read filename
-    
+
     if [ -f "$trash_dir/$filename" ]; then
         # 去除时间戳
         local original_name=$(echo $filename | sed 's/\.[0-9]\{8\}-[0-9]\{6\}$//')
@@ -89,7 +89,7 @@ gignore() {
         echo "例如: gignore python node java"
         return 1
     fi
-    
+
     for lang in "$@"; do
         curl -sL "https://www.gitignore.io/api/$lang" >> .gitignore
     done
@@ -111,7 +111,7 @@ gundo() {
 
 # 查看 Git 仓库大小
 gsize() {
-    git rev-list --objects --all | 
+    git rev-list --objects --all |
     git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |
     sed -n 's/^blob //p' |
     sort --numeric-sort --key=2 |
@@ -157,16 +157,16 @@ pyenv() {
 project() {
     local project_type=$1
     local project_name=$2
-    
+
     if [ -z "$project_name" ]; then
         echo "用法: project <类型> <项目名>"
         echo "支持的类型: python, node, go, rust"
         return 1
     fi
-    
+
     mkdir -p "$project_name"
     cd "$project_name"
-    
+
     case "$project_type" in
         python)
             touch README.md requirements.txt .gitignore
@@ -201,7 +201,7 @@ project() {
             return 1
             ;;
     esac
-    
+
     git init
     echo "项目已创建: $project_name (类型: $project_type)"
 }
@@ -234,7 +234,7 @@ tailf() {
 fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    
+
     if [ "x$pid" != "x" ]; then
         echo $pid | xargs kill -${1:-9}
     fi
@@ -281,7 +281,7 @@ portscan() {
     local host=$1
     local start_port=${2:-1}
     local end_port=${3:-1000}
-    
+
     echo "扫描 $host 端口 $start_port-$end_port..."
     for port in $(seq $start_port $end_port); do
         (echo >/dev/tcp/$host/$port) &>/dev/null && echo "端口 $port 开放"
@@ -330,7 +330,7 @@ jsonview() {
 note() {
     local note_dir="${HOME}/.notes"
     mkdir -p "$note_dir"
-    
+
     case "$1" in
         add|a)
             shift
@@ -361,20 +361,20 @@ note() {
 pomodoro() {
     local work_time=${1:-25}
     local break_time=${2:-5}
-    
+
     echo "开始 $work_time 分钟工作时间..."
     sleep $((work_time * 60))
-    
+
     # 播放提示音（如果可能）
     if command -v afplay >/dev/null 2>&1; then
         afplay /System/Library/Sounds/Glass.aiff
     elif command -v paplay >/dev/null 2>&1; then
         paplay /usr/share/sounds/freedesktop/stereo/complete.oga
     fi
-    
+
     echo "工作时间结束！开始 $break_time 分钟休息..."
     sleep $((break_time * 60))
-    
+
     echo "休息结束！"
 }
 

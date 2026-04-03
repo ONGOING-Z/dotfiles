@@ -19,13 +19,13 @@ benchmark_shell_startup() {
     local shell_path="${1:-$SHELL}"
     local iterations="${2:-10}"
     local times=()
-    
+
     echo -e "${BLUE}测试 $(basename "$shell_path") 启动性能 ($iterations 次迭代)...${NC}"
-    
+
     for i in $(seq 1 "$iterations"); do
         local start_time
         start_time=$(date +%s%N)
-        
+
         # 使用超时防止卡死
         if timeout 10s "$shell_path" -i -c exit >/dev/null 2>&1; then
             local end_time
@@ -38,26 +38,26 @@ benchmark_shell_startup() {
             times+=("10000")  # 10秒超时作为惩罚值
         fi
     done
-    
+
     # 计算统计信息
     local sum=0
     local min=999999
     local max=0
-    
+
     for time in "${times[@]}"; do
         sum=$((sum + time))
         (( time < min )) && min=$time
         (( time > max )) && max=$time
     done
-    
+
     local avg=$((sum / ${#times[@]}))
-    
+
     echo ""
     echo -e "${BLUE}=== 性能统计 ===${NC}"
     echo -e "平均启动时间: ${avg}ms"
     echo -e "最快启动时间: ${min}ms"
     echo -e "最慢启动时间: ${max}ms"
-    
+
     # 性能评级
     if (( avg < 100 )); then
         echo -e "性能评级: ${GREEN}优秀 ⚡${NC}"
@@ -68,54 +68,54 @@ benchmark_shell_startup() {
     else
         echo -e "性能评级: ${RED}需要优化 ✗${NC}"
     fi
-    
+
     return $avg
 }
 
 # 分析配置文件性能瓶颈
 analyze_config_bottlenecks() {
     local config_file="$1"
-    
+
     echo -e "${BLUE}分析配置文件: $config_file${NC}"
-    
+
     if [[ ! -f "$config_file" ]]; then
         echo -e "${RED}配置文件不存在${NC}"
         return 1
     fi
-    
+
     echo -e "${YELLOW}潜在性能问题:${NC}"
-    
+
     # 检查同步的 eval 调用
     local eval_count
     eval_count=$(grep -c "eval.*\$(" "$config_file" 2>/dev/null || echo "0")
     if (( eval_count > 3 )); then
         echo -e "  ${RED}✗${NC} 过多的 eval 调用 ($eval_count 个) - 建议使用延迟加载"
     fi
-    
+
     # 检查 source 调用
     local source_count
     source_count=$(grep -c "source\|^\." "$config_file" 2>/dev/null || echo "0")
     if (( source_count > 10 )); then
         echo -e "  ${RED}✗${NC} 过多的 source 调用 ($source_count 个) - 建议合并或缓存"
     fi
-    
+
     # 检查命令存在性检查
     local command_check_count
     command_check_count=$(grep -c "command -v\|which\|type" "$config_file" 2>/dev/null || echo "0")
     if (( command_check_count > 5 )); then
         echo -e "  ${YELLOW}⚠${NC} 多个命令检查 ($command_check_count 个) - 建议批量检查和缓存"
     fi
-    
+
     # 检查可能的阻塞操作
     if grep -q "curl\|wget\|git.*remote" "$config_file" 2>/dev/null; then
         echo -e "  ${RED}✗${NC} 包含网络调用 - 建议移到后台或延迟执行"
     fi
-    
+
     # 检查大循环
     if grep -q "for.*in.*{[0-9]*\.\.[0-9]*}" "$config_file" 2>/dev/null; then
         echo -e "  ${YELLOW}⚠${NC} 包含大循环 - 检查是否必要"
     fi
-    
+
     echo ""
 }
 
@@ -124,13 +124,13 @@ generate_optimized_config() {
     local original_config="$1"
     local optimized_config="${original_config}.optimized"
     local backup_config="${original_config}.backup.$(date +%Y%m%d_%H%M%S)"
-    
+
     echo -e "${BLUE}生成优化配置...${NC}"
-    
+
     # 备份原配置
     cp "$original_config" "$backup_config"
     echo -e "原配置备份到: $backup_config"
-    
+
     # 开始生成优化配置
     cat > "$optimized_config" << 'EOF'
 #!/usr/bin/env zsh
@@ -163,13 +163,13 @@ else
 fi
 
 EOF
-    
+
     # 从原配置提取基本设置，跳过性能瓶颈
     echo "# 从原配置提取的设置" >> "$optimized_config"
-    
+
     # 提取基本的 export 和 alias
     grep -E "^export |^alias " "$original_config" | head -20 >> "$optimized_config" || true
-    
+
     # 添加延迟加载的插件
     cat >> "$optimized_config" << 'EOF'
 
@@ -187,7 +187,7 @@ if [[ "${ZSH_PROFILE:-0}" == "1" ]]; then
     zmodload zsh/zprof
 fi
 EOF
-    
+
     echo -e "${GREEN}优化配置已生成: $optimized_config${NC}"
     echo -e "${YELLOW}使用方法:${NC}"
     echo -e "  1. 测试: mv ~/.zshrc ~/.zshrc.old && ln -s $optimized_config ~/.zshrc"
@@ -198,7 +198,7 @@ EOF
 # 系统性能优化建议
 system_optimization_tips() {
     echo -e "${BLUE}=== 系统性能优化建议 ===${NC}"
-    
+
     # 检查系统负载
     if command -v uptime >/dev/null 2>&1; then
         local load
@@ -207,7 +207,7 @@ system_optimization_tips() {
             echo -e "  ${YELLOW}⚠${NC} 系统负载较高 ($load) - 可能影响 shell 性能"
         fi
     fi
-    
+
     # 检查内存使用
     if command -v free >/dev/null 2>&1; then
         local mem_usage
@@ -216,7 +216,7 @@ system_optimization_tips() {
             echo -e "  ${YELLOW}⚠${NC} 内存使用率较高 (${mem_usage}%) - 建议关闭不必要的程序"
         fi
     fi
-    
+
     # 检查磁盘 I/O
     if command -v df >/dev/null 2>&1; then
         local disk_usage
@@ -225,7 +225,7 @@ system_optimization_tips() {
             echo -e "  ${YELLOW}⚠${NC} 磁盘使用率较高 (${disk_usage}%) - 可能影响文件访问速度"
         fi
     fi
-    
+
     echo -e "${GREEN}优化建议:${NC}"
     echo -e "  • 使用 SSD 存储配置文件"
     echo -e "  • 定期清理缓存目录"
@@ -236,7 +236,7 @@ system_optimization_tips() {
 # 主函数
 main() {
     local action="${1:-benchmark}"
-    
+
     case "$action" in
         "benchmark"|"bench")
             benchmark_shell_startup "${2:-$SHELL}"

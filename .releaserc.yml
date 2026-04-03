@@ -12,26 +12,26 @@ branches:
 plugins:
   # 分析提交信息
   - "@semantic-release/commit-analyzer"
-  
+
   # 生成发布说明
   - "@semantic-release/release-notes-generator"
-  
+
   # 生成 CHANGELOG
   - - "@semantic-release/changelog"
     - changelogFile: CHANGELOG.md
       changelogTitle: "# 📋 更新日志\n\n所有重要更改都将记录在此文件中。\n\n格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，\n版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。\n"
-  
+
   # 更新版本文件
   - - "@semantic-release/exec"
     - prepareCmd: 'echo "${nextRelease.version}" > VERSION'
-  
+
   # Git 操作
   - - "@semantic-release/git"
     - assets:
         - CHANGELOG.md
         - VERSION
       message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-  
+
   # GitHub 发布
   - "@semantic-release/github"
 

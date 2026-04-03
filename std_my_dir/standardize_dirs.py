@@ -90,13 +90,9 @@ def print_summary(results):
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="创建标准化目录: project, archive, discard"
-    )
+    parser = argparse.ArgumentParser(description="创建标准化目录: project, archive, discard")
     parser.add_argument("path", nargs="?", default=".", help="目标路径，默认当前目录")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="仅打印将要创建的目录，不实际创建"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="仅打印将要创建的目录，不实际创建")
     return parser.parse_args(argv)
 
 
