@@ -6,6 +6,14 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.8.3](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.2...v3.8.3) (2026-04-03)
+
+
+### Bug Fixes
+
+* **install:** correct dotbot root and dry-run backup in CI ([6629cbf](https://github.com/ONGOING-Z/dotfiles/commit/6629cbf630fd6ec3829a485fc7e68fdd7d2a7431))
+* **test:** repair pytest.ini for pytest 9.x ([9ecf485](https://github.com/ONGOING-Z/dotfiles/commit/9ecf485e1436bb2d255bdcefe3f8710b0b64ff5f))
+
 ## [3.8.2](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.1...v3.8.2) (2026-04-03)
 
 
