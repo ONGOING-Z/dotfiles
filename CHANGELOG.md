@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.8.2](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.1...v3.8.2) (2026-04-03)
+
+
+### Bug Fixes
+
+* **zsh:** dedupe functions load, lazy NVM with completion, portable SDKMAN/BFG ([4dcdf2a](https://github.com/ONGOING-Z/dotfiles/commit/4dcdf2a76dac69a481c4ef781260f60b22af53fa))
+
 ## [3.8.1](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.0...v3.8.1) (2025-12-18)
 
 
