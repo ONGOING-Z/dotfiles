@@ -21,7 +21,7 @@ check_pre_commit() {
         echo "  brew install pre-commit"
         echo ""
         read -rp "是否尝试自动安装? [y/N] " install_pc
-        
+
         if [[ "$install_pc" =~ ^[Yy]$ ]]; then
             if command -v pip3 >/dev/null 2>&1; then
                 pip3 install pre-commit
@@ -40,13 +40,13 @@ check_pre_commit() {
 # 安装 hooks
 install_hooks() {
     echo -e "${BLUE}安装 Git hooks...${NC}"
-    
+
     # 安装 pre-commit hooks
     pre-commit install
     pre-commit install --hook-type commit-msg
-    
+
     echo -e "${GREEN}✓ Pre-commit hooks 已安装${NC}"
-    
+
     # 首次运行（可选）
     read -rp "是否立即运行所有 hooks 检查? [y/N] " run_now
     if [[ "$run_now" =~ ^[Yy]$ ]]; then
@@ -58,10 +58,10 @@ install_hooks() {
 # 创建自定义 hooks
 create_custom_hooks() {
     local hooks_dir=".git/hooks"
-    
+
     # 确保 hooks 目录存在
     mkdir -p "$hooks_dir"
-    
+
     # 创建 commit-msg hook（检查提交信息格式）
     cat > "$hooks_dir/commit-msg.custom" << 'EOF'
 #!/usr/bin/env bash
@@ -93,9 +93,9 @@ if ! echo "$commit_msg" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|cho
     exit 1
 fi
 EOF
-    
+
     chmod +x "$hooks_dir/commit-msg.custom"
-    
+
     # 创建 pre-push hook（运行测试）
     cat > "$hooks_dir/pre-push.custom" << 'EOF'
 #!/usr/bin/env bash
@@ -115,16 +115,16 @@ fi
 
 echo "所有测试通过 ✓"
 EOF
-    
+
     chmod +x "$hooks_dir/pre-push.custom"
-    
+
     echo -e "${GREEN}✓ 自定义 hooks 已创建${NC}"
 }
 
 # 显示 hooks 状态
 show_hooks_status() {
     echo -e "\n${BLUE}=== Git Hooks 状态 ===${NC}"
-    
+
     if [ -d .git/hooks ]; then
         echo -e "\n已安装的 hooks:"
         for hook in .git/hooks/*; do
@@ -133,7 +133,7 @@ show_hooks_status() {
             fi
         done
     fi
-    
+
     if command -v pre-commit >/dev/null 2>&1; then
         echo -e "\nPre-commit 配置:"
         pre-commit --version
@@ -144,18 +144,18 @@ show_hooks_status() {
 # 主函数
 main() {
     echo -e "${BLUE}=== Git Hooks 设置工具 ===${NC}\n"
-    
+
     # 检查是否在 Git 仓库中
     if ! git rev-parse --git-dir >/dev/null 2>&1; then
         echo -e "${RED}错误: 不在 Git 仓库中${NC}"
         exit 1
     fi
-    
+
     check_pre_commit
     install_hooks
     create_custom_hooks
     show_hooks_status
-    
+
     echo -e "\n${GREEN}Git hooks 设置完成！${NC}"
     echo ""
     echo "提示:"

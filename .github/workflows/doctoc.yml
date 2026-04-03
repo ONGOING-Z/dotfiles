@@ -19,22 +19,22 @@ permissions:
 jobs:
   generate-toc:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Install doctoc
         run: npm install -g doctoc
-      
+
       - name: Generate TOC for all markdown files
         run: |
           # 为根目录和主要目录中的 markdown 文件生成目录
@@ -44,7 +44,7 @@ jobs:
             -not -path "*/vendor/*" \
             -not -path "*/vim/plugged/*" \
             -exec doctoc --github --notitle {} \;
-      
+
       - name: Check for changes
         id: check_changes
         run: |
@@ -55,7 +55,7 @@ jobs:
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "没有目录变化"
           fi
-      
+
       - name: Commit and push if changed
         if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'push'
         run: |
@@ -64,7 +64,7 @@ jobs:
           git add -A
           git commit -m "docs: auto-generate table of contents with doctoc [skip ci]"
           git push
-      
+
       - name: Create PR comment on changes
         if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'pull_request'
         uses: actions/github-script@v7

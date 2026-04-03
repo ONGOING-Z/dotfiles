@@ -27,10 +27,10 @@ check_shfmt() {
 format_file() {
     local file="$1"
     echo -e "${BLUE}格式化: $file${NC}"
-    
+
     # 备份原文件
     cp "$file" "${file}.backup"
-    
+
     # 格式化
     if shfmt -i 4 -bn -ci -w "$file"; then
         echo -e "${GREEN}  ✓ 成功${NC}"
@@ -47,7 +47,7 @@ format_file() {
 check_file() {
     local file="$1"
     echo -n "检查: $file ... "
-    
+
     if shfmt -i 4 -bn -ci -d "$file" >/dev/null 2>&1; then
         echo -e "${GREEN}✓${NC}"
         return 0
@@ -61,14 +61,14 @@ check_file() {
 main() {
     local mode="${1:-check}"
     local target="${2:-.}"
-    
+
     check_shfmt
-    
+
     echo -e "${BLUE}=== Shell 脚本格式化工具 ===${NC}"
     echo ""
-    
+
     local files=()
-    
+
     # 收集需要处理的文件
     if [ -f "$target" ]; then
         files=("$target")
@@ -76,7 +76,7 @@ main() {
         while IFS= read -r -d '' file; do
             files+=("$file")
         done < <(find "$target" -type f \( -name "*.sh" -o -name "*.bash" \) -not -path "*/.git/*" -not -path "*/.venv/*" -print0)
-        
+
         # 添加特殊的可执行脚本
         for special in install; do
             if [ -f "$special" ] && [ -x "$special" ]; then
@@ -86,12 +86,12 @@ main() {
             fi
         done
     fi
-    
+
     if [ ${#files[@]} -eq 0 ]; then
         echo "没有找到 Shell 脚本"
         exit 0
     fi
-    
+
     case "$mode" in
         check)
             echo "检查模式 - 检查格式问题"
@@ -102,7 +102,7 @@ main() {
                     need_format=1
                 fi
             done
-            
+
             echo ""
             if [ $need_format -eq 1 ]; then
                 echo -e "${YELLOW}一些文件需要格式化${NC}"
@@ -112,7 +112,7 @@ main() {
                 echo -e "${GREEN}所有文件格式正确！${NC}"
             fi
             ;;
-            
+
         format)
             echo "格式化模式 - 自动修复格式"
             echo ""
@@ -122,7 +122,7 @@ main() {
                     failed=$((failed + 1))
                 fi
             done
-            
+
             echo ""
             if [ $failed -eq 0 ]; then
                 echo -e "${GREEN}格式化完成！${NC}"
@@ -131,7 +131,7 @@ main() {
                 exit 1
             fi
             ;;
-            
+
         *)
             echo "用法: $0 [check|format] [文件或目录]"
             echo ""

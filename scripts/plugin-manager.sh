@@ -42,7 +42,7 @@ log_warning() {
 # 获取所有插件
 get_all_plugins() {
     local plugins=()
-    
+
     # 扫描插件目录
     for category in core community personal; do
         if [ -d "$PLUGINS_DIR/$category" ]; then
@@ -53,7 +53,7 @@ get_all_plugins() {
             done
         fi
     done
-    
+
     printf '%s\n' "${plugins[@]}"
 }
 
@@ -67,16 +67,16 @@ is_plugin_enabled() {
 get_plugin_info() {
     local plugin_path="$1"
     local init_file="$plugin_path/init.sh"
-    
+
     if [ ! -f "$init_file" ]; then
         return 1
     fi
-    
+
     # 提取元数据
     local name=$(grep "^PLUGIN_NAME=" "$init_file" 2>/dev/null | cut -d'"' -f2 || echo "$(basename "$plugin_path")")
     local version=$(grep "^PLUGIN_VERSION=" "$init_file" 2>/dev/null | cut -d'"' -f2 || echo "unknown")
     local description=$(grep "^PLUGIN_DESCRIPTION=" "$init_file" 2>/dev/null | cut -d'"' -f2 || echo "No description")
-    
+
     echo "名称: $name"
     echo "版本: $version"
     echo "描述: $description"
@@ -85,31 +85,31 @@ get_plugin_info() {
 # 列出插件
 list_plugins() {
     echo -e "${MAGENTA}=== 可用插件 ===${NC}\n"
-    
+
     local plugins=($(get_all_plugins))
-    
+
     if [ ${#plugins[@]} -eq 0 ]; then
         log_info "没有找到插件"
         return
     fi
-    
+
     for plugin in "${plugins[@]}"; do
         local plugin_path="$PLUGINS_DIR/$plugin"
         local status=""
-        
+
         if is_plugin_enabled "$plugin"; then
             status="${GREEN}[已启用]${NC}"
         else
             status="${YELLOW}[未启用]${NC}"
         fi
-        
+
         echo -e "$status ${CYAN}$plugin${NC}"
-        
+
         if [ -f "$plugin_path/init.sh" ]; then
             local info=$(get_plugin_info "$plugin_path" | sed 's/^/    /')
             echo "$info"
         fi
-        
+
         echo ""
     done
 }
@@ -118,17 +118,17 @@ list_plugins() {
 install_plugin() {
     local plugin="$1"
     local plugin_path="$PLUGINS_DIR/$plugin"
-    
+
     if [ ! -d "$plugin_path" ]; then
         log_error "插件不存在: $plugin"
         return 1
     fi
-    
+
     if [ ! -f "$plugin_path/init.sh" ]; then
         log_error "插件无效（缺少 init.sh）: $plugin"
         return 1
     fi
-    
+
     # 运行安装脚本（如果存在）
     if [ -f "$plugin_path/install.sh" ]; then
         log_info "运行安装脚本..."
@@ -137,7 +137,7 @@ install_plugin() {
             return 1
         }
     fi
-    
+
     log_success "插件安装成功: $plugin"
 }
 
@@ -146,23 +146,23 @@ enable_plugin() {
     local plugin="$1"
     local plugin_path="$PLUGINS_DIR/$plugin"
     local plugin_name=$(basename "$plugin")
-    
+
     if [ ! -d "$plugin_path" ]; then
         log_error "插件不存在: $plugin"
         return 1
     fi
-    
+
     if is_plugin_enabled "$plugin"; then
         log_warning "插件已启用: $plugin"
         return 0
     fi
-    
+
     # 创建符号链接
     ln -sf "$plugin_path" "$ENABLED_PLUGINS/$plugin_name"
-    
+
     # 记录到配置
     echo "$plugin" >> "$PLUGIN_CONFIG"
-    
+
     log_success "插件已启用: $plugin"
     log_info "请重新加载 Shell 以生效"
 }
@@ -171,21 +171,21 @@ enable_plugin() {
 disable_plugin() {
     local plugin="$1"
     local plugin_name=$(basename "$plugin")
-    
+
     if ! is_plugin_enabled "$plugin"; then
         log_warning "插件未启用: $plugin"
         return 0
     fi
-    
+
     # 删除符号链接
     rm -f "$ENABLED_PLUGINS/$plugin_name"
-    
+
     # 从配置中移除
     if [ -f "$PLUGIN_CONFIG" ]; then
         grep -v "^$plugin$" "$PLUGIN_CONFIG" > "$PLUGIN_CONFIG.tmp" || true
         mv "$PLUGIN_CONFIG.tmp" "$PLUGIN_CONFIG"
     fi
-    
+
     log_success "插件已禁用: $plugin"
     log_info "请重新加载 Shell 以生效"
 }
@@ -195,17 +195,17 @@ create_plugin() {
     local plugin_name="$1"
     local category="${2:-personal}"
     local plugin_dir="$PLUGINS_DIR/$category/$plugin_name"
-    
+
     if [ -d "$plugin_dir" ]; then
         log_error "插件已存在: $plugin_name"
         return 1
     fi
-    
+
     log_info "创建新插件: $plugin_name"
-    
+
     # 创建插件目录
     mkdir -p "$plugin_dir"
-    
+
     # 创建 init.sh
     cat > "$plugin_dir/init.sh" << EOF
 #!/usr/bin/env bash
@@ -220,10 +220,10 @@ PLUGIN_DESCRIPTION="描述您的插件功能"
 plugin_init() {
     # 在这里添加您的插件代码
     # 例如：定义别名、函数、环境变量等
-    
+
     # 示例别名
     alias ${plugin_name}_hello='echo "Hello from $plugin_name plugin!"'
-    
+
     # 示例函数
     ${plugin_name}_info() {
         echo "Plugin: \$PLUGIN_NAME v\$PLUGIN_VERSION"
@@ -241,9 +241,9 @@ plugin_unload() {
 # 执行初始化
 plugin_init
 EOF
-    
+
     chmod +x "$plugin_dir/init.sh"
-    
+
     # 创建 README.md
     cat > "$plugin_dir/README.md" << EOF
 # $plugin_name
@@ -271,7 +271,7 @@ EOF
 
 列出插件的依赖项。
 EOF
-    
+
     log_success "插件创建成功: $plugin_dir"
     log_info "编辑 $plugin_dir/init.sh 来实现您的插件"
 }
@@ -281,7 +281,7 @@ load_plugins() {
     if [ ! -d "$ENABLED_PLUGINS" ]; then
         return
     fi
-    
+
     for plugin_link in "$ENABLED_PLUGINS"/*; do
         if [ -L "$plugin_link" ] && [ -f "$plugin_link/init.sh" ]; then
             source "$plugin_link/init.sh"
@@ -316,7 +316,7 @@ show_help() {
 main() {
     local command="${1:-help}"
     shift || true
-    
+
     case "$command" in
         list|ls)
             list_plugins

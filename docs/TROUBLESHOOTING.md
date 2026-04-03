@@ -120,7 +120,7 @@ rm ~/.bashrc
    ```bash
    # 在 ~/.zshrc 开头添加
    zmodload zsh/zprof
-   
+
    # 在 ~/.zshrc 结尾添加
    zprof
    ```
@@ -153,7 +153,7 @@ zsh: command not found: xxx
    ```bash
    # macOS
    brew install xxx
-   
+
    # Linux
    sudo apt install xxx
    ```

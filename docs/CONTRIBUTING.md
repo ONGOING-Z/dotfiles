@@ -128,7 +128,7 @@ git push origin feat/your-feature-name
    ```bash
    #!/usr/bin/env bash
    # 脚本描述
-   
+
    set -euo pipefail
    ```
 
@@ -151,7 +151,7 @@ git push origin feat/your-feature-name
    function_name() {
        local param1="$1"
        local param2="${2:-default}"
-       
+
        # 函数体
    }
    ```

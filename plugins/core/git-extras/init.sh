@@ -19,15 +19,15 @@ plugin_init() {
     alias gb='git branch'
     alias glog='git log --oneline --graph --decorate'
     alias gundo='git reset HEAD~1 --soft'
-    
+
     # Git 函数
-    
+
     # 快速提交
     gquick() {
         local message="${1:-Quick commit}"
         git add -A && git commit -m "$message"
     }
-    
+
     # 创建并切换分支
     gnew() {
         local branch="$1"
@@ -37,7 +37,7 @@ plugin_init() {
         fi
         git checkout -b "$branch"
     }
-    
+
     # 删除本地和远程分支
     gdelete() {
         local branch="$1"
@@ -45,23 +45,23 @@ plugin_init() {
             echo "用法: gdelete <branch-name>"
             return 1
         fi
-        
+
         echo "删除分支: $branch"
         git branch -d "$branch" 2>/dev/null || git branch -D "$branch"
         git push origin --delete "$branch" 2>/dev/null || true
     }
-    
+
     # 交互式 rebase
     grebase() {
         local commits="${1:-10}"
         git rebase -i HEAD~"$commits"
     }
-    
+
     # 查看贡献者统计
     gcontrib() {
         git shortlog -sn --all --no-merges
     }
-    
+
     # 查找包含特定提交的分支
     gfind() {
         local commit="$1"
@@ -71,16 +71,16 @@ plugin_init() {
         fi
         git branch -a --contains "$commit"
     }
-    
+
     # 清理已合并的分支
     gclean() {
         echo "清理已合并的本地分支..."
         git branch --merged | grep -v "\*\|main\|master\|develop" | xargs -n 1 git branch -d 2>/dev/null || true
-        
+
         echo "清理远程跟踪分支..."
         git remote prune origin
     }
-    
+
     # 显示文件历史
     ghistory() {
         local file="$1"
@@ -90,7 +90,7 @@ plugin_init() {
         fi
         git log --follow -p -- "$file"
     }
-    
+
     # 暂存和恢复工作
     gstash() {
         if [ "$1" = "pop" ]; then
@@ -103,7 +103,7 @@ plugin_init() {
             git stash push -m "${1:-WIP}"
         fi
     }
-    
+
     # Git 工作流助手
     gflow() {
         case "$1" in
@@ -135,7 +135,7 @@ plugin_init() {
 plugin_unload() {
     # 移除别名
     unalias gs ga gc gp gl gd gco gb glog gundo 2>/dev/null || true
-    
+
     # 移除函数
     unset -f gquick gnew gdelete grebase gcontrib gfind gclean ghistory gstash gflow 2>/dev/null || true
 }

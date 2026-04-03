@@ -4,7 +4,7 @@
 [run]
 branch = True
 source = .
-omit = 
+omit =
     */tests/*
     */test_*.py
     */__pycache__/*
@@ -21,21 +21,21 @@ omit =
 exclude_lines =
     # 默认排除
     pragma: no cover
-    
+
     # 调试相关
     def __repr__
     if self.debug:
     if settings.DEBUG
-    
+
     # 防御性编程
     raise AssertionError
     raise NotImplementedError
-    
+
     # 不会执行到的代码
     if 0:
     if False:
     if __name__ == .__main__.:
-    
+
     # 类型检查
     if TYPE_CHECKING:
     @(abc\.)?abstractmethod

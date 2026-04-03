@@ -35,14 +35,14 @@ check_encryption_tool() {
 age_encrypt() {
     local input_file="$1"
     local output_file="$2"
-    
+
     # 生成密钥（如果不存在）
     if [ ! -f "$SECRETS_DIR/age-key.txt" ]; then
         echo -e "${BLUE}生成 age 密钥...${NC}"
         age-keygen > "$SECRETS_DIR/age-key.txt"
         chmod 600 "$SECRETS_DIR/age-key.txt"
     fi
-    
+
     # 加密
     age -e -i "$SECRETS_DIR/age-key.txt" -o "$output_file" "$input_file"
 }
@@ -50,12 +50,12 @@ age_encrypt() {
 age_decrypt() {
     local input_file="$1"
     local output_file="$2"
-    
+
     if [ ! -f "$SECRETS_DIR/age-key.txt" ]; then
         error "age 密钥不存在"
         return 1
     fi
-    
+
     age -d -i "$SECRETS_DIR/age-key.txt" -o "$output_file" "$input_file"
 }
 
@@ -63,21 +63,21 @@ age_decrypt() {
 gpg_encrypt() {
     local input_file="$1"
     local output_file="$2"
-    
+
     gpg --yes --armor --symmetric --cipher-algo AES256 --output "$output_file" "$input_file"
 }
 
 gpg_decrypt() {
     local input_file="$1"
     local output_file="$2"
-    
+
     gpg --yes --decrypt --output "$output_file" "$input_file"
 }
 
 # 通用加密函数
 encrypt_file() {
     local tool=$(check_encryption_tool)
-    
+
     case "$tool" in
         age)
             age_encrypt "$1" "$2"
@@ -98,7 +98,7 @@ encrypt_file() {
 # 通用解密函数
 decrypt_file() {
     local tool=$(check_encryption_tool)
-    
+
     case "$tool" in
         age)
             age_decrypt "$1" "$2"
@@ -127,50 +127,50 @@ success() {
 add_secret() {
     local key="$1"
     local value="$2"
-    
+
     # 解密现有文件（如果存在）
     if [ -f "$ENCRYPTED_FILE" ]; then
         decrypt_file "$ENCRYPTED_FILE" "$SECRETS_FILE" || return 1
     fi
-    
+
     # 添加或更新密钥
     if [ -f "$SECRETS_FILE" ]; then
         # 移除旧值
         grep -v "^${key}=" "$SECRETS_FILE" > "$SECRETS_FILE.tmp" || true
         mv "$SECRETS_FILE.tmp" "$SECRETS_FILE"
     fi
-    
+
     # 添加新值
     echo "${key}=${value}" >> "$SECRETS_FILE"
-    
+
     # 重新加密
     encrypt_file "$SECRETS_FILE" "$ENCRYPTED_FILE"
-    
+
     # 删除明文文件
     rm -f "$SECRETS_FILE"
-    
+
     success "密钥 '$key' 已添加"
 }
 
 # 获取密钥
 get_secret() {
     local key="$1"
-    
+
     if [ ! -f "$ENCRYPTED_FILE" ]; then
         error "没有存储的密钥"
         return 1
     fi
-    
+
     # 解密到临时文件
     local temp_file=$(mktemp)
     decrypt_file "$ENCRYPTED_FILE" "$temp_file" || return 1
-    
+
     # 获取值
     local value=$(grep "^${key}=" "$temp_file" | cut -d'=' -f2-)
-    
+
     # 清理
     rm -f "$temp_file"
-    
+
     if [ -n "$value" ]; then
         echo "$value"
     else
@@ -185,18 +185,18 @@ list_secrets() {
         echo "没有存储的密钥"
         return 0
     fi
-    
+
     # 解密到临时文件
     local temp_file=$(mktemp)
     decrypt_file "$ENCRYPTED_FILE" "$temp_file" || return 1
-    
+
     echo -e "${BLUE}存储的密钥:${NC}"
     while IFS='=' read -r key value; do
         # 脱敏显示
         masked_value="${value:0:3}***${value: -3}"
         echo "  • $key = $masked_value"
     done < "$temp_file"
-    
+
     # 清理
     rm -f "$temp_file"
 }
@@ -204,25 +204,25 @@ list_secrets() {
 # 删除密钥
 remove_secret() {
     local key="$1"
-    
+
     if [ ! -f "$ENCRYPTED_FILE" ]; then
         error "没有存储的密钥"
         return 1
     fi
-    
+
     # 解密
     decrypt_file "$ENCRYPTED_FILE" "$SECRETS_FILE" || return 1
-    
+
     # 删除密钥
     grep -v "^${key}=" "$SECRETS_FILE" > "$SECRETS_FILE.tmp" || true
     mv "$SECRETS_FILE.tmp" "$SECRETS_FILE"
-    
+
     # 重新加密
     encrypt_file "$SECRETS_FILE" "$ENCRYPTED_FILE"
-    
+
     # 清理
     rm -f "$SECRETS_FILE"
-    
+
     success "密钥 '$key' 已删除"
 }
 
@@ -232,35 +232,35 @@ export_to_shell() {
         error "没有存储的密钥"
         return 1
     fi
-    
+
     # 解密到临时文件
     local temp_file=$(mktemp)
     decrypt_file "$ENCRYPTED_FILE" "$temp_file" || return 1
-    
+
     # 导出
     while IFS='=' read -r key value; do
         export "$key=$value"
     done < "$temp_file"
-    
+
     # 清理
     rm -f "$temp_file"
-    
+
     success "密钥已导出到当前 shell"
 }
 
 # 交互式添加
 interactive_add() {
     echo -e "${CYAN}添加新密钥${NC}"
-    
+
     read -rp "密钥名称: " key
     read -rsp "密钥值: " value
     echo
-    
+
     if [ -z "$key" ] || [ -z "$value" ]; then
         error "密钥名称和值不能为空"
         return 1
     fi
-    
+
     add_secret "$key" "$value"
 }
 
@@ -288,7 +288,7 @@ show_help() {
 # 主函数
 main() {
     local command="${1:-help}"
-    
+
     case "$command" in
         add)
             if [ $# -lt 3 ]; then

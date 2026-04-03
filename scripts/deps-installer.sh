@@ -66,7 +66,7 @@ check_dependency() {
     local dep="$1"
     local name="${dep%%:*}"
     local desc="${dep#*:}"
-    
+
     if command -v "$name" >/dev/null 2>&1; then
         local version=$($name --version 2>/dev/null | head -1 || echo "已安装")
         echo -e "${GREEN}✓${NC} $desc ($name): $version"
@@ -81,9 +81,9 @@ check_dependency() {
 install_dependency() {
     local dep="$1"
     local name="${dep%%:*}"
-    
+
     echo -e "${BLUE}安装 $name...${NC}"
-    
+
     case "$OS_TYPE" in
         macos)
             if command -v brew >/dev/null 2>&1; then
@@ -113,7 +113,7 @@ install_dependency() {
 # 特殊安装函数
 install_special() {
     local name="$1"
-    
+
     case "$name" in
         fzf)
             if [ ! -d ~/.fzf ]; then
@@ -149,15 +149,15 @@ check_all_deps() {
     shift
     local deps=("$@")
     local missing=()
-    
+
     echo -e "\n${BLUE}=== $category ===${NC}"
-    
+
     for dep in "${deps[@]}"; do
         if ! check_dependency "$dep"; then
             missing+=("$dep")
         fi
     done
-    
+
     if [ ${#missing[@]} -gt 0 ]; then
         echo -e "\n${YELLOW}缺少 ${#missing[@]} 个依赖${NC}"
         return 1
@@ -170,21 +170,21 @@ check_all_deps() {
 # 交互式安装
 interactive_install() {
     local missing_deps=("$@")
-    
+
     echo -e "\n${YELLOW}发现缺失的依赖:${NC}"
     for dep in "${missing_deps[@]}"; do
         local name="${dep%%:*}"
         local desc="${dep#*:}"
         echo "  - $desc ($name)"
     done
-    
+
     echo ""
     read -rp "是否自动安装这些依赖? [Y/n] " response
-    
+
     if [[ "$response" =~ ^[Yy]?$ ]]; then
         for dep in "${missing_deps[@]}"; do
             local name="${dep%%:*}"
-            
+
             # 尝试特殊安装方法
             if ! install_special "$name" 2>/dev/null; then
                 # 使用包管理器安装
@@ -201,12 +201,12 @@ main() {
     echo -e "${BLUE}╔═══════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║         依赖检查和安装工具            ║${NC}"
     echo -e "${BLUE}╚═══════════════════════════════════════╝${NC}"
-    
+
     echo -e "\n操作系统: $OS_TYPE"
-    
+
     # 检查必需依赖
     local all_missing=()
-    
+
     if ! check_all_deps "必需依赖" "${REQUIRED_DEPS[@]}"; then
         for dep in "${REQUIRED_DEPS[@]}"; do
             local name="${dep%%:*}"
@@ -215,7 +215,7 @@ main() {
             fi
         done
     fi
-    
+
     # 检查推荐依赖
     if ! check_all_deps "推荐依赖" "${RECOMMENDED_DEPS[@]}"; then
         for dep in "${RECOMMENDED_DEPS[@]}"; do
@@ -225,7 +225,7 @@ main() {
             fi
         done
     fi
-    
+
     # 检查开发依赖
     if [ "${CHECK_DEV_DEPS:-0}" = "1" ]; then
         if ! check_all_deps "开发依赖" "${DEV_DEPS[@]}"; then
@@ -237,7 +237,7 @@ main() {
             done
         fi
     fi
-    
+
     # 如果有缺失的依赖，询问是否安装
     if [ ${#all_missing[@]} -gt 0 ]; then
         interactive_install "${all_missing[@]}"

@@ -64,7 +64,7 @@ jobs:
           - os: ubuntu-latest
             python: '3.11'
             shell: bash
-          - os: ubuntu-latest  
+          - os: ubuntu-latest
             python: '3.11'
             shell: zsh
           - os: macos-latest
@@ -145,7 +145,7 @@ benchmark_shell_startup() {
 check_startup_performance() {
     local max_time=0.5  # 500ms
     local actual_time=$(benchmark_shell_startup | grep -o '[0-9.]*s' | head -1)
-    
+
     if (( $(echo "$actual_time > $max_time" | bc -l) )); then
         echo "⚠️  Shell 启动时间过长: ${actual_time}s (建议 < ${max_time}s)"
         return 1
@@ -199,12 +199,12 @@ cache_command() {
     local command="$2"
     local ttl="${3:-3600}"  # 默认1小时过期
     local cache_file="$CACHE_DIR/$cache_key.cache"
-    
+
     if [[ -f "$cache_file" ]] && [[ $(($(date +%s) - $(stat -c %Y "$cache_file"))) -lt $ttl ]]; then
         cat "$cache_file"
         return 0
     fi
-    
+
     eval "$command" | tee "$cache_file"
 }
 
@@ -220,14 +220,14 @@ alias zoxide_init='cache_command "zoxide_init" "zoxide init zsh" 86400'  # 24小
 # 并行执行初始化任务
 parallel_init() {
     local pids=()
-    
+
     # 后台执行各种初始化
     (cache_command "zoxide" "zoxide init zsh") &
     pids+=($!)
-    
+
     (cache_command "fzf" "fzf --zsh") &
     pids+=($!)
-    
+
     # 等待所有任务完成
     for pid in "${pids[@]}"; do
         wait "$pid"

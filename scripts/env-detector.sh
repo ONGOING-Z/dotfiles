@@ -25,7 +25,7 @@ RECOMMENDATIONS=()
 # 检测操作系统
 detect_os() {
     echo -e "${BLUE}检测操作系统...${NC}"
-    
+
     if [[ "$OSTYPE" == "darwin"* ]]; then
         DETECTED_OS="macOS"
         DETECTED_VERSION=$(sw_vers -productVersion)
@@ -34,13 +34,13 @@ detect_os() {
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         DETECTED_OS="Linux"
         DETECTED_ARCH=$(uname -m)
-        
+
         # 检测发行版
         if [ -f /etc/os-release ]; then
             . /etc/os-release
             DETECTED_DISTRO="$NAME"
             DETECTED_VERSION="$VERSION_ID"
-            
+
             case "$ID" in
                 ubuntu|debian)
                     DETECTED_PACKAGE_MANAGER="apt"
@@ -62,7 +62,7 @@ detect_os() {
     else
         DETECTED_OS="Unknown"
     fi
-    
+
     echo -e "  ${GREEN}✓${NC} 操作系统: $DETECTED_OS $DETECTED_VERSION ($DETECTED_ARCH)"
     [ -n "$DETECTED_DISTRO" ] && echo -e "  ${GREEN}✓${NC} 发行版: $DETECTED_DISTRO"
     echo -e "  ${GREEN}✓${NC} 包管理器: $DETECTED_PACKAGE_MANAGER"
@@ -71,10 +71,10 @@ detect_os() {
 # 检测 Shell 环境
 detect_shell() {
     echo -e "\n${BLUE}检测 Shell 环境...${NC}"
-    
+
     DETECTED_SHELL=$(basename "$SHELL")
     local shell_version=""
-    
+
     case "$DETECTED_SHELL" in
         bash)
             shell_version=$($SHELL --version | head -1)
@@ -86,10 +86,10 @@ detect_shell() {
             shell_version=$($SHELL --version)
             ;;
     esac
-    
+
     echo -e "  ${GREEN}✓${NC} 当前 Shell: $DETECTED_SHELL"
     [ -n "$shell_version" ] && echo -e "  ${GREEN}✓${NC} 版本: $shell_version"
-    
+
     # 检测已安装的 Shell
     echo -e "  ${GREEN}✓${NC} 可用 Shell:"
     for shell in bash zsh fish; do
@@ -102,7 +102,7 @@ detect_shell() {
 # 检测已安装的工具
 detect_tools() {
     echo -e "\n${BLUE}检测已安装的工具...${NC}"
-    
+
     local tools=(
         "git:版本控制"
         "vim:文本编辑器"
@@ -120,10 +120,10 @@ detect_tools() {
         "curl:网络工具"
         "wget:下载工具"
     )
-    
+
     local installed_count=0
     local missing_tools=()
-    
+
     for tool_desc in "${tools[@]}"; do
         IFS=':' read -r tool desc <<< "$tool_desc"
         if command -v "$tool" >/dev/null 2>&1; then
@@ -134,9 +134,9 @@ detect_tools() {
             missing_tools+=("$tool")
         fi
     done
-    
+
     echo -e "\n  已安装: $installed_count/${#tools[@]} 个工具"
-    
+
     # 根据缺失的工具给出建议
     if [ ${#missing_tools[@]} -gt 0 ]; then
         RECOMMENDATIONS+=("建议安装缺失的工具: ${missing_tools[*]}")
@@ -146,57 +146,57 @@ detect_tools() {
 # 检测开发环境
 detect_dev_env() {
     echo -e "\n${BLUE}检测开发环境...${NC}"
-    
+
     local dev_score=0
     local dev_tools=()
-    
+
     # Python 开发
     if command -v python3 >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Python $(python3 --version 2>&1 | cut -d' ' -f2)"
         ((dev_score++))
         dev_tools+=("Python")
-        
+
         if command -v pip3 >/dev/null 2>&1; then
             echo -e "    - pip $(pip3 --version | cut -d' ' -f2)"
         fi
-        
+
         if command -v virtualenv >/dev/null 2>&1; then
             echo -e "    - virtualenv"
         fi
     fi
-    
+
     # Node.js 开发
     if command -v node >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Node.js $(node --version)"
         ((dev_score++))
         dev_tools+=("Node.js")
-        
+
         if command -v npm >/dev/null 2>&1; then
             echo -e "    - npm $(npm --version)"
         fi
     fi
-    
+
     # Go 开发
     if command -v go >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Go $(go version | cut -d' ' -f3)"
         ((dev_score++))
         dev_tools+=("Go")
     fi
-    
+
     # Rust 开发
     if command -v rustc >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Rust $(rustc --version | cut -d' ' -f2)"
         ((dev_score++))
         dev_tools+=("Rust")
     fi
-    
+
     # Docker
     if command -v docker >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Docker $(docker --version | cut -d' ' -f3 | tr -d ',')"
         ((dev_score++))
         dev_tools+=("Docker")
     fi
-    
+
     # 判断用户类型
     if [ $dev_score -ge 3 ]; then
         USER_TYPE="developer"
@@ -213,7 +213,7 @@ detect_dev_env() {
 # 生成推荐配置
 generate_recommendations() {
     echo -e "\n${BLUE}=== 配置建议 ===${NC}\n"
-    
+
     # 基于操作系统的建议
     case "$DETECTED_OS" in
         macOS)
@@ -229,7 +229,7 @@ generate_recommendations() {
             fi
             ;;
     esac
-    
+
     # 基于用户类型的建议
     case "$USER_TYPE" in
         developer)
@@ -260,7 +260,7 @@ generate_recommendations() {
             echo -e "${CYAN}建议运行:${NC} ./install --minimal"
             ;;
     esac
-    
+
     # 显示其他建议
     if [ ${#RECOMMENDATIONS[@]} -gt 0 ]; then
         echo -e "\n${YELLOW}其他建议:${NC}"
@@ -273,7 +273,7 @@ generate_recommendations() {
 # 生成环境报告
 generate_report() {
     local report_file="environment-report.txt"
-    
+
     {
         echo "=== 环境检测报告 ==="
         echo "生成时间: $(date)"
@@ -290,7 +290,7 @@ generate_report() {
             echo "- $rec"
         done
     } > "$report_file"
-    
+
     echo -e "\n${GREEN}报告已保存到: $report_file${NC}"
 }
 
@@ -300,20 +300,20 @@ main() {
     echo -e "${MAGENTA}║        环境检测和配置推荐工具         ║${NC}"
     echo -e "${MAGENTA}╚═══════════════════════════════════════╝${NC}"
     echo ""
-    
+
     detect_os
     detect_shell
     detect_tools
     detect_dev_env
     generate_recommendations
-    
+
     # 询问是否保存报告
     echo ""
     read -rp "是否保存检测报告? [y/N] " save_report
     if [[ "$save_report" =~ ^[Yy]$ ]]; then
         generate_report
     fi
-    
+
     echo -e "\n${GREEN}检测完成！${NC}"
 }
 
