@@ -230,24 +230,12 @@ alias clean_pic="mat"
 if [ -n "${BFG_JAR:-}" ] && [ -f "$BFG_JAR" ]; then
   alias bfg="java -jar \"$BFG_JAR\""
 fi
-alias gbook="gitbook"
-alias mj="makejava"
 
 
 ############################################
 
 ################ self defined functions ###################
 #
-# 有道词典cli查询
-# pre condition: sudo apt install w3m
-youdao() {
-if [ -z "$1" ]
-then
-echo 'Usage youdao <word>'
-else
-    w3m -dump "https://dict.youdao.com/search?q=$1"
-fi
-}
 
 ###########################################################
 
