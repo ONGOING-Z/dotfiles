@@ -90,7 +90,13 @@ alias dprune='docker system prune -af'
 # 进程管理
 alias psg='ps aux | grep -v grep | grep -i'
 alias port='netstat -tulanp | grep'
-alias killport='function _killport() { lsof -ti :$1 | xargs kill -9; }; _killport'
+killport() {
+    if [ -z "${1:-}" ]; then
+        echo "Usage: killport <port>" >&2
+        return 1
+    fi
+    lsof -ti ":$1" | xargs kill -9 2>/dev/null || true
+}
 
 # 系统信息
 alias meminfo='free -h'
@@ -178,13 +184,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     alias brewup='brew update && brew upgrade && brew cleanup'
     alias brewinfo='brew info'
     alias brewsearch='brew search'
-    
+
     # macOS 工具
     alias showfiles='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
     alias hidefiles='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
     alias cleanup='find . -type f -name "*.DS_Store" -ls -delete'
     alias emptytrash='sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl'
-    
+
     # 应用管理
     alias ios='open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'
     alias watchos='open /Applications/Xcode.app/Contents/Developer/Applications/Simulator\ \(Watch\).app'
@@ -201,7 +207,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     alias aptinstall='sudo apt install'
     alias aptremove='sudo apt remove'
     alias aptclean='sudo apt autoremove && sudo apt autoclean'
-    
+
     # 系统管理
     alias reboot='sudo reboot'
     alias poweroff='sudo poweroff'

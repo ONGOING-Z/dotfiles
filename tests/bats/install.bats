@@ -41,11 +41,11 @@ echo "MOCK: install-new.sh called"
 exit 0
 EOF
     chmod +x "$TEST_TEMP_DIR/scripts/install-new.sh"
-    
+
     # 修改 install 脚本使用测试目录
     sed "s|SCRIPT_DIR/scripts|TEST_TEMP_DIR/scripts|g" "$DOTFILES_ROOT/install" > "$TEST_TEMP_DIR/install"
     chmod +x "$TEST_TEMP_DIR/install"
-    
+
     run "$TEST_TEMP_DIR/install"
     assert_success "$status"
     [[ "$output" =~ "MOCK: install-new.sh called" ]]
@@ -60,11 +60,11 @@ echo "MOCK: install-unified.sh called with args: $@"
 exit 0
 EOF
     chmod +x "$TEST_TEMP_DIR/scripts/install-unified.sh"
-    
+
     # 修改 install 脚本
     sed "s|SCRIPT_DIR/scripts|TEST_TEMP_DIR/scripts|g" "$DOTFILES_ROOT/install" > "$TEST_TEMP_DIR/install"
     chmod +x "$TEST_TEMP_DIR/install"
-    
+
     run "$TEST_TEMP_DIR/install" --quick
     assert_success "$status"
     [[ "$output" =~ "MOCK: install-unified.sh called with args: --quick" ]]

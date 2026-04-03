@@ -5,7 +5,7 @@
 lazy_load() {
     local func_name="$1"
     local load_command="$2"
-    
+
     # 创建占位函数
     eval "
     $func_name() {
@@ -32,7 +32,7 @@ fi
 # RVM 延迟加载
 if [ -s "$HOME/.rvm/scripts/rvm" ]; then
     export PATH="$PATH:$HOME/.rvm/bin"
-    
+
     lazy_load rvm "source '$HOME/.rvm/scripts/rvm'"
     lazy_load ruby "source '$HOME/.rvm/scripts/rvm'"
     lazy_load gem "source '$HOME/.rvm/scripts/rvm'"
@@ -43,7 +43,7 @@ fi
 if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
     export PATH="$PYENV_ROOT/bin:$PATH"
-    
+
     lazy_load pyenv 'eval "$(pyenv init -)"'
     lazy_load python 'eval "$(pyenv init -)"'
     lazy_load pip 'eval "$(pyenv init -)"'
@@ -52,7 +52,7 @@ fi
 # rbenv 延迟加载
 if [ -d "$HOME/.rbenv" ]; then
     export PATH="$HOME/.rbenv/bin:$PATH"
-    
+
     lazy_load rbenv 'eval "$(rbenv init -)"'
 fi
 
@@ -76,7 +76,7 @@ fi
 # FZF 延迟加载
 if [ -f ~/.fzf.bash ] || [ -f ~/.fzf.zsh ]; then
     export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-    
+
     # FZF 函数延迟加载
     if [ -n "$BASH_VERSION" ]; then
         lazy_load _fzf_setup_completion 'source ~/.fzf.bash'
@@ -92,7 +92,7 @@ fi
 git_status_cached() {
     local cache_file="/tmp/.git_status_cache_$$"
     local cache_time=5  # 缓存5秒
-    
+
     if [ -f "$cache_file" ]; then
         local age=$(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file" 2>/dev/null)))
         if [ $age -lt $cache_time ]; then
@@ -100,7 +100,7 @@ git_status_cached() {
             return
         fi
     fi
-    
+
     git status --porcelain 2>/dev/null | tee "$cache_file"
 }
 
@@ -109,10 +109,10 @@ git_prompt_info_fast() {
     if ! git rev-parse --git-dir >/dev/null 2>&1; then
         return
     fi
-    
+
     local branch=$(git symbolic-ref -q --short HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || echo "detached")
     local status=$(git_status_cached | wc -l | tr -d ' ')
-    
+
     if [ "$status" -gt 0 ]; then
         echo " ($branch *)"
     else
@@ -125,9 +125,9 @@ shell_startup_time() {
     local shell_name="${1:-$SHELL}"
     local iterations="${2:-10}"
     local total_time=0
-    
+
     echo "测试 $shell_name 启动时间 ($iterations 次迭代)..."
-    
+
     for i in $(seq 1 $iterations); do
         local start_time=$(date +%s%N)
         $shell_name -i -c exit 2>/dev/null
@@ -136,11 +136,11 @@ shell_startup_time() {
         total_time=$((total_time + duration))
         echo "  迭代 $i: ${duration}ms"
     done
-    
+
     local avg_time=$((total_time / iterations))
     echo ""
     echo "平均启动时间: ${avg_time}ms"
-    
+
     if [ $avg_time -lt 100 ]; then
         echo "性能: 优秀 ⚡"
     elif [ $avg_time -lt 300 ]; then

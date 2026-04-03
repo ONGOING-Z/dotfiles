@@ -27,17 +27,17 @@ teardown() {
     mkdir -p "$HOME/.config"
     touch "$TEST_TEMP_DIR/test_file"
     ln -s "$TEST_TEMP_DIR/test_file" "$HOME/.test_link"
-    
+
     # 确认链接存在
     assert_link_exists "$HOME/.test_link"
-    
+
     # 创建一个简单的卸载测试
     # 注意：这里我们不真正运行完整的 uninstall.sh，因为它会影响系统
     # 只测试基本功能
-    
+
     # 手动删除链接（模拟卸载行为）
     rm -f "$HOME/.test_link"
-    
+
     # 确认链接已删除
     [ ! -L "$HOME/.test_link" ]
 }
@@ -53,7 +53,7 @@ teardown() {
     # 创建一些测试文件
     touch "$HOME/.bashrc"
     touch "$HOME/.zshrc"
-    
+
     # 确保这些文件在测试后仍然存在
     # （我们不真正运行卸载，只是验证文件存在）
     assert_file_exists "$HOME/.bashrc"
