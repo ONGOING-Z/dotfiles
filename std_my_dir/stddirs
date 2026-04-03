@@ -1,138 +1,36 @@
 #!/usr/bin/env python3
 """
 标准化目录命令 - 全局命令版本
-创建 project, archive, discard 三个标准目录
+调用 standardize_dirs.py 实现完整功能
 """
 
 import os
 import sys
 from pathlib import Path
 
-
-def create_standard_directories(base_path="."):
-    """
-    创建标准化目录
-
-    Args:
-        base_path (str): 基础路径，默认为当前目录
-
-    Returns:
-        dict: 创建结果信息
-    """
-    # 定义标准目录名称
-    standard_dirs = ["project", "archive", "discard"]
-
-    # 转换为Path对象
-    base_path = Path(base_path).resolve()
-
-    results = {"created": [], "existed": [], "errors": []}
-
-    print(f"正在标准化目录: {base_path}")
-    print("-" * 50)
-
-    for dir_name in standard_dirs:
-        dir_path = base_path / dir_name
-
-        try:
-            if dir_path.exists():
-                if dir_path.is_dir():
-                    print(f"✓ 目录已存在: {dir_name}")
-                    results["existed"].append(str(dir_path))
-                else:
-                    print(f"✗ 错误: {dir_name} 已存在但不是目录")
-                    results["errors"].append(f"{dir_name} 已存在但不是目录")
-            else:
-                # 创建目录
-                dir_path.mkdir(parents=True, exist_ok=True)
-                print(f"✓ 创建目录: {dir_name}")
-                results["created"].append(str(dir_path))
-
-        except PermissionError:
-            error_msg = f"权限不足，无法创建目录 {dir_name}"
-            print(f"✗ {error_msg}")
-            results["errors"].append(error_msg)
-        except Exception as e:
-            error_msg = f"创建目录 {dir_name} 时发生错误: {str(e)}"
-            print(f"✗ {error_msg}")
-            results["errors"].append(error_msg)
-
-    return results
-
-
-def print_summary(results):
-    """打印创建结果摘要"""
-    print("\n" + "=" * 50)
-    print("创建结果摘要:")
-    print(f"✓ 新创建: {len(results['created'])} 个目录")
-    print(f"✓ 已存在: {len(results['existed'])} 个目录")
-    print(f"✗ 错误: {len(results['errors'])} 个")
-
-    if results["created"]:
-        print("\n新创建的目录:")
-        for dir_path in results["created"]:
-            print(f"  - {dir_path}")
-
-    if results["existed"]:
-        print("\n已存在的目录:")
-        for dir_path in results["existed"]:
-            print(f"  - {dir_path}")
-
-    if results["errors"]:
-        print("\n错误信息:")
-        for error in results["errors"]:
-            print(f"  - {error}")
-
-
-def show_help():
-    """显示帮助信息"""
-    print(
-        """
-标准化目录命令 - stddirs
-
-用法:
-    stddirs                    # 在当前目录创建标准化目录
-    stddirs <path>            # 在指定路径创建标准化目录
-    stddirs -h, --help        # 显示帮助信息
-
-示例:
-    stddirs                    # 在当前目录创建 project, archive, discard
-    stddirs ~/Documents       # 在 Documents 目录创建标准化目录
-    stddirs /path/to/project  # 在指定项目目录创建标准化目录
-
-创建的目录:
-    project/   - 项目文件
-    archive/   - 归档文件
-    discard/   - 待删除文件
-"""
-    )
+# 获取脚本所在目录
+SCRIPT_DIR = Path(__file__).resolve().parent
+MAIN_SCRIPT = SCRIPT_DIR / "standardize_dirs.py"
 
 
 def main():
-    """主函数"""
-    # 处理命令行参数
-    if len(sys.argv) > 1:
-        if sys.argv[1] in ["-h", "--help", "help"]:
-            show_help()
-            sys.exit(0)
-        target_path = sys.argv[1]
-    else:
-        target_path = "."
+    """主函数 - 调用主脚本"""
+    # 检查主脚本是否存在
+    if not MAIN_SCRIPT.exists():
+        print(f"❌ 错误: 找不到主脚本 {MAIN_SCRIPT}")
+        print("请确保 standardize_dirs.py 在同一目录下")
+        sys.exit(1)
+
+    # 执行主脚本，传递所有参数
+    import subprocess
 
     try:
-        # 创建标准化目录
-        results = create_standard_directories(target_path)
-
-        # 打印摘要
-        print_summary(results)
-
-        # 返回适当的退出码
-        if results["errors"]:
-            print(f"\n⚠️  有 {len(results['errors'])} 个错误，请检查上述信息")
-            sys.exit(1)
-        else:
-            print(f"\n✅ 目录标准化完成！")
-            sys.exit(0)
-
+        # 使用 subprocess 调用主脚本
+        result = subprocess.run(
+            [sys.executable, str(MAIN_SCRIPT)] + sys.argv[1:],
+            cwd=os.getcwd(),
+        )
+        sys.exit(result.returncode)
     except KeyboardInterrupt:
         print("\n\n操作被用户中断")
         sys.exit(130)
