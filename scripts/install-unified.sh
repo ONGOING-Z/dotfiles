@@ -730,17 +730,24 @@ backup_existing() {
     done
 
     if [ "$need_backup" = true ]; then
+        # 演示模式不得等待 stdin（CI 无 TTY 时会挂起）
+        if [ "$DRY_RUN" = "1" ]; then
+            print_info "[DRY-RUN] 将备份到: $BACKUP_DIR"
+            for file in "${files_to_backup[@]}"; do
+                if [ -f "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
+                    print_info "[DRY-RUN] 备份 $file"
+                fi
+            done
+            return
+        fi
+
         if confirm "发现现有配置文件，是否备份？" "y"; then
-            [ "$DRY_RUN" = "1" ] && print_info "[DRY-RUN] 创建备份目录: $BACKUP_DIR" || mkdir -p "$BACKUP_DIR"
+            mkdir -p "$BACKUP_DIR"
 
             for file in "${files_to_backup[@]}"; do
                 if [ -f "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
-                    if [ "$DRY_RUN" = "1" ]; then
-                        print_info "[DRY-RUN] 备份 $file"
-                    else
-                        cp "$HOME/$file" "$BACKUP_DIR/"
-                        print_success "已备份: $file"
-                    fi
+                    cp "$HOME/$file" "$BACKUP_DIR/"
+                    print_success "已备份: $file"
                 fi
             done
 
@@ -758,7 +765,18 @@ backup_existing() {
 run_dotbot() {
     print_section "创建符号链接"
 
-    cd "${BASEDIR}"
+    # 仓库根目录：本脚本在 scripts/ 下时，dotbot 与 install.conf.yaml 在上一级
+    local ROOT_DIR
+    if [ -f "${BASEDIR}/${CONFIG}" ]; then
+        ROOT_DIR="${BASEDIR}"
+    elif [ -f "${BASEDIR}/../${CONFIG}" ]; then
+        ROOT_DIR="$(cd "${BASEDIR}/.." && pwd)"
+    else
+        print_error "找不到配置文件 ${CONFIG}"
+        exit 1
+    fi
+
+    cd "${ROOT_DIR}"
 
     # 初始化 dotbot submodule
     if [ "$DRY_RUN" = "1" ]; then
@@ -772,7 +790,7 @@ run_dotbot() {
     if [ "$DRY_RUN" = "1" ]; then
         print_info "[DRY-RUN] 运行 Dotbot 创建符号链接"
     else
-        "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
+        "${ROOT_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${ROOT_DIR}" -c "${CONFIG}" ${FORWARD_ARGS+"${FORWARD_ARGS[@]}"}
     fi
 }
 
