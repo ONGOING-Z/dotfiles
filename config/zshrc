@@ -207,11 +207,8 @@ fi
 
 #alias vim='gvim -v'
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-
+# NVM：由 ~/dotfiles/shell/lazy-load.sh 延迟加载（见该文件 nvm 段）
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 
 # fzf
@@ -229,7 +226,10 @@ _tail_log() {
 # -d: display
 alias clean_pic="mat"
 
-alias bfg="java -jar /media/$USER/New_Disk/test6/bfg-1.14.0.jar"
+# 可移植：在 ~/.zshrc.local 中设置 BFG_JAR=/path/to/bfg.jar
+if [ -n "${BFG_JAR:-}" ] && [ -f "$BFG_JAR" ]; then
+  alias bfg="java -jar \"$BFG_JAR\""
+fi
 alias gbook="gitbook"
 alias mj="makejava"
 
@@ -245,7 +245,7 @@ if [ -z "$1" ]
 then
 echo 'Usage youdao <word>'
 else
-    w3m -dump "http://dict.youdao.com/search?q=$1"
+    w3m -dump "https://dict.youdao.com/search?q=$1"
 fi
 }
 
@@ -285,10 +285,9 @@ unsetopt correct_all
 # 下面这句加进去之后新起一个终端会出问题！！！
 #. ~/.bashrc
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# 21-9-5 Sun the sdkman is a tool that installs software like apache tomcat.
-export SDKMAN_DIR="/home/${USER}/.sdkman"
-[[ -s "/home/${USER}/.sdkman/bin/sdkman-init.sh" ]] && source "/home/${USER}/.sdkman/bin/sdkman-init.sh"
+# SDKMAN：默认 ~/.sdkman（可在 ~/.zshrc.local 覆盖 SDKMAN_DIR）
+export SDKMAN_DIR="${SDKMAN_DIR:-$HOME/.sdkman}"
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
 
 ###################################################################################################
 # place this the end of file. !!!
@@ -490,10 +489,6 @@ fi
 # 加载 dotfiles 别名和函数
 if [ -f ~/dotfiles/shell/aliases.sh ]; then
     source ~/dotfiles/shell/aliases.sh
-fi
-
-if [ -f ~/dotfiles/shell/functions.sh ]; then
-    source ~/dotfiles/shell/functions.sh
 fi
 
 # 加载插件系统

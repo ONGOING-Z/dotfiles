@@ -17,16 +17,16 @@ lazy_load() {
     "
 }
 
-# NVM 延迟加载
-if [ -s "$HOME/.nvm/nvm.sh" ]; then
-    export NVM_DIR="$HOME/.nvm"
-    
-    # 创建 nvm, node, npm 的占位函数
-    lazy_load nvm "source '$NVM_DIR/nvm.sh'"
-    lazy_load node "source '$NVM_DIR/nvm.sh'"
-    lazy_load npm "source '$NVM_DIR/nvm.sh'"
-    lazy_load npx "source '$NVM_DIR/nvm.sh'"
-    lazy_load yarn "source '$NVM_DIR/nvm.sh'"
+# NVM 延迟加载（与 zshrc 中 NVM_DIR 一致；首次调用 nvm/node/npm 等时再 source）
+: "${NVM_DIR:=$HOME/.nvm}"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    _nvm_lazy_init="source '$NVM_DIR/nvm.sh' && [ -s '$NVM_DIR/bash_completion' ] && . '$NVM_DIR/bash_completion'"
+    lazy_load nvm "$_nvm_lazy_init"
+    lazy_load node "$_nvm_lazy_init"
+    lazy_load npm "$_nvm_lazy_init"
+    lazy_load npx "$_nvm_lazy_init"
+    lazy_load yarn "$_nvm_lazy_init"
+    unset _nvm_lazy_init
 fi
 
 # RVM 延迟加载
