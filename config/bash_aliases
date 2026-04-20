@@ -39,7 +39,17 @@ alias pmanim='python3 -m manim'
 alias pc='proxychains'
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 alias pycharm="/Applications/PyCharm.app/Contents/MacOS/pycharm"
-alias idea="/Applications/IntelliJ\ IDEA.app/Contents/MacOS/idea"
+unalias idea 2>/dev/null
+function idea() {
+  if [ -d "$HOME/Applications/IntelliJ IDEA.app" ] || [ -d "/Applications/IntelliJ IDEA.app" ]; then
+    open -na "IntelliJ IDEA.app" --args "$@"
+  elif [ -d "$HOME/Applications/IntelliJ IDEA CE.app" ] || [ -d "/Applications/IntelliJ IDEA CE.app" ]; then
+    open -na "IntelliJ IDEA CE.app" --args "$@"
+  else
+    echo "IntelliJ IDEA 未找到，请先安装或确认应用名称。"
+    return 1
+  fi
+}
 alias typora="/Applications/Typora.app/Contents/MacOS/Typora"
 alias cursor="/Applications/Cursor.app/Contents/MacOS/Cursor"
 alias arthas="/usr/local/arthas-packaging-4.0.5-bin/as.sh"
