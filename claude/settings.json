@@ -1,0 +1,7 @@
+{
+  "theme": "dark-ansi",
+  "fileSuggestion": {
+    "type": "command",
+    "command": "~/.claude/file-suggestion.sh"
+  }
+}

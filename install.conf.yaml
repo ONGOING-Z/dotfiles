@@ -17,6 +17,18 @@
     ~/.config/nvim/init.vim: nvim/init.vim
     ~/.ripgreprc: config/ripgreprc
     ~/.fzf: config/fzf
+    ~/.claude/settings.json: claude/settings.json
+    ~/.claude/settings.local.json: claude/settings.local.json
+    ~/.claude/file-suggestion.sh: claude/file-suggestion.sh
+    ~/.claude/CLAUDE.md: claude/CLAUDE.md
+    ~/.claude/commands/menu.md: claude/commands/menu.md
+    ~/.claude/commands/commit.md: claude/commands/commit.md
+    ~/.claude/commands/pr.md: claude/commands/pr.md
+    ~/.claude/commands/review.md: claude/commands/review.md
+    ~/.claude/commands/release.md: claude/commands/release.md
+    ~/.claude/commands/update.md: claude/commands/update.md
+    ~/.claude/commands/clean.md: claude/commands/clean.md
+    ~/.claude/commands/health.md: claude/commands/health.md
     # arthas properties (link only when directory exists; see shell task below)
     # /usr/local/arthas-packaging-4.0.5-bin/arthas.properties: arthas/arthas.properties
 
@@ -25,6 +37,8 @@
     - ~/.vim/undo-history
     - ~/.pip
     - ~/.config/nvim
+    - ~/.claude
+    - ~/.claude/commands
 
 - shell:
     - git submodule update --init --recursive

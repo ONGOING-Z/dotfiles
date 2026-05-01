@@ -485,6 +485,7 @@ if [ -f ~/dotfiles/scripts/plugin-manager.sh ]; then
 fi
 
 # 加载本地配置（如果存在）
+# 敏感配置（API keys 等）请放入 ~/.zshrc.local，该文件不会被提交到 git
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
