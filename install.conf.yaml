@@ -20,6 +20,7 @@
     ~/.claude/settings.json: claude/settings.json
     ~/.claude/settings.local.json: claude/settings.local.json
     ~/.claude/file-suggestion.sh: claude/file-suggestion.sh
+    ~/.claude/statusline.js: claude/statusline.js
     ~/.claude/CLAUDE.md: claude/CLAUDE.md
     ~/.claude/commands/menu.md: claude/commands/menu.md
     ~/.claude/commands/commit.md: claude/commands/commit.md

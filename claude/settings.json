@@ -3,5 +3,9 @@
   "fileSuggestion": {
     "type": "command",
     "command": "~/.claude/file-suggestion.sh"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.js"
   }
 }
