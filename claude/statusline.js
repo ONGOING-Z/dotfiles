@@ -22,16 +22,9 @@ function ansi(text, bgColor, fgColor = 'rgb(255, 255, 255)') {
 }
 
 function formatSections(sections) {
-  // 使用三角箭头分隔，所有终端均支持
-  const SEP = '◀'; // ◀ 左三角
-
-  const colored = sections.map((s, i) => {
-    const segment = ansi(` ${s.text} `, s.bg, s.fg || 'rgb(255,255,255)');
-    if (i === 0) return segment;
-    return ansi(`${SEP}`, s.bg, sections[i - 1].bg) + segment;
-  });
-
-  return colored.join('');
+  return sections.map((s, i) => {
+    return ansi(` ${s.text} `, s.bg, s.fg || 'rgb(255,255,255)');
+  }).join('');
 }
 
 try {
