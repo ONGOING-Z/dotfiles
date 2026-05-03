@@ -22,21 +22,16 @@ function ansi(text, bgColor, fgColor = 'rgb(255, 255, 255)') {
 }
 
 function formatSections(sections) {
-  const LEFT_ROUND = '';
-  const RIGHT_ARROW = '';
-  const RIGHT_ROUND = '';
+  // 使用三角箭头分隔，所有终端均支持
+  const SEP = '◀'; // ◀ 左三角
 
   const colored = sections.map((s, i) => {
     const segment = ansi(` ${s.text} `, s.bg, s.fg || 'rgb(255,255,255)');
     if (i === 0) return segment;
-    return ansi(RIGHT_ARROW, s.bg, sections[i - 1].bg) + segment;
+    return ansi(`${SEP}`, s.bg, sections[i - 1].bg) + segment;
   });
 
-  return [
-    ansi(LEFT_ROUND, 'rgb(0,0,0)', sections[0].bg),
-    ...colored,
-    ansi(RIGHT_ROUND, 'rgb(0,0,0)', sections.at(-1).bg),
-  ].join('');
+  return colored.join('');
 }
 
 try {
@@ -50,7 +45,7 @@ try {
   // git 分支
   const branch = getGitBranch();
   if (branch) {
-    sections.push({ text: ` ${branch}`, bg: 'rgb(70, 107, 62)' });
+    sections.push({ text: `${branch}`, bg: 'rgb(70, 107, 62)' });
   }
 
   // 模型名称
@@ -68,7 +63,7 @@ try {
     const pct = Math.round((used / cw.context_window_size) * 100);
     const danger = pct > DUMB_ZONE;
     sections.push({
-      text: ` ${pct}%`,
+      text: `${pct}%`,
       bg: danger ? 'rgb(226, 0, 0)' : 'rgb(217, 119, 87)',
       fg: danger ? 'rgb(255,255,255)' : 'rgb(0,0,0)',
     });
