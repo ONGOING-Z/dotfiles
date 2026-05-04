@@ -3,7 +3,7 @@
       create: true
       relink: true
 
-- clean: ['~']
+- clean: ['~/.claude/commands', '~/.claude/rules', '~/.config/nvim']
 
 - link:
     ~/.tmux.conf: tmux/tmux.conf
@@ -22,6 +22,7 @@
     ~/.claude/file-suggestion.sh: claude/file-suggestion.sh
     ~/.claude/statusline.js: claude/statusline.js
     ~/.claude/CLAUDE.md: claude/CLAUDE.md
+    ~/.claude/rules/coding-standards.md: claude/rules/coding-standards.md
     ~/.claude/commands/menu.md: claude/commands/menu.md
     ~/.claude/commands/commit.md: claude/commands/commit.md
     ~/.claude/commands/pr.md: claude/commands/pr.md
@@ -40,6 +41,7 @@
     - ~/.config/nvim
     - ~/.claude
     - ~/.claude/commands
+    - ~/.claude/rules
 
 - shell:
     - git submodule update --init --recursive
