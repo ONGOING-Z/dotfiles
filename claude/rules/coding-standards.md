@@ -2,6 +2,16 @@
 
 ---
 
+## Mybatis xml
+
+条件要另起一行开始，对齐
+```xml
+<select id="selectById" resultMap="NodeMap">
+    SELECT * FROM decision_tree_nodes
+    WHERE id = #{id}
+</select>
+```
+
 ## Shell / Bash
 
 ### 模板
@@ -109,36 +119,6 @@ public class ConfigLoader {
 ```
 
 ---
-
-## Go
-
-### 模板
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("hello")
-}
-```
-
-### 示例
-
-```go
-type Config struct {
-    Path string
-    Mode int
-}
-
-func LoadConfig(p string) (*Config, error) {
-    if p == "" {
-        return nil, fmt.Errorf("path required")
-    }
-    return &Config{Path: p, Mode: 0644}, nil
-}
-```
 
 ---
 

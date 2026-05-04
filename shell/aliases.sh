@@ -327,6 +327,13 @@ alias dotfiles='cd ~/dotfiles'
 alias dotup='cd ~/dotfiles && git pull && ./install'
 alias dothealth='cd ~/dotfiles && ./install --health-check'
 
+# Claude Code
+alias cc='claude'
+alias cl='claude'
+alias cr='claude --resume'
+alias cp='claude --print'
+alias cpr='claude --project'
+
 # -----------------------------------------------------------------------------
 # 加载本地别名（如果存在）
 # -----------------------------------------------------------------------------
