@@ -13,6 +13,7 @@
 - 不过度抽象——三个相似的写法好过一个过早的抽象
 - 不需要写文档/README/CHANGELOG 除非明确要求
 - 不添加没发生过的场景的错误处理
+- 严格遵守分层：Controller → Service → Manager → DAO，Controller 不能直接调用 Manager 或 Engine
 
 ## 常用工作流
 - 提交: 遵循 conventional commits，message 用英文
