@@ -6,6 +6,13 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+## [3.8.4](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.3...v3.8.4) (2026-04-21)
+
+
+### Bug Fixes
+
+* **shell:** make idea command work in zsh ([6337b17](https://github.com/ONGOING-Z/dotfiles/commit/6337b17e5fbf380c32a4e58de07f1201dedadfb3))
+
 ## [3.8.3](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.2...v3.8.3) (2026-04-03)
 
 
