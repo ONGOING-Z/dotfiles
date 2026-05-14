@@ -35,3 +35,8 @@
 - 不要往 ~/.zshrc 写 API key 等敏感信息（用 ~/.zshrc.local）
 - 不要用 `git add -A`，指定具体文件
 - 不要在 main/master 上 force push
+- 禁止通过 docker exec、mysql 客户端等任何方式直接查询数据库数据，包括但不限于：
+  - `docker exec ... mysql -e "SELECT ..."`
+  - `docker exec ... mysql -uroot -proot`
+  - `mysql -h ... -e ...`
+  - 建表/改表等 DDL 除外，但需用户明确确认
