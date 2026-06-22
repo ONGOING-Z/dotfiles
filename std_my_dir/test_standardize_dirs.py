@@ -3,7 +3,7 @@ import json
 import shutil
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import pytest
 
 from standardize_dirs import (
@@ -286,3 +286,69 @@ def test_list_presets(capsys):
     assert "可用的预设模板" in captured.out
     for key in PRESET_TEMPLATES.keys():
         assert key in captured.out
+
+
+def test_get_directory_list_from_custom_config(tmp_path: Path):
+    """自定义 JSON 含 dirs 时应使用该列表"""
+    cfg = tmp_path / "dirs.json"
+    cfg.write_text(json.dumps({"dirs": ["a", "b"]}), encoding="utf-8")
+    assert get_directory_list(custom_config=str(cfg)) == ["a", "b"]
+
+
+def test_get_directory_list_custom_config_no_dirs_key(tmp_path: Path):
+    """自定义 JSON 无 dirs 时应回退到默认基础结构"""
+    cfg = tmp_path / "empty.json"
+    cfg.write_text(json.dumps({"note": "x"}), encoding="utf-8")
+    assert get_directory_list(custom_config=str(cfg)) == PRESET_TEMPLATES["basic"]["dirs"]
+
+
+def test_get_directory_list_learning_and_frameworks_presets():
+    assert "01_learning" in get_directory_list(preset="learning")
+    assert "01_spring" in get_directory_list(preset="frameworks")
+
+
+def test_print_summary_not_verbose(capsys):
+    print_summary({"created": [], "existed": [], "errors": []}, verbose=False)
+    assert capsys.readouterr().out == ""
+
+
+def test_create_standard_directories_permission_error(tmp_path: Path):
+    with patch.object(Path, "mkdir", side_effect=PermissionError("denied")):
+        result = create_standard_directories(tmp_path, dirs=["x"])
+    assert len(result["errors"]) == 1
+    assert "权限不足" in result["errors"][0]
+
+
+def test_create_standard_directories_unexpected_error(tmp_path: Path):
+    with patch.object(Path, "mkdir", side_effect=RuntimeError("boom")):
+        result = create_standard_directories(tmp_path, dirs=["y"])
+    assert len(result["errors"]) == 1
+    assert "boom" in result["errors"][0]
+
+
+def test_main_list_presets_exits_zero(capsys):
+    with patch.object(sys, "argv", ["standardize_dirs.py", "--list-presets"]):
+        with pytest.raises(SystemExit) as exc:
+            main()
+        assert exc.value.code == 0
+    assert "可用的预设模板" in capsys.readouterr().out
+
+
+def test_main_no_dirs_from_config_exits_one(tmp_path: Path):
+    cfg = tmp_path / "nodirs.json"
+    cfg.write_text(json.dumps({"dirs": []}), encoding="utf-8")
+    with patch.object(sys, "argv", ["standardize_dirs.py", str(tmp_path), "-c", str(cfg)]):
+        with pytest.raises(SystemExit) as exc:
+            main()
+        assert exc.value.code == 1
+
+
+def test_main_unexpected_exception(tmp_path: Path):
+    with patch(
+        "standardize_dirs.get_directory_list",
+        side_effect=RuntimeError("unexpected"),
+    ):
+        with patch.object(sys, "argv", ["standardize_dirs.py", str(tmp_path)]):
+            with pytest.raises(SystemExit) as exc:
+                main()
+            assert exc.value.code == 1
