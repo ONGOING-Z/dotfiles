@@ -4,3 +4,78 @@
 [submodule "rime-config"]
 	path = rime-config
 	url = git@github.com:ONGOING-Z/rime-config.git
+[submodule "vim-vim-plugged-ack-vim"]
+	path = vim/vim/plugged/ack.vim
+	url = https://github.com/mileszs/ack.vim.git
+[submodule "vim-vim-plugged-ale"]
+	path = vim/vim/plugged/ale
+	url = https://github.com/dense-analysis/ale.git
+[submodule "vim-vim-plugged-auto-pairs"]
+	path = vim/vim/plugged/auto-pairs
+	url = https://github.com/jiangmiao/auto-pairs.git
+[submodule "vim-vim-plugged-calendar-vim"]
+	path = vim/vim/plugged/calendar.vim
+	url = https://github.com/itchyny/calendar.vim.git
+[submodule "vim-vim-plugged-command-t"]
+	path = vim/vim/plugged/command-t
+	url = https://github.com/wincent/command-t.git
+[submodule "vim-vim-plugged-gruvbox"]
+	path = vim/vim/plugged/gruvbox
+	url = https://github.com/morhetz/gruvbox.git
+[submodule "vim-vim-plugged-incsearch-vim"]
+	path = vim/vim/plugged/incsearch.vim
+	url = https://github.com/haya14busa/incsearch.vim.git
+[submodule "vim-vim-plugged-indentLine"]
+	path = vim/vim/plugged/indentLine
+	url = https://github.com/Yggdroot/indentLine.git
+[submodule "vim-vim-plugged-md-img-paste-vim"]
+	path = vim/vim/plugged/md-img-paste.vim
+	url = https://github.com/ferrine/md-img-paste.vim.git
+[submodule "vim-vim-plugged-nerdtree"]
+	path = vim/vim/plugged/nerdtree
+	url = https://github.com/preservim/nerdtree.git
+[submodule "vim-vim-plugged-tabular"]
+	path = vim/vim/plugged/tabular
+	url = https://github.com/godlygeek/tabular.git
+[submodule "vim-vim-plugged-tagbar"]
+	path = vim/vim/plugged/tagbar
+	url = https://github.com/majutsushi/tagbar.git
+[submodule "vim-vim-plugged-ultisnips"]
+	path = vim/vim/plugged/ultisnips
+	url = https://github.com/SirVer/ultisnips.git
+[submodule "vim-vim-plugged-vim-airline"]
+	path = vim/vim/plugged/vim-airline
+	url = https://github.com/vim-airline/vim-airline.git
+[submodule "vim-vim-plugged-vim-airline-themes"]
+	path = vim/vim/plugged/vim-airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes.git
+[submodule "vim-vim-plugged-vim-easy-align"]
+	path = vim/vim/plugged/vim-easy-align
+	url = https://github.com/junegunn/vim-easy-align.git
+[submodule "vim-vim-plugged-vim-easymotion"]
+	path = vim/vim/plugged/vim-easymotion
+	url = https://github.com/easymotion/vim-easymotion.git
+[submodule "vim-vim-plugged-vim-illuminate"]
+	path = vim/vim/plugged/vim-illuminate
+	url = https://github.com/RRethy/vim-illuminate.git
+[submodule "vim-vim-plugged-vim-instant-markdown"]
+	path = vim/vim/plugged/vim-instant-markdown
+	url = https://github.com/suan/vim-instant-markdown.git
+[submodule "vim-vim-plugged-vim-markdown"]
+	path = vim/vim/plugged/vim-markdown
+	url = https://github.com/plasticboy/vim-markdown.git
+[submodule "vim-vim-plugged-vim-signify"]
+	path = vim/vim/plugged/vim-signify
+	url = https://github.com/mhinz/vim-signify.git
+[submodule "vim-vim-plugged-vim-snippets"]
+	path = vim/vim/plugged/vim-snippets
+	url = https://github.com/honza/vim-snippets.git
+[submodule "vim-vim-plugged-vim-startify"]
+	path = vim/vim/plugged/vim-startify
+	url = https://github.com/mhinz/vim-startify.git
+[submodule "vim-vim-plugged-vim-surround"]
+	path = vim/vim/plugged/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule "vim-vim-plugged-vim-table-mode"]
+	path = vim/vim/plugged/vim-table-mode
+	url = https://github.com/dhruvasagar/vim-table-mode.git
