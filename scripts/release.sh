@@ -13,6 +13,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CLIFF_TOML="$DOTFILES_ROOT/cliff.toml"
 VERSION="${1:-}"
+DRY_RUN=0
+[[ "${2:-}" == "--dry-run" ]] && DRY_RUN=1
 
 git rev-parse --git-dir >/dev/null 2>&1 || { echo "当前目录不是 git 仓库" >&2; exit 1; }
 [[ -z "$(git status --porcelain)" ]] || { echo "working tree 不干净，先提交或清理" >&2; exit 1; }
@@ -47,6 +49,11 @@ if command -v git-cliff >/dev/null 2>&1; then
   echo "CHANGELOG.md 已生成（git-cliff）"
 else
   echo "git-cliff 未安装，跳过 CHANGELOG"
+fi
+
+if [[ $DRY_RUN -eq 1 ]]; then
+  echo "dry-run：跳过 bump/commit/tag/push。CHANGELOG.md 已生成，查看后删除即可。"
+  exit 0
 fi
 
 if [[ -f package.json ]]; then
