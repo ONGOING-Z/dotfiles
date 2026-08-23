@@ -128,6 +128,14 @@ for config in zshrc bashrc vimrc tmux.conf gitconfig; do
 done
 
 echo ""
+echo -e "${BLUE}=== Claude Code 配置检查 ===${NC}"
+check "~/.claude/CLAUDE.md 已链接" "[ -L '$HOME/.claude/CLAUDE.md' ]"
+check "~/.claude/rules/coding-standards.md 已链接" "[ -L '$HOME/.claude/rules/coding-standards.md' ]" "warning"
+check "~/.claude/settings.json 已链接" "[ -L '$HOME/.claude/settings.json' ]" "warning"
+check "~/.claude/settings.local.json 是本地文件（非 symlink）" "[ -f '$HOME/.claude/settings.local.json' ] && [ ! -L '$HOME/.claude/settings.local.json' ]" "warning"
+check "~/.claude/commands/update.md 已链接" "[ -L '$HOME/.claude/commands/update.md' ]" "warning"
+
+echo ""
 echo -e "${BLUE}=== 依赖工具检查 ===${NC}"
 # 检查常用工具
 tools=(git zsh bash vim nvim tmux)

@@ -4,7 +4,8 @@
 set -euo pipefail
 
 # 配置
-SECRETS_DIR="$HOME/.dotfiles/secrets"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SECRETS_DIR="$(cd "$SCRIPT_DIR/.." && pwd)/secrets"
 ENCRYPTED_FILE="$SECRETS_DIR/secrets.enc"
 SECRETS_FILE="$SECRETS_DIR/secrets.env"
 

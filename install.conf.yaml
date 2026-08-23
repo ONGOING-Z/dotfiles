@@ -18,7 +18,6 @@
     ~/.ripgreprc: config/ripgreprc
     ~/.fzf: config/fzf
     ~/.claude/settings.json: claude/settings.json
-    ~/.claude/settings.local.json: claude/settings.local.json
     ~/.claude/file-suggestion.sh: claude/file-suggestion.sh
     ~/.claude/statusline.js: claude/statusline.js
     ~/.claude/CLAUDE.md: claude/CLAUDE.md

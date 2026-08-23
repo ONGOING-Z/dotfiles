@@ -7,5 +7,17 @@
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.js"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(shellcheck install *)",
+      "Bash(git submodule *)"
+    ],
+    "deny": [
+      "Bash(mysql *)",
+      "Bash(psql *)",
+      "Bash(sqlite3 *)",
+      "Bash(mongo *)"
+    ]
   }
 }
