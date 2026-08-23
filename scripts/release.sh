@@ -37,9 +37,9 @@ TAG="v$VERSION"
 git rev-parse "$TAG" >/dev/null 2>&1 && { echo "tag $TAG 已存在" >&2; exit 1; }
 
 if [[ ! -t 0 ]]; then
-  echo "版本: $TAG（非交互环境，自动继续）"
+  echo "版本: ${TAG}（非交互环境，自动继续）"
 else
-  echo -n "发布版本: $TAG，回车确认（Ctrl-C 取消）"
+  echo -n "发布版本: ${TAG}，回车确认（Ctrl-C 取消）"
   read -r _ || exit 1
 fi
 
