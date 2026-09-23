@@ -38,8 +38,9 @@ alias dclogs='docker-compose logs -f'  # 查看日志
 alias pmanim='python3 -m manim'
 alias pc='proxychains'
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
-alias pycharm="/Applications/PyCharm.app/Contents/MacOS/pycharm"
 unalias idea 2>/dev/null
+unalias pycharm 2>/dev/null
+unalias typora 2>/dev/null
 function idea() {
   if [ -d "$HOME/Applications/IntelliJ IDEA.app" ] || [ -d "/Applications/IntelliJ IDEA.app" ]; then
     open -na "IntelliJ IDEA.app" --args "$@"
@@ -50,8 +51,12 @@ function idea() {
     return 1
   fi
 }
-alias typora="/Applications/Typora.app/Contents/MacOS/Typora"
-alias cursor="/Applications/Cursor.app/Contents/MacOS/Cursor"
+typora() {
+  open -a Typora "$@"
+}
+pycharm() {
+  open -na "PyCharm.app" --args "$@"
+}
 alias arthas="/usr/local/arthas-packaging-4.0.5-bin/as.sh"
 
 # brew install m-cli
