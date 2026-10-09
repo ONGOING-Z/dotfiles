@@ -6,6 +6,22 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.10.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.9.0...v3.10.0) (2026-10-09)
+
+
+### Bug Fixes
+
+* brace-quote TAG in release.sh echo（全角字符紧跟变量名导致 bash 解析歧义） ([85805ce](https://github.com/ONGOING-Z/dotfiles/commit/85805ce7e3291bc0bf5adf6fa0d815871cc20150))
+* **claude:** repair dotfiles install paths and settings governance ([e8e040c](https://github.com/ONGOING-Z/dotfiles/commit/e8e040c63f9e33e1f60623a1d31c7d40733cc213))
+* 用 open 启动 Typora/PyCharm，避免直跑二进制阻塞终端 ([f62984a](https://github.com/ONGOING-Z/dotfiles/commit/f62984af6e5d9ff299d3cebd07fba2e2a41cf87b))
+
+
+### Features
+
+* **claude:** unified release flow via release.sh + git-cliff ([396043e](https://github.com/ONGOING-Z/dotfiles/commit/396043eb029e3651e9d58add176632fd4c9aff53))
+* release.sh --dry-run 预演模式 ([18374ac](https://github.com/ONGOING-Z/dotfiles/commit/18374ac09a046c1cfa569ba2eb81168514b06ffd))
+* 新增 glr 快捷命令，展示本地与远端分支的 commit/文件/diff 差距 ([06bdcc7](https://github.com/ONGOING-Z/dotfiles/commit/06bdcc76377619665eacb4834eef749d7f22ffb9))
+
 # [3.9.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.4...v3.9.0) (2026-05-07)
 
 
