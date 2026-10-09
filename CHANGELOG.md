@@ -6,6 +6,23 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.9.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.4...v3.9.0) (2026-05-07)
+
+
+### Bug Fixes
+
+* **claude:** remove separator icon from statusline ([b37aaf3](https://github.com/ONGOING-Z/dotfiles/commit/b37aaf38cee2302c2408df096f6d972be0bcb3d6))
+* **claude:** replace Nerd Font glyphs with Unicode in statusline ([218809d](https://github.com/ONGOING-Z/dotfiles/commit/218809de58484db70280daebf3aaf3dab9a48f2d))
+* **tmux:** auto-copy to system clipboard on mouse drag release ([fcd3b5c](https://github.com/ONGOING-Z/dotfiles/commit/fcd3b5c43be4776ac85568e773aba0cb4e9759c2))
+* **tmux:** show yellow COPY on bottom-left status bar in copy mode ([7ed3c1f](https://github.com/ONGOING-Z/dotfiles/commit/7ed3c1f1e727a03c44a563b20eb1dd44410edc01))
+
+
+### Features
+
+* **claude:** add Claude Code config management and custom slash commands ([02e469a](https://github.com/ONGOING-Z/dotfiles/commit/02e469aa02bba73fc7019b518848df0b05f35bf6))
+* **claude:** add coding standards rules template ([0108445](https://github.com/ONGOING-Z/dotfiles/commit/0108445b3937d6005b01892901104b3e7bd68b08))
+* **claude:** add status line with dir, branch, model, and context usage ([fca3a98](https://github.com/ONGOING-Z/dotfiles/commit/fca3a98a33948e5704f4024b74c01ee47c390dda))
+
 ## [3.8.4](https://github.com/ONGOING-Z/dotfiles/compare/v3.8.3...v3.8.4) (2026-04-21)
 
 
