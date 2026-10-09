@@ -53,6 +53,49 @@ alias gco='git checkout'
 alias gcb='git checkout -b'
 alias glog='git log --oneline --graph --decorate'
 alias gloga='git log --oneline --graph --decorate --all'
+# 当前分支与远端（upstream / origin/<branch>）的差距：commits + 文件 + diff
+# < = 本地有、远端没有；> = 远端有、本地没有
+glr() {
+  local base branch ahead behind
+  branch=$(git branch --show-current 2>/dev/null) || {
+    echo "glr: not on a branch" >&2
+    return 1
+  }
+  if base=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null); then
+    :
+  elif git rev-parse --verify --quiet "origin/${branch}" >/dev/null; then
+    base="origin/${branch}"
+  else
+    echo "glr: no remote tracking branch for '${branch}' (try: git fetch && git push -u origin HEAD)" >&2
+    return 1
+  fi
+  ahead=$(git rev-list --count "${base}..HEAD" 2>/dev/null)
+  behind=$(git rev-list --count "HEAD..${base}" 2>/dev/null)
+  echo "glr: ${branch}...${base}  ahead ${ahead} / behind ${behind}"
+  if [ "${ahead}" -eq 0 ] && [ "${behind}" -eq 0 ]; then
+    echo "(synced)"
+    return 0
+  fi
+  echo ""
+  echo "=== commits ==="
+  git --no-pager log --left-right --graph --oneline --decorate "HEAD...${base}"
+  if [ "${ahead}" -gt 0 ]; then
+    echo ""
+    echo "=== local ahead: files ==="
+    git --no-pager diff --stat "${base}...HEAD"
+    echo ""
+    echo "=== local ahead: diff ==="
+    git diff "${base}...HEAD"
+  fi
+  if [ "${behind}" -gt 0 ]; then
+    echo ""
+    echo "=== remote ahead: files ==="
+    git --no-pager diff --stat "HEAD...${base}"
+    echo ""
+    echo "=== remote ahead: diff ==="
+    git diff "HEAD...${base}"
+  fi
+}
 alias greset='git reset --hard HEAD'
 alias gclean='git clean -fd'
 alias gstash='git stash'
