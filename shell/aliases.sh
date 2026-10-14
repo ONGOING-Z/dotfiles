@@ -51,6 +51,127 @@ alias gdc='git diff --cached'
 alias gb='git branch'
 alias gco='git checkout'
 alias gcb='git checkout -b'
+# 重命名分支；可选同步远端（推新名、删旧名）
+#   gren <new>              # 重命名当前分支
+#   gren <old> <new>        # 重命名指定分支
+#   gren -r <new>           # 当前分支 + 同步远端
+#   gren -r <old> <new>     # 指定分支 + 同步远端
+gren() {
+  local sync_remote=0 old new current upstream_remote
+  if [ "$1" = "-r" ] || [ "$1" = "--remote" ]; then
+    sync_remote=1
+    shift
+  fi
+  case $# in
+    1)
+      new="$1"
+      old=$(git branch --show-current 2>/dev/null) || {
+        echo "gren: not on a branch" >&2
+        return 1
+      }
+      ;;
+    2)
+      old="$1"
+      new="$2"
+      ;;
+    *)
+      echo "用法: gren [-r|--remote] <new> | gren [-r|--remote] <old> <new>" >&2
+      return 1
+      ;;
+  esac
+  if [ -z "$old" ] || [ -z "$new" ]; then
+    echo "gren: old/new branch name required" >&2
+    return 1
+  fi
+  if [ "$old" = "$new" ]; then
+    echo "gren: old and new names are identical" >&2
+    return 1
+  fi
+  git rev-parse --verify --quiet "refs/heads/${old}" >/dev/null || {
+    echo "gren: local branch '${old}' not found" >&2
+    return 1
+  }
+  if git rev-parse --verify --quiet "refs/heads/${new}" >/dev/null; then
+    echo "gren: local branch '${new}' already exists" >&2
+    return 1
+  fi
+
+  current=$(git branch --show-current 2>/dev/null || true)
+  upstream_remote=$(git config --get "branch.${old}.remote" 2>/dev/null || true)
+
+  git branch -m "$old" "$new" || return 1
+  echo "gren: ${old} -> ${new}"
+
+  if [ "$sync_remote" -eq 1 ]; then
+    local remote="${upstream_remote:-origin}"
+    echo "gren: syncing remote '${remote}'..."
+    git push -u "$remote" "$new" || return 1
+    git push "$remote" --delete "$old" 2>/dev/null || \
+      echo "gren: remote branch '${old}' not found or already deleted (ok)"
+  elif [ -n "$upstream_remote" ]; then
+    echo "gren: tip — had upstream ${upstream_remote}/${old}; sync with:"
+    echo "         git push -u ${upstream_remote} ${new} && git push ${upstream_remote} --delete ${old}"
+  fi
+
+  # 若改的是当前分支，提示已生效
+  if [ "$current" = "$old" ] || [ "$current" = "$new" ]; then
+    echo "gren: now on $(git branch --show-current)"
+  fi
+}
+
+# gren tab 补全：本地分支 + -r/--remote
+if [ -n "${ZSH_VERSION:-}" ]; then
+  _gren() {
+    local -a branches pos
+    local w
+    # shellcheck disable=SC2296
+    branches=(${(f)"$(git for-each-ref --format='%(refname:short)' refs/heads 2>/dev/null)"})
+
+    # words[1]=命令；补全到 CURRENT 之前的参数
+    for w in "${(@)words[2,CURRENT-1]}"; do
+      case "$w" in
+        -r|--remote) ;;
+        *) pos+=("$w") ;;
+      esac
+    done
+
+    if (( $#pos == 0 )); then
+      compadd -- -r --remote
+      compadd -a -- branches
+    elif (( $#pos == 1 )); then
+      # 新分支名可自由输入；列出已有分支作参考
+      compadd -a -- branches
+    fi
+  }
+  if (( $+functions[compdef] )); then
+    compdef _gren gren
+  fi
+elif [ -n "${BASH_VERSION:-}" ]; then
+  _gren() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local branches pos_count=0
+    local i w
+    branches=$(git for-each-ref --format='%(refname:short)' refs/heads 2>/dev/null)
+
+    for ((i = 1; i < COMP_CWORD; i++)); do
+      w="${COMP_WORDS[i]}"
+      case "$w" in
+        -r|--remote) ;;
+        *) pos_count=$((pos_count + 1)) ;;
+      esac
+    done
+
+    if [ "$pos_count" -eq 0 ]; then
+      COMPREPLY=( $(compgen -W "-r --remote $branches" -- "$cur") )
+    elif [ "$pos_count" -eq 1 ]; then
+      COMPREPLY=( $(compgen -W "$branches" -- "$cur") )
+    else
+      COMPREPLY=()
+    fi
+  }
+  complete -F _gren gren
+fi
+
 alias glog='git log --oneline --graph --decorate'
 alias gloga='git log --oneline --graph --decorate --all'
 # 当前分支与远端（upstream / origin/<branch>）的差距：commits + 文件 + diff
