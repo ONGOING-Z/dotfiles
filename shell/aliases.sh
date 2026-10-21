@@ -45,7 +45,7 @@ alias gcm='git commit -m'
 alias gca='git commit -a -m'
 alias gp='git push'
 alias gpu='git push -u origin HEAD'
-alias gl='git pull'
+alias gl='git log'
 alias gd='git diff'
 alias gdc='git diff --cached'
 alias gb='git branch'
@@ -174,6 +174,61 @@ fi
 
 alias glog='git log --oneline --graph --decorate'
 alias gloga='git log --oneline --graph --decorate --all'
+# 当前分支 vs 指定分支的对称差异（left-right graph）
+#   gld <other>     # 例：在 02 上执行 gld 01 → git log --left-right 01...HEAD
+# < = 对方有、当前没有；> = 当前有、对方没有
+gld() {
+  local other current ahead behind
+  if [ $# -ne 1 ]; then
+    echo "用法: gld <other-branch>" >&2
+    return 1
+  fi
+  other="$1"
+  current=$(git branch --show-current 2>/dev/null) || {
+    echo "gld: not on a branch" >&2
+    return 1
+  }
+  git rev-parse --verify --quiet "${other}^{commit}" >/dev/null || {
+    echo "gld: ref '${other}' not found" >&2
+    return 1
+  }
+  if [ "$other" = "$current" ] || [ "$other" = "HEAD" ]; then
+    echo "gld: '${other}' is the current branch" >&2
+    return 1
+  fi
+  ahead=$(git rev-list --count "${other}..HEAD" 2>/dev/null)
+  behind=$(git rev-list --count "HEAD..${other}" 2>/dev/null)
+  echo "gld: ${other}...${current}  ahead ${ahead} / behind ${behind}"
+  echo "     < = only in ${other}   > = only in ${current}"
+  if [ "${ahead}" -eq 0 ] && [ "${behind}" -eq 0 ]; then
+    echo "(identical)"
+    return 0
+  fi
+  echo ""
+  git --no-pager log --oneline --left-right --graph --decorate "${other}...HEAD"
+}
+
+# gld tab 补全：本地 + 远端分支
+if [ -n "${ZSH_VERSION:-}" ]; then
+  _gld() {
+    local -a branches
+    # shellcheck disable=SC2296
+    branches=(${(f)"$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null)"})
+    compadd -a -- branches
+  }
+  if (( $+functions[compdef] )); then
+    compdef _gld gld
+  fi
+elif [ -n "${BASH_VERSION:-}" ]; then
+  _gld() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local branches
+    branches=$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null)
+    COMPREPLY=( $(compgen -W "$branches" -- "$cur") )
+  }
+  complete -F _gld gld
+fi
+
 # 当前分支与远端（upstream / origin/<branch>）的差距：commits + 文件 + diff
 # < = 本地有、远端没有；> = 远端有、本地没有
 glr() {
@@ -434,7 +489,8 @@ csv() {
     column -t -s ',' "$@" | less -S
 }
 
-# 天气查询
+# 天气查询（覆盖 bash_aliases 里的 weather 别名）
+unalias weather 2>/dev/null || true
 weather() {
     curl -s "wttr.in/${1:-Beijing}?lang=zh"
 }

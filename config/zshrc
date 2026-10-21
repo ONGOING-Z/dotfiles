@@ -465,28 +465,40 @@ fi
 export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-# 加载性能优化
+# 仅当存在 ~/dotfiles 软链时才加载（仓库当前不在该路径则跳过）
 if [ -f ~/dotfiles/shell/performance.sh ]; then
     source ~/dotfiles/shell/performance.sh
 fi
-
-# 加载延迟加载配置
 if [ -f ~/dotfiles/shell/lazy-load.sh ]; then
     source ~/dotfiles/shell/lazy-load.sh
 fi
-
-# 加载 dotfiles 别名和函数
-if [ -f ~/dotfiles/shell/aliases.sh ]; then
-    source ~/dotfiles/shell/aliases.sh
-fi
-
-# 加载插件系统
 if [ -f ~/dotfiles/scripts/plugin-manager.sh ]; then
     source ~/dotfiles/scripts/plugin-manager.sh load
 fi
+
+# aliases：按本 zshrc 真实路径加载，不依赖 ~/dotfiles
+_DOTFILES_ROOT="${${(%):-%x}:A:h:h}"
+if [ -f "$_DOTFILES_ROOT/shell/aliases.sh" ]; then
+    source "$_DOTFILES_ROOT/shell/aliases.sh"
+fi
+unset _DOTFILES_ROOT
 
 # 加载本地配置（如果存在）
 # 敏感配置（API keys 等）请放入 ~/.zshrc.local，该文件不会被提交到 git
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
+
+# Added by JetBrains Context CLI installer
+export PATH="$PATH:/Users/zero/.jbcontext/bin"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.bun/bin:$PATH"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+
+# WW R2 artifact update source
+[ -f "$HOME/.config/ww/r2-artifacts.env" ] && . "$HOME/.config/ww/r2-artifacts.env"
+
+# Cloudflare Access (ww-agent) for artifacts.mailworld.uk
+[ -f "$HOME/.config/ww/cf-access-ww-agent.env" ] && . "$HOME/.config/ww/cf-access-ww-agent.env"
