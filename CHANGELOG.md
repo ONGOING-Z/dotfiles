@@ -6,6 +6,14 @@
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
 
+# [3.11.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.10.0...v3.11.0) (2026-10-22)
+
+
+### Features
+
+* 新增 gld 对比分支差异，并按 zshrc 真实路径加载 aliases ([c1849f3](https://github.com/ONGOING-Z/dotfiles/commit/c1849f32a7cc68bfb8c0e46e6cad9016cdcea63f))
+* 新增 gren 快捷命令，支持重命名分支并 Tab 补全 ([8ede745](https://github.com/ONGOING-Z/dotfiles/commit/8ede7450a492d9e16afda21824cfd7d1be7c20a8))
+
 # [3.10.0](https://github.com/ONGOING-Z/dotfiles/compare/v3.9.0...v3.10.0) (2026-10-09)
 
 
